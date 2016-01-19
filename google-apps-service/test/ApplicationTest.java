@@ -1,23 +1,11 @@
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import static play.test.Helpers.running;
+import static play.test.Helpers.testServer;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import org.junit.*;
+import org.junit.Assert;
+import org.junit.Test;
 
-import play.mvc.*;
-import play.test.*;
-import play.data.DynamicForm;
-import play.data.validation.ValidationError;
-import play.data.validation.Constraints.RequiredValidator;
-import play.i18n.Lang;
 import play.libs.F;
-import play.libs.F.*;
-import play.twirl.api.Content;
-
-import static play.test.Helpers.*;
-import static org.junit.Assert.*;
+import play.libs.ws.WS;
 
 
 /**
@@ -29,16 +17,16 @@ import static org.junit.Assert.*;
 public class ApplicationTest {
 
     @Test
-    public void simpleCheck() {
-        int a = 1 + 1;
-        assertEquals(2, a);
-    }
-
-    @Test
     public void renderTemplate() {
-        Content html = views.html.index.render("Your new application is ready.");
-        assertEquals("text/html", contentType(html));
-        assertTrue(contentAsString(html).contains("Your new application is ready."));
+        running(testServer(3333), new Runnable(){
+		public void run(){
+			Assert.assertEquals(200,
+					WS.url("http://localhost:3333/users/some@email.com")
+					.get().get(5000).getStatus()
+					);
+		}
+	});
+	    
     }
 
 
