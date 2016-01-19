@@ -3,7 +3,7 @@
 # ~~~~
 
 # Home page
-GET     /                           controllers.Application.index()
-
+GET     /users/:email                           controllers.Application.getUserInfo(email: String)
+POST	/users					controllers.Application.insert()
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

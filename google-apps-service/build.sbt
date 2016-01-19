@@ -9,7 +9,9 @@ scalaVersion := "2.11.6"
 libraryDependencies ++= Seq(
   javaJdbc,
   cache,
-  javaWs
+  javaWs,
+  "com.orientechnologies" % "orientdb-core" % "2.1.6",
+  "com.orientechnologies" % "orientdb-graphdb" % "2.1.6"
 )
 
 // Play provides two styles of routers, one expects its actions to be injected, the
