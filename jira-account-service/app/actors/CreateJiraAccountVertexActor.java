@@ -77,8 +77,8 @@ public class CreateJiraAccountVertexActor extends UntypedActor {
 			user.addEdge("hasAccount", account);
 			app.addEdge("forApplication", account);
 
-			sender().tell("Ok", self());
 			graph.commit();
+			sender().tell("Ok", self());
 			logger.info("Jira account vertex created");
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
