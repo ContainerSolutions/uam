@@ -1,0 +1,79 @@
+package com.diosoft.uar.ldap.ad;
+
+import com.diosoft.uar.Access;
+
+public class WindowsAccountAccess extends Access {
+
+    private final String cnValue;
+    private final String firstName;
+    private final String lastName;
+    private final String fullName;
+    private final String email;
+
+    public WindowsAccountAccess(String login, String firstName, String lastName, String email) {
+        super(login);
+        this.firstName = firstName;
+        this.lastName = lastName;
+        if(this.firstName == null || this.lastName == null) {
+            this.fullName = null;
+            this.cnValue = login;
+        } else {
+            this.fullName = this.firstName + ' ' + this.lastName;
+            this.cnValue = this.fullName;
+        }
+        this.email = email;
+    }
+
+    public String getCnValue() {
+        return cnValue;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+    public String getLastName() {
+        return lastName;
+    }
+    public String getFullName() {
+        return fullName;
+    }
+    public String getEmail() {
+        return email;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        WindowsAccountAccess that = (WindowsAccountAccess) o;
+
+        if (cnValue != null ? !cnValue.equals(that.cnValue) : that.cnValue != null) return false;
+        if (firstName != null ? !firstName.equals(that.firstName) : that.firstName != null) return false;
+        if (lastName != null ? !lastName.equals(that.lastName) : that.lastName != null) return false;
+        return !(email != null ? !email.equals(that.email) : that.email != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (cnValue != null ? cnValue.hashCode() : 0);
+        result = 31 * result + (firstName != null ? firstName.hashCode() : 0);
+        result = 31 * result + (lastName != null ? lastName.hashCode() : 0);
+        result = 31 * result + (email != null ? email.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "WindowsAccountAccess {" +
+                "cnValue='" + cnValue + '\'' +
+                ", login='" + getName() + '\'' +
+                ", fullName='" + fullName + '\'' +
+                ", email='" + email + '\'' +
+                '}';
+    }
+
+}
