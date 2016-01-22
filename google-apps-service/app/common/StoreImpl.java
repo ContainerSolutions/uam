@@ -29,7 +29,9 @@ public class StoreImpl implements Store
 	public String get(String key)
 	{
 
-		String value = Base64.encodeBase64String(WS.client().url(CONSUL_REST + key).setAuth(CONSUL_USER, CONSUL_PASSWORD).get().get(5000).asJson().findValue(key).asText().toByte());
+
+		String encodedValue = WS.client().url(CONSUL_REST + key).setAuth(CONSUL_USER, CONSUL_PASSWORD).get().get(5000).asJson().findValue(key).asText();
+		String value = Base64.encodeBase64String(encodedValue.getBytes());
 
 		return value;
 	}
@@ -39,8 +41,11 @@ public class StoreImpl implements Store
 	{
 
 		String value = get(key);
-		String value = "removed value"; // removed from store
-		WS.client().url(CONSUL_REST).
+		int status = WS.client().url(CONSUL_REST).delete().get(5000).getStatus();
+		if (status != 200)
+		{
+			throw new IllegalStateException("Error while deliting key : " + status);
+		}
 		return value;
 	}
 }
