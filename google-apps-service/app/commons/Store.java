@@ -1,4 +1,4 @@
-package common;
+package commons;
 
 import play.Configuration;
 import play.libs.Json;

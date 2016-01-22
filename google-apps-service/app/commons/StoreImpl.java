@@ -1,8 +1,9 @@
-package common;
+package commons;
 
 import play.Configuration;
 import play.libs.Json;
 import play.libs.ws.WS;
+import play.libs.ws.WSResponse;
 import play.mvc.Controller;
 import play.mvc.Http.RequestBody;
 import play.mvc.Result;
@@ -22,7 +23,11 @@ public class StoreImpl implements Store
 
 	public void put(String key, String value)
 	{
-		WS.client().url(CONSUL_REST + key).setAuth(CONSUL_USER, CONSUL_PASSWORD).post(value).get(5000);
+		WSResponse response = WS.client().url(CONSUL_REST + key).setAuth(CONSUL_USER, CONSUL_PASSWORD).put(value).get(5000);
+		if (response.getStatus() != 200)
+		{
+			throw new IllegalStateException(response.getStatusText());
+		}
 	}
 
 	@Override
@@ -30,8 +35,15 @@ public class StoreImpl implements Store
 	{
 
 
-		String encodedValue = WS.client().url(CONSUL_REST + key).setAuth(CONSUL_USER, CONSUL_PASSWORD).get().get(5000).asJson().findValue(key).asText();
-		String value = Base64.encodeBase64String(encodedValue.getBytes());
+		WSResponse response = WS.client().url(CONSUL_REST + key).setAuth(CONSUL_USER, CONSUL_PASSWORD).get().get(5000);
+		if (response.getStatus() != 200)
+		{
+			return null;
+		}
+
+		String encodedValue = response.asJson().findValue("Value").asText();
+
+		String value = new String(Base64.decodeBase64(encodedValue));
 
 		return value;
 	}
@@ -41,10 +53,11 @@ public class StoreImpl implements Store
 	{
 
 		String value = get(key);
-		int status = WS.client().url(CONSUL_REST).delete().get(5000).getStatus();
+		WSResponse response = WS.client().url(CONSUL_REST + key).delete().get(5000);
+		int status = response.getStatus();
 		if (status != 200)
 		{
-			throw new IllegalStateException("Error while deliting key : " + status);
+			throw new IllegalStateException("Error while deliting key : " + response.getStatusText());
 		}
 		return value;
 	}
