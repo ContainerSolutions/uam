@@ -35,7 +35,6 @@ public class StoreTest extends WithApplication
 		testClass.put(inputKey, inputValue);
 
 		String valueFromStore = testClass.get(inputKey);
-		System.out.println("value from store  " + valueFromStore);
 		Assert.assertEquals(inputValue, valueFromStore);
 
 		String removedValueFromStore = testClass.remove(inputKey);
