@@ -6,7 +6,6 @@ import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.impls.orient.OrientGraph;
 import com.tinkerpop.blueprints.impls.orient.OrientGraphFactory;
 
-import akka.actor.Props;
 import akka.actor.UntypedActor;
 import play.Logger;
 import play.Logger.ALogger;
@@ -25,11 +24,6 @@ public class RemoveAccountVertexActor extends UntypedActor {
 			this.name = name;
 		}
 
-	}
-
-	public static Props props(final String url) {
-		return Props.create(RemoveAccountVertexActor.class,
-				() -> new RemoveAccountVertexActor(new OrientGraphFactory(url).setupPool(1, 10)));
 	}
 
 	private final OrientGraphFactory graphFactory;

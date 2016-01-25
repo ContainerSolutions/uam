@@ -67,7 +67,7 @@ public class GetAccountActor extends UntypedActor {
 
 			logger.info("Result: " + result.toString());
 
-			return result;
+			return result.toString();
 		}).get(10, TimeUnit.SECONDS), self());
 	}
 }

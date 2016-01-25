@@ -10,7 +10,6 @@ import play.Logger;
 import play.Logger.ALogger;
 import play.libs.Json;
 import play.libs.ws.WSClient;
-import play.mvc.Http.MimeTypes;
 
 public class GetAllAccountsActor extends UntypedActor {
 	private static final ALogger logger = Logger.of(GetAllAccountsActor.class);
@@ -40,7 +39,7 @@ public class GetAllAccountsActor extends UntypedActor {
 	}
 
 	private void getAllAccounts() {
-		sender().tell(client.url(url + "/user/search?username=%25").setContentType(MimeTypes.JSON).setAuth("asirak", "secret")
+		sender().tell(client.url(url + "/user/search?username=%25").setAuth("asirak", "secret")
 				.get().map(response -> {
 					if (response.getStatus() != 200) {
 						return response.getBody();
@@ -50,7 +49,7 @@ public class GetAllAccountsActor extends UntypedActor {
 				    response.asJson().forEach(jsonNode -> result.add(jsonNode.findValue("name")));
 					logger.info("Result: " + result.toString());
 
-					return result;
+					return result.toString();
 				}).get(10, TimeUnit.SECONDS), self());
 	}
 }

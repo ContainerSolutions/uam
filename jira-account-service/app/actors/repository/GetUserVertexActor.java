@@ -7,7 +7,6 @@ import com.tinkerpop.blueprints.impls.orient.OrientGraphFactory;
 import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 
 import actors.jira.CreateAccountActor.CreateJiraAccountMessage;
-import akka.actor.Props;
 import akka.actor.UntypedActor;
 import play.Logger;
 import play.Logger.ALogger;
@@ -30,11 +29,6 @@ public class GetUserVertexActor extends UntypedActor {
 			return "GetUserData [userId=" + userId + "]";
 		}
 
-	}
-
-	public static Props props(final String url) {
-		return Props.create(GetUserVertexActor.class,
-				() -> new GetUserVertexActor(new OrientGraphFactory(url).setupPool(1, 10)));
 	}
 
 	private final OrientGraphFactory graphFactory;
@@ -65,7 +59,6 @@ public class GetUserVertexActor extends UntypedActor {
 			sender().tell(createMessage(graph.getVertex(msg.userId)), self());
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
-			graph.rollback();
 			sender().tell(e.getMessage(), self());
 		} finally {
 			graph.shutdown();

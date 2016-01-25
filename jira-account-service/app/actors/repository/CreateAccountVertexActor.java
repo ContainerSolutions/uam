@@ -7,7 +7,6 @@ import com.tinkerpop.blueprints.impls.orient.OrientGraph;
 import com.tinkerpop.blueprints.impls.orient.OrientGraphFactory;
 import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 
-import akka.actor.Props;
 import akka.actor.UntypedActor;
 import play.Logger;
 import play.Logger.ALogger;
@@ -35,11 +34,6 @@ public class CreateAccountVertexActor extends UntypedActor {
 			return "CreateVertex [userId=" + userId + ", flowId=" + flowId + ", appId=" + appId + "]";
 		}
 
-	}
-
-	public static Props props(final String url) {
-		return Props.create(CreateAccountVertexActor.class,
-				() -> new CreateAccountVertexActor(new OrientGraphFactory(url).setupPool(1, 10)));
 	}
 
 	private final OrientGraphFactory graphFactory;

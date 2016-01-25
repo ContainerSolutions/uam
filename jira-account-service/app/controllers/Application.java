@@ -9,6 +9,7 @@ import org.apache.commons.lang.StringUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.tinkerpop.blueprints.impls.orient.OrientGraphFactory;
 
 import actors.jira.CreateAccountActor;
 import actors.jira.GetAllAccountsActor;
@@ -26,6 +27,7 @@ import actors.repository.GetUserVertexActor.GetUserData;
 import actors.repository.RemoveAccountVertexActor.RemoveVertex;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
+import akka.actor.Props;
 import akka.util.Timeout;
 import play.Configuration;
 import play.Logger;
@@ -57,15 +59,17 @@ public class Application extends Controller {
 	@Inject
 	public Application(ActorSystem system, Configuration configuration) {
 
-		userVertexActor = system.actorOf(GetUserVertexActor.props(configuration.getString("orientdb.url")));
+		OrientGraphFactory graphFactory = new OrientGraphFactory(configuration.getString("orientdb.url")).setupPool(1, 10);
+
+		userVertexActor = system.actorOf(Props.create(GetUserVertexActor.class, graphFactory));
 		createActor = system.actorOf(CreateAccountActor.props(WS.client(), configuration.getString("jira.url")));
-		createVertexActor = system.actorOf(CreateAccountVertexActor.props(configuration.getString("orientdb.url")));
+		createVertexActor = system.actorOf(Props.create(CreateAccountVertexActor.class, graphFactory));
 
 		getAllActor = system.actorOf(GetAllAccountsActor.props(WS.client(), configuration.getString("jira.url")));
 		getAccountActor = system.actorOf(GetAccountActor.props(WS.client(), configuration.getString("jira.url")));
 
 		removeAccountActor = system.actorOf(RemoveAccountActor.props(WS.client(), configuration.getString("jira.url")));
-		removeAccountVertexActor = system.actorOf(RemoveAccountVertexActor.props(configuration.getString("orientdb.url")));
+		removeAccountVertexActor = system.actorOf(Props.create(RemoveAccountVertexActor.class, graphFactory));
 	}
 
 	public Result index() {
