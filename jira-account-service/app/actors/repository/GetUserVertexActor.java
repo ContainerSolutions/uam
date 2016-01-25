@@ -1,4 +1,4 @@
-package actors;
+package actors.repository;
 
 import java.util.Arrays;
 
@@ -6,7 +6,7 @@ import com.tinkerpop.blueprints.impls.orient.OrientGraph;
 import com.tinkerpop.blueprints.impls.orient.OrientGraphFactory;
 import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 
-import actors.CreateJiraAccountActor.CreateJiraAccountMessage;
+import actors.jira.CreateAccountActor.CreateJiraAccountMessage;
 import akka.actor.Props;
 import akka.actor.UntypedActor;
 import play.Logger;

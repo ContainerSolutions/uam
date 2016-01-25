@@ -7,7 +7,6 @@ GET     /                           controllers.Application.index()
 GET     /account/all                controllers.Application.getAll()
 GET     /account/:name              controllers.Application.get(name)
 POST    /account                    controllers.Application.post()
-PUT     /account/:name              controllers.Application.put(name)
 DELETE  /account/:name              controllers.Application.delete(name)
 
 # Map static resources from the /public folder to the /assets URL path

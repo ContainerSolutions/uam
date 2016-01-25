@@ -10,12 +10,20 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import actors.CreateJiraAccountActor;
-import actors.CreateJiraAccountActor.CreateJiraAccountMessage;
-import actors.CreateJiraAccountVertexActor;
-import actors.CreateJiraAccountVertexActor.CreateVertex;
-import actors.GetUserVertexActor;
-import actors.GetUserVertexActor.GetUserData;
+import actors.jira.CreateAccountActor;
+import actors.jira.GetAllAccountsActor;
+import actors.jira.GetAccountActor;
+import actors.jira.RemoveAccountActor;
+import actors.jira.CreateAccountActor.CreateJiraAccountMessage;
+import actors.jira.GetAllAccountsActor.GetAllAccounts;
+import actors.jira.GetAccountActor.GetAccount;
+import actors.jira.RemoveAccountActor.RemoveAccount;
+import actors.repository.CreateAccountVertexActor;
+import actors.repository.GetUserVertexActor;
+import actors.repository.RemoveAccountVertexActor;
+import actors.repository.CreateAccountVertexActor.CreateVertex;
+import actors.repository.GetUserVertexActor.GetUserData;
+import actors.repository.RemoveAccountVertexActor.RemoveVertex;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.util.Timeout;
@@ -33,18 +41,31 @@ import scala.concurrent.duration.Duration;
 
 @Singleton
 public class Application extends Controller {
-	private static final Timeout TIMEOUT = new Timeout(Duration.create(50, TimeUnit.SECONDS));
+	private static final Timeout TIMEOUT = new Timeout(Duration.create(10, TimeUnit.SECONDS));
 	private static final ALogger logger = Logger.of(Application.class);
 
 	private final ActorRef userVertexActor;
 	private final ActorRef createActor;
 	private final ActorRef createVertexActor;
 
+	private final ActorRef getAllActor;
+	private final ActorRef getAccountActor;
+
+	private final ActorRef removeAccountActor;
+	private final ActorRef removeAccountVertexActor;
+
 	@Inject
 	public Application(ActorSystem system, Configuration configuration) {
+
 		userVertexActor = system.actorOf(GetUserVertexActor.props(configuration.getString("orientdb.url")));
-		createActor = system.actorOf(CreateJiraAccountActor.props(WS.client(), configuration.getString("jira.url")));
-		createVertexActor = system.actorOf(CreateJiraAccountVertexActor.props(configuration.getString("orientdb.url")));
+		createActor = system.actorOf(CreateAccountActor.props(WS.client(), configuration.getString("jira.url")));
+		createVertexActor = system.actorOf(CreateAccountVertexActor.props(configuration.getString("orientdb.url")));
+
+		getAllActor = system.actorOf(GetAllAccountsActor.props(WS.client(), configuration.getString("jira.url")));
+		getAccountActor = system.actorOf(GetAccountActor.props(WS.client(), configuration.getString("jira.url")));
+
+		removeAccountActor = system.actorOf(RemoveAccountActor.props(WS.client(), configuration.getString("jira.url")));
+		removeAccountVertexActor = system.actorOf(RemoveAccountVertexActor.props(configuration.getString("orientdb.url")));
 	}
 
 	public Result index() {
@@ -52,11 +73,11 @@ public class Application extends Controller {
 	}
 
 	public Promise<Result> getAll() {
-		return Promise.pure(internalServerError("not implemented"));
+		return Promise.wrap(ask(getAllActor, new GetAllAccounts(), TIMEOUT)).map(response -> ok(Json.toJson(response)));
 	}
 
 	public Promise<Result> get(String name) {
-		return Promise.pure(internalServerError("not implemented"));
+		return Promise.wrap(ask(getAccountActor, new GetAccount(name), TIMEOUT)).map(response -> ok(Json.toJson(response)));
 	}
 
 	@BodyParser.Of(BodyParser.Json.class)
@@ -65,24 +86,22 @@ public class Application extends Controller {
 		logger.info("Create Jira account: " + request);
 
 		CreateVertex createVertex = Json.fromJson(request, CreateVertex.class);
-		CreateJiraAccountMessage createMessage = (CreateJiraAccountMessage) Await.result(
-				ask(userVertexActor, new GetUserData(createVertex.userId), TIMEOUT), TIMEOUT.duration());
+		CreateJiraAccountMessage createMessage = (CreateJiraAccountMessage) Await
+				.result(ask(userVertexActor, new GetUserData(createVertex.userId), TIMEOUT), TIMEOUT.duration());
 
 		String status = Await.result(ask(createActor, createMessage, TIMEOUT), TIMEOUT.duration()).toString();
 		if (!StringUtils.equals("Ok", status)) {
 			return Promise.pure(badRequest(status));
 		}
 
-		return Promise.wrap(ask(createVertexActor, createVertex, TIMEOUT)).map(response -> ok((String) response));
+		return Promise.wrap(ask(createVertexActor, createVertex, TIMEOUT)).map(response -> ok(Json.toJson(response)));
 	}
 
-	@BodyParser.Of(BodyParser.Json.class)
-	public Promise<Result> put(String name) {
-		return Promise.pure(internalServerError("not implemented"));
+	public Promise<Result> delete(String name) throws Exception {
+		String status = Await.result(ask(removeAccountActor, new RemoveAccount(name), TIMEOUT), TIMEOUT.duration()).toString();
+		if (!StringUtils.equals("Ok", status)) {
+			return Promise.pure(internalServerError(status));
+		}
+		return Promise.wrap(ask(removeAccountVertexActor, new RemoveVertex(name), TIMEOUT)).map(response -> ok(Json.toJson(response)));
 	}
-
-	public Promise<Result> delete(String name) {
-		return Promise.pure(internalServerError("not implemented"));
-	}
-
 }

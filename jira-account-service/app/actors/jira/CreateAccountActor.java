@@ -1,4 +1,4 @@
-package actors;
+package actors.jira;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -11,8 +11,8 @@ import play.libs.Json;
 import play.libs.ws.WSClient;
 import play.mvc.Http.MimeTypes;
 
-public class CreateJiraAccountActor extends UntypedActor {
-	private static final ALogger logger = Logger.of(CreateJiraAccountActor.class);
+public class CreateAccountActor extends UntypedActor {
+	private static final ALogger logger = Logger.of(CreateAccountActor.class);
 
 	public static class CreateJiraAccountMessage {
 		public String name;
@@ -38,13 +38,13 @@ public class CreateJiraAccountActor extends UntypedActor {
 	}
 
 	public static Props props(WSClient client, String url) {
-		return Props.create(CreateJiraAccountActor.class, () -> new CreateJiraAccountActor(client, url));
+		return Props.create(CreateAccountActor.class, () -> new CreateAccountActor(client, url));
 	}
 
 	private final WSClient client;
 	private final String url;
 
-	public CreateJiraAccountActor(WSClient client, String url) {
+	public CreateAccountActor(WSClient client, String url) {
 		this.client = client;
 		this.url = url;
 	}

@@ -1,4 +1,4 @@
-package actors;
+package actors.repository;
 
 
 import org.apache.commons.lang.StringUtils;
@@ -12,8 +12,8 @@ import akka.actor.UntypedActor;
 import play.Logger;
 import play.Logger.ALogger;
 
-public class CreateJiraAccountVertexActor extends UntypedActor {
-	private static final ALogger logger = Logger.of(CreateJiraAccountVertexActor.class);
+public class CreateAccountVertexActor extends UntypedActor {
+	private static final ALogger logger = Logger.of(CreateAccountVertexActor.class);
 	private static final String vertexClassName = "JiraAccount";
 
 	public static class CreateVertex {
@@ -38,13 +38,13 @@ public class CreateJiraAccountVertexActor extends UntypedActor {
 	}
 
 	public static Props props(final String url) {
-		return Props.create(CreateJiraAccountVertexActor.class,
-				() -> new CreateJiraAccountVertexActor(new OrientGraphFactory(url).setupPool(1, 10)));
+		return Props.create(CreateAccountVertexActor.class,
+				() -> new CreateAccountVertexActor(new OrientGraphFactory(url).setupPool(1, 10)));
 	}
 
 	private final OrientGraphFactory graphFactory;
 
-	public CreateJiraAccountVertexActor(OrientGraphFactory graph) {
+	public CreateAccountVertexActor(OrientGraphFactory graph) {
 		this.graphFactory = graph;
 	}
 
