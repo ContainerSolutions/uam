@@ -48,12 +48,21 @@ html {
   font-family: 'Roboto', serif;
 }
 
+body {
+  min-width: 900px;
+  overflow-x: auto;
+}
+
 .browsehappy {
   margin: 0.2em 0;
   background: #ccc;
   color: #000;
   padding: 0.2em 0;
 }
+
+//colors:
+
+$color-blue: #3F51B5;
 
 /**
  *  Do not remove the comment below. It's the markers used by gulp-inject to inject

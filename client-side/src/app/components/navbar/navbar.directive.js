@@ -17,12 +17,33 @@
     };
 
     /** @ngInject */
-    function NavbarController() {
+    function NavbarController($rootScope) {
       var vm = this;
 
       vm.user = {
         name: 'John Galt'
       };
+
+      vm.links = [
+        {
+          state: 'main.user-list',
+          text: 'User List'
+        },
+        {
+          state: 'main.audit',
+          text: 'Audit'
+        },
+        {
+          state: 'main.settings',
+          text: 'Application Settings'
+        }
+      ];
+
+      /*eslint-disable */
+      $rootScope.$on('$stateChangeSuccess', function (event, toState) {
+        /*eslint-enable */
+        vm.activeState = toState.name;
+      });
     }
   }
 
