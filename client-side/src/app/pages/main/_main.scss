@@ -1,0 +1,17 @@
+.full-height {
+  height: 100vh;
+}
+
+.section {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: $offset-small;
+
+  &.padding-large {
+    padding: $offset-standard;
+  }
+}
+
+.section-divider {
+  width: $offset-small;
+}

@@ -1,0 +1,87 @@
+<div layout="row" class="user-list-wrapper">
+  <div flex="25">
+    <div layout-padding class="section padding-large">
+      <md-input-container class="search-query-wrapper">
+        <label>User Name</label>
+        <input ng-model="userList.searchQuery" type="text">
+      </md-input-container>
+      <md-list class="user-list">
+        <md-list-item ng-repeat="user in userList.users | filter: userList.searchQuery">
+          {{::user.name}}
+        </md-list-item>
+      </md-list>
+      <md-button class="md-primary md-raised">New User</md-button>
+    </div>
+  </div>
+  <div class="section-divider"></div>
+  <div flex layout="column">
+    <div class="section">
+      <div flex layout="row">
+        <div flex class="cards-wrapper">
+          <md-card>
+            <md-card-title>
+              <md-card-title-text>
+                <span class="md-headline">General</span>
+              </md-card-title-text>
+            </md-card-title>
+            <md-input-container>
+              <label>First Name</label>
+              <input ng-model="userList.selectedUser.firstName" type="text">
+            </md-input-container>
+            <md-input-container>
+              <label>Last Name</label>
+              <input ng-model="userList.selectedUser.lastName" type="text">
+            </md-input-container>
+            <md-input-container>
+              <label>Unique ID</label>
+              <input ng-model="userList.selectedUser.id" type="text">
+            </md-input-container>
+            <md-input-container>
+              <label>Email</label>
+              <input ng-model="userList.selectedUser.email" type="email">
+            </md-input-container>
+          </md-card>
+          <md-card>
+            <md-card-title>
+              <md-card-title-text>
+                <span class="md-headline">GApps</span>
+              </md-card-title-text>
+            </md-card-title>
+            Olol GApps
+          </md-card>
+          <md-card>
+            <md-card-title>
+              <md-card-title-text>
+                <span class="md-headline">AD</span>
+              </md-card-title-text>
+            </md-card-title>
+            Olol AD
+          </md-card>
+          <md-card>
+            <md-card-title>
+              <md-card-title-text>
+                <span class="md-headline">Jira</span>
+              </md-card-title-text>
+            </md-card-title>
+            Olol JIRA
+          </md-card>
+        </div>
+        <div layout="column" class="buttons-wrapper">
+          <md-button class="md-primary md-raised">General</md-button>
+          <md-button class="md-raised">GApps</md-button>
+          <md-button class="md-raised">AD</md-button>
+          <md-button class="md-raised">Jira</md-button>
+          <md-button class="md-raised">Git</md-button>
+        </div>
+      </div>
+      <div class="actions-wrapper-divider"></div>
+      <div layout="row" class="actions-wrapper">
+        <div flex>
+          <md-button class="md-warn md-raised">Retire</md-button>
+        </div>
+        <md-button class="md-primary md-raised">Save</md-button>
+        <md-button class="md-raised">Discard</md-button>
+      </div>
+    </div>
+  </div>
+</div>

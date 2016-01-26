@@ -64,6 +64,11 @@ body {
 
 $color-blue: #3F51B5;
 
+//variables
+
+$offset-standard: 15px;
+$offset-small: $offset-standard / 2;
+
 /**
  *  Do not remove the comment below. It's the markers used by gulp-inject to inject
  *  all your sass files automatically

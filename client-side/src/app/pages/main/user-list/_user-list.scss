@@ -1,0 +1,36 @@
+.user-list-wrapper {
+  .search-query-wrapper {
+    padding-bottom: 0;
+  }
+
+  .user-list {
+    height: calc(100vh - 228px);
+    min-height: 100px;
+    overflow-y: auto;
+
+    md-list-item.md-no-proxy {
+      padding: 0 $offset-small;
+    }
+  }
+
+  .cards-wrapper {
+    height: calc(100vh - 171px);
+    overflow-y: auto;
+
+    md-card {
+      padding: $offset-standard;
+    }
+  }
+
+  .actions-wrapper-divider {
+    width: calc(100% + #{$offset-standard});
+    position: relative;
+    left: -$offset-small;
+    padding-top: $offset-small;
+    border-top: 1px solid #ccc;
+  }
+
+  .actions-wrapper {
+    padding: $offset-small;
+  }
+}
