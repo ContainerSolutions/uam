@@ -1,0 +1,17 @@
+<md-content layout="column" layout-padding class="full-height">
+  <div flex></div>
+  <div layout="row" layout-align="center">
+    <div class="login-form-wrapper">
+      <md-input-container>
+        <label>Email</label>
+        <input ng-model="login.credentials.email" type="email">
+      </md-input-container>
+      <md-input-container>
+        <label>Password</label>
+        <input ng-model="login.credentials.password" type="password">
+      </md-input-container>
+      <md-button ui-sref="main.user-list" class="md-raised">Log in</md-button>
+    </div>
+  </div>
+  <div flex></div>
+</md-content>

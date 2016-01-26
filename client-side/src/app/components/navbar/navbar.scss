@@ -1,3 +1,6 @@
-.acme-navbar-text{
-  color: white;
+mantl-navbar {
+  .md-button.active {
+    color: $color-blue;
+    font-weight: bold;
+  }
 }
