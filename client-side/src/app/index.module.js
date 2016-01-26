@@ -8,7 +8,6 @@
       'ngAria',
       'ngResource',
       'ui.router',
-      'ngMaterial',
-      'dndLists'
+      'ngMaterial'
     ]);
 })();
