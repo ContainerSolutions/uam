@@ -4,7 +4,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -26,6 +25,8 @@ public class GetAllAccountsActorTest extends JavaTestKit {
 	}
 
 	private static final String url = "testConfigUrl";
+	private static final String user = "user";
+	private static final String password = "secret";
 
 	static ActorSystem system;
 
@@ -53,13 +54,13 @@ public class GetAllAccountsActorTest extends JavaTestKit {
 	public void testOnReceive() throws Exception {
 		// given
 		Mockito.when(client.url(url + "/user/search?username=%25")).thenReturn(wsRequest);
-		Mockito.when(wsRequest.setAuth(Matchers.anyString(), Matchers.anyString())).thenReturn(wsRequest);
+		Mockito.when(wsRequest.setAuth(user, password)).thenReturn(wsRequest);
 		Mockito.when(wsRequest.get()).thenReturn(Promise.pure(wsResponse));
 		Mockito.when(wsResponse.getStatus()).thenReturn(200);
 		Mockito.when(wsResponse.asJson()).thenReturn(Json.parse(
 				"[{\"name\":\"testName\",\"emailAddress\":\"test@email.test\",\"displayName\":\"testDN\",\"active\":\"true\"}]"));
 
-		ActorRef unit = system.actorOf(GetAllAccountsActor.props(client, url));
+		ActorRef unit = system.actorOf(GetAllAccountsActor.props(client, url, user, password));
 
 		// when
 		unit.tell(new GetAllAccounts(), getRef());

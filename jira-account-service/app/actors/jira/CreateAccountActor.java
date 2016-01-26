@@ -81,16 +81,20 @@ public class CreateAccountActor extends UntypedActor {
 
 	}
 
-	public static Props props(WSClient client, String url) {
-		return Props.create(CreateAccountActor.class, () -> new CreateAccountActor(client, url));
+	public static Props props(WSClient client, String url, String user, String password) {
+		return Props.create(CreateAccountActor.class, () -> new CreateAccountActor(client, url, user, password));
 	}
 
 	private final WSClient client;
 	private final String url;
+	private final String user;
+	private final String password;
 
-	public CreateAccountActor(WSClient client, String url) {
+	public CreateAccountActor(WSClient client, String url, String user, String password) {
 		this.client = client;
 		this.url = url;
+		this.user = user;
+		this.password = password;
 	}
 
 	public void onReceive(Object msg) throws Exception {
@@ -105,7 +109,7 @@ public class CreateAccountActor extends UntypedActor {
 	private void createJiraAccount(CreateJiraAccountMessage msg) {
 		logger.info("Create jira account started: " + msg);
 
-		sender().tell(client.url(url + "/user").setContentType(MimeTypes.JSON).setAuth("asirak", "secret")
+		sender().tell(client.url(url + "/user").setContentType(MimeTypes.JSON).setAuth(user, password)
 				.post(Json.toJson(msg)).map(response -> {
 					if (response.getStatus() != 201) {
 						return response.getBody();

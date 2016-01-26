@@ -31,16 +31,20 @@ public class GetAccountActor extends UntypedActor {
 		}
 	}
 
-	public static Props props(WSClient client, String url) {
-		return Props.create(GetAccountActor.class, () -> new GetAccountActor(client, url));
+	public static Props props(WSClient client, String url, String user, String password) {
+		return Props.create(GetAccountActor.class, () -> new GetAccountActor(client, url, user, password));
 	}
 
 	private final WSClient client;
 	private final String url;
+	private final String user;
+	private final String password;
 
-	public GetAccountActor(WSClient client, String url) {
+	public GetAccountActor(WSClient client, String url, String user, String password) {
 		this.client = client;
 		this.url = url;
+		this.user = user;
+		this.password = password;
 	}
 
 	public void onReceive(Object msg) throws Exception {
@@ -53,7 +57,7 @@ public class GetAccountActor extends UntypedActor {
 	}
 
 	private void getAccount(GetAccount msg) {
-		sender().tell(client.url(url + "/user?username=" + msg.name).setAuth("asirak", "secret").get().map(response -> {
+		sender().tell(client.url(url + "/user?username=" + msg.name).setAuth(user, password).get().map(response -> {
 			if (response.getStatus() != 200) {
 				return response.getBody();
 			}

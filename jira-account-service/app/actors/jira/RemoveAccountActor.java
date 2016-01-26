@@ -27,16 +27,20 @@ public class RemoveAccountActor extends UntypedActor {
 		}
 	}
 
-	public static Props props(WSClient client, String url) {
-		return Props.create(RemoveAccountActor.class, () -> new RemoveAccountActor(client, url));
+	public static Props props(WSClient client, String url, String user, String password) {
+		return Props.create(RemoveAccountActor.class, () -> new RemoveAccountActor(client, url, user, password));
 	}
 
 	private final WSClient client;
 	private final String url;
+	private final String user;
+	private final String password;
 
-	public RemoveAccountActor(WSClient client, String url) {
+	public RemoveAccountActor(WSClient client, String url, String user, String password) {
 		this.client = client;
 		this.url = url;
+		this.user = user;
+		this.password = password;
 	}
 
 	public void onReceive(Object msg) throws Exception {
@@ -49,12 +53,13 @@ public class RemoveAccountActor extends UntypedActor {
 	}
 
 	private void removeAccount(RemoveAccount msg) {
-		sender().tell(client.url(url + "/user?username=" + msg.name).setAuth("asirak", "secret").delete().map(response -> {
-			if (response.getStatus() != 204) {
-				return response.getBody();
-			}
+		sender().tell(
+				client.url(url + "/user?username=" + msg.name).setAuth(user, password).delete().map(response -> {
+					if (response.getStatus() != 204) {
+						return response.getBody();
+					}
 
-			return "Ok";
-		}).get(10, TimeUnit.SECONDS), self());
+					return "Ok";
+				}).get(10, TimeUnit.SECONDS), self());
 	}
 }

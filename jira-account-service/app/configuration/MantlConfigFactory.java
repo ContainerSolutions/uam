@@ -6,14 +6,19 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.typesafe.config.ConfigFactory;
 
 import play.Configuration;
+import play.libs.Json;
 import play.libs.ws.WS;
 
 public class MantlConfigFactory {
-	public static Configuration load(String consulUrl, String serviceName) {
-		return new Configuration(Configuration.root().underlying().withFallback(ConfigFactory
+	public static Configuration load(String consulUrlKey, String serviceName) {
+		Configuration configuration = Configuration.root();
+		String consulUrl = configuration.getString(consulUrlKey);
+		return StringUtils.isEmpty(consulUrl) ? configuration : new Configuration(configuration.underlying().withFallback(ConfigFactory
 				.parseMap(WS.client().url(consulUrl + "/v1/kv/" + serviceName + "?recurse").get().map(response -> {
 					if (response.getStatus() != 200) {
 						return Collections.<String, String> emptyMap();
@@ -23,7 +28,7 @@ public class MantlConfigFactory {
 					response.asJson().forEach(jsonNode -> configMap.put(jsonNode.get("Key").asText(),
 							new String(Base64.getDecoder().decode(jsonNode.get("Value").asText()))));
 					return configMap;
-				}).get(10, TimeUnit.DAYS))));
+				}).get(10, TimeUnit.SECONDS))));
 	}
 
 	public static String generateToken(String vaultUrl, String user, String pass) {
@@ -37,14 +42,15 @@ public class MantlConfigFactory {
 				}).get(10, TimeUnit.SECONDS);
 	}
 
-	public static String getSecret(String vaultUrl, String token, String account) {
-		return WS.client().url(vaultUrl + "/v1/secret/" + account).setHeader("X-Vault-Token", token).get()
+	public static ServiceAccountCredentials getCredentials(String vaultUrl, String token, String application) {
+		
+		return WS.client().url(vaultUrl + "/v1/secret/" + application).setHeader("X-Vault-Token", token).get()
 				.map(response -> {
 					if (response.getStatus() != 200) {
-						return response.getBody();
+						return null;
 					}
 
-					return response.asJson().findValue("value").asText();
+					return Json.fromJson(response.asJson().findValue("data"), ServiceAccountCredentials.class);
 				}).get(10, TimeUnit.SECONDS);
 	}
 }

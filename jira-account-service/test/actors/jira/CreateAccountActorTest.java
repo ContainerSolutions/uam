@@ -9,7 +9,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -27,11 +26,15 @@ import play.libs.ws.WSResponse;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CreateAccountActorTest extends JavaTestKit {
+
+
 	public CreateAccountActorTest() {
 		super(system);
 	}
 
 	private static final String url = "testConfigUrl";
+	private static final String user = "user";
+	private static final String password = "secret";
 	private static final String name = "testName";
 	private static final String email = "test@email.test";
 	private static final String displayName = "testDN";
@@ -66,11 +69,11 @@ public class CreateAccountActorTest extends JavaTestKit {
 		ArgumentCaptor<JsonNode> bodyArgument = ArgumentCaptor.forClass(JsonNode.class);
 		Mockito.when(client.url(url + "/user")).thenReturn(wsRequest);
 		Mockito.when(wsRequest.setContentType("application/json")).thenReturn(wsRequest);
-		Mockito.when(wsRequest.setAuth(Matchers.anyString(), Matchers.anyString())).thenReturn(wsRequest);
+		Mockito.when(wsRequest.setAuth(user, password)).thenReturn(wsRequest);
 		Mockito.when(wsRequest.post(bodyArgument.capture())).thenReturn(Promise.pure(wsResponse));
 		Mockito.when(wsResponse.getStatus()).thenReturn(201);
 
-		ActorRef unit = system.actorOf(CreateAccountActor.props(client, url));
+		ActorRef unit = system.actorOf(CreateAccountActor.props(client, url, user, password));
 
 		// when
 		unit.tell(new CreateJiraAccountMessage(name, email, displayName, applicationKeys), getRef());

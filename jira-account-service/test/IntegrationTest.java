@@ -11,16 +11,22 @@ import play.test.TestBrowser;
 
 public class IntegrationTest {
 
-    /**
-     * add your integration test here
-     * in this example we just check if the welcome page is being shown
-     */
     @Test
-    public void test() {
+    public void testIndex() {
         running(testServer(3333, fakeApplication()), HTMLUNIT, new Callback<TestBrowser>() {
             public void invoke(TestBrowser browser) {
                 browser.goTo("http://localhost:3333");
-                assertTrue(browser.pageSource().contains("Your new application is ready."));
+                assertTrue(browser.pageSource().contains("Welcome"));
+            }
+        });
+    }
+
+    @Test
+    public void testAllAccounts() {
+        running(testServer(3333, fakeApplication()), HTMLUNIT, new Callback<TestBrowser>() {
+            public void invoke(TestBrowser browser) {
+                browser.goTo("http://localhost:3333/account/all");
+                assertTrue(browser.pageSource().contains("asirak"));
             }
         });
     }

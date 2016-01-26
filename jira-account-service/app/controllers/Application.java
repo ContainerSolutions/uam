@@ -29,6 +29,8 @@ import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
 import akka.util.Timeout;
+import configuration.MantlConfigFactory;
+import configuration.ServiceAccountCredentials;
 import play.Configuration;
 import play.Logger;
 import play.Logger.ALogger;
@@ -45,6 +47,17 @@ import scala.concurrent.duration.Duration;
 public class Application extends Controller {
 	private static final Timeout TIMEOUT = new Timeout(Duration.create(10, TimeUnit.SECONDS));
 	private static final ALogger logger = Logger.of(Application.class);
+	private static final String serviceName = "jiraservice";
+
+	private static final String consulUrlKey = "consul.url";
+	private static final String vaultUrlKey = "vault/url";
+	private static final String vaultUserKey = "vault/user";
+	private static final String vaultPassKey = "vault/pass";
+
+	private static final String orientDbUrlKey = "jiraservice/orientdb/url";
+	private static final String orientDbKey = "jiraservice/orientdb";
+	private static final String jiraUrlKey = "jiraservice/jira/url";
+	private static final String jiraKey = "jiraservice/jira";
 
 	private final ActorRef userVertexActor;
 	private final ActorRef createActor;
@@ -57,31 +70,36 @@ public class Application extends Controller {
 	private final ActorRef removeAccountVertexActor;
 
 	@Inject
-	public Application(ActorSystem system, Configuration configuration) {
+	public Application(ActorSystem system) {
+		Configuration configuration = MantlConfigFactory.load(consulUrlKey, serviceName);
+		String token = MantlConfigFactory.generateToken(configuration.getString(vaultUrlKey), configuration.getString(vaultUserKey), configuration.getString(vaultPassKey));
 
-		OrientGraphFactory graphFactory = new OrientGraphFactory(configuration.getString("orientdb.url")).setupPool(1, 10);
-
+		ServiceAccountCredentials orientDbCredentials = MantlConfigFactory.getCredentials(configuration.getString(vaultUrlKey), token, orientDbKey);
+		OrientGraphFactory graphFactory = new OrientGraphFactory(configuration.getString(orientDbUrlKey), orientDbCredentials.getUser(), orientDbCredentials.getPassword()).setupPool(1, 10);
+		
 		userVertexActor = system.actorOf(Props.create(GetUserVertexActor.class, graphFactory));
-		createActor = system.actorOf(CreateAccountActor.props(WS.client(), configuration.getString("jira.url")));
 		createVertexActor = system.actorOf(Props.create(CreateAccountVertexActor.class, graphFactory));
-
-		getAllActor = system.actorOf(GetAllAccountsActor.props(WS.client(), configuration.getString("jira.url")));
-		getAccountActor = system.actorOf(GetAccountActor.props(WS.client(), configuration.getString("jira.url")));
-
-		removeAccountActor = system.actorOf(RemoveAccountActor.props(WS.client(), configuration.getString("jira.url")));
 		removeAccountVertexActor = system.actorOf(Props.create(RemoveAccountVertexActor.class, graphFactory));
+		
+		ServiceAccountCredentials jiraCredentials = MantlConfigFactory.getCredentials(configuration.getString(vaultUrlKey), token, jiraKey);
+		createActor = system.actorOf(CreateAccountActor.props(WS.client(), configuration.getString(jiraUrlKey), jiraCredentials.getUser(), jiraCredentials.getPassword()));
+
+		getAllActor = system.actorOf(GetAllAccountsActor.props(WS.client(), configuration.getString(jiraUrlKey), jiraCredentials.getUser(), jiraCredentials.getPassword()));
+		getAccountActor = system.actorOf(GetAccountActor.props(WS.client(), configuration.getString(jiraUrlKey), jiraCredentials.getUser(), jiraCredentials.getPassword()));
+		removeAccountActor = system.actorOf(RemoveAccountActor.props(WS.client(), configuration.getString(jiraUrlKey), jiraCredentials.getUser(), jiraCredentials.getPassword()));
 	}
 
 	public Result index() {
-		return ok("Your new application is ready.");
+		return ok("Welcome");
 	}
 
 	public Promise<Result> getAll() {
-		return Promise.wrap(ask(getAllActor, new GetAllAccounts(), TIMEOUT)).map(response -> ok(Json.toJson(response)));
+		return Promise.wrap(ask(getAllActor, new GetAllAccounts(), TIMEOUT)).map(response -> ok((String) response));
 	}
 
 	public Promise<Result> get(String name) {
-		return Promise.wrap(ask(getAccountActor, new GetAccount(name), TIMEOUT)).map(response -> ok(Json.toJson(response)));
+		return Promise.wrap(ask(getAccountActor, new GetAccount(name), TIMEOUT))
+				.map(response -> ok((String) response));
 	}
 
 	@BodyParser.Of(BodyParser.Json.class)
@@ -98,14 +116,16 @@ public class Application extends Controller {
 			return Promise.pure(badRequest(status));
 		}
 
-		return Promise.wrap(ask(createVertexActor, createVertex, TIMEOUT)).map(response -> ok(Json.toJson(response)));
+		return Promise.wrap(ask(createVertexActor, createVertex, TIMEOUT)).map(response -> ok((String) response));
 	}
 
 	public Promise<Result> delete(String name) throws Exception {
-		String status = Await.result(ask(removeAccountActor, new RemoveAccount(name), TIMEOUT), TIMEOUT.duration()).toString();
+		String status = Await.result(ask(removeAccountActor, new RemoveAccount(name), TIMEOUT), TIMEOUT.duration())
+				.toString();
 		if (!StringUtils.equals("Ok", status)) {
 			return Promise.pure(internalServerError(status));
 		}
-		return Promise.wrap(ask(removeAccountVertexActor, new RemoveVertex(name), TIMEOUT)).map(response -> ok(Json.toJson(response)));
+		return Promise.wrap(ask(removeAccountVertexActor, new RemoveVertex(name), TIMEOUT))
+				.map(response -> ok((String) response));
 	}
 }

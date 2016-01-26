@@ -17,16 +17,20 @@ public class GetAllAccountsActor extends UntypedActor {
 	public static class GetAllAccounts {
 	}
 
-	public static Props props(WSClient client, String url) {
-		return Props.create(GetAllAccountsActor.class, () -> new GetAllAccountsActor(client, url));
+	public static Props props(WSClient client, String url, String user, String password) {
+		return Props.create(GetAllAccountsActor.class, () -> new GetAllAccountsActor(client, url, user, password));
 	}
 
 	private final WSClient client;
 	private final String url;
+	private final String user;
+	private final String password;
 
-	public GetAllAccountsActor(WSClient client, String url) {
+	public GetAllAccountsActor(WSClient client, String url, String user, String password) {
 		this.client = client;
 		this.url = url;
+		this.user = user;
+		this.password = password;
 	}
 
 	public void onReceive(Object msg) throws Exception {
@@ -39,7 +43,7 @@ public class GetAllAccountsActor extends UntypedActor {
 	}
 
 	private void getAllAccounts() {
-		sender().tell(client.url(url + "/user/search?username=%25").setAuth("asirak", "secret")
+		sender().tell(client.url(url + "/user/search?username=%25").setAuth(user, password)
 				.get().map(response -> {
 					if (response.getStatus() != 200) {
 						return response.getBody();

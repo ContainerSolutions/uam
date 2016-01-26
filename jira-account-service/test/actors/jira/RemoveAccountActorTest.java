@@ -4,7 +4,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -25,6 +24,8 @@ public class RemoveAccountActorTest extends JavaTestKit {
 	}
 
 	private static final String url = "testConfigUrl";
+	private static final String user = "user";
+	private static final String password = "secret";
 	private static final String name = "testName";
 
 	static ActorSystem system;
@@ -53,11 +54,11 @@ public class RemoveAccountActorTest extends JavaTestKit {
 	public void testOnReceive() throws Exception {
 		// given
 		Mockito.when(client.url(url + "/user?username=" + name)).thenReturn(wsRequest);
-		Mockito.when(wsRequest.setAuth(Matchers.anyString(), Matchers.anyString())).thenReturn(wsRequest);
+		Mockito.when(wsRequest.setAuth(user, password)).thenReturn(wsRequest);
 		Mockito.when(wsRequest.delete()).thenReturn(Promise.pure(wsResponse));
 		Mockito.when(wsResponse.getStatus()).thenReturn(204);
 
-		ActorRef unit = system.actorOf(RemoveAccountActor.props(client, url));
+		ActorRef unit = system.actorOf(RemoveAccountActor.props(client, url, user, password));
 
 		// when
 		unit.tell(new RemoveAccount(name), getRef());
