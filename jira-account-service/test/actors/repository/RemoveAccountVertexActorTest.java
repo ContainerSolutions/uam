@@ -19,6 +19,7 @@ import actors.repository.RemoveAccountVertexActor.RemoveVertex;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
+import akka.actor.Status.Failure;
 import akka.testkit.JavaTestKit;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -53,14 +54,13 @@ public class RemoveAccountVertexActorTest extends JavaTestKit {
 	@Mock
 	private OrientVertex accountVertex3;
 
+	private ActorRef unit = system.actorOf(Props.create(RemoveAccountVertexActor.class, graphFactory));
 	@Test
 	public void testOnReceive() throws Exception {
 		// given
 		Mockito.when(graphFactory.getTx()).thenReturn(graph);
 		Mockito.when(graph.getVerticesOfClass("JiraAccount")).thenReturn(Arrays.asList(accountVertex1, accountVertex2, accountVertex3));
 		Mockito.when(accountVertex2.getProperty("name")).thenReturn(name);
-
-		ActorRef unit = system.actorOf(Props.create(RemoveAccountVertexActor.class, graphFactory));
 
 		// when
 		unit.tell(new RemoveVertex(name), getRef());
@@ -82,8 +82,6 @@ public class RemoveAccountVertexActorTest extends JavaTestKit {
 		Mockito.when(graphFactory.getTx()).thenReturn(graph);
 		Mockito.when(graph.getVerticesOfClass(Matchers.anyString())).thenThrow(new RuntimeException(message));
 
-		ActorRef unit = system.actorOf(Props.create(RemoveAccountVertexActor.class, graphFactory));
-
 		// when
 		unit.tell(new RemoveVertex(name), getRef());
 
@@ -93,6 +91,16 @@ public class RemoveAccountVertexActorTest extends JavaTestKit {
 		Mockito.verify(graph).rollback();
 		Mockito.verify(graph).shutdown();
 		Mockito.verifyZeroInteractions(accountVertex1,accountVertex2,accountVertex3);
+	}
+	
+	@Test
+	public void testOnReceive_whenFailure() throws Exception {
+		// when
+		unit.tell(new Failure(new RuntimeException()), getRef());
+
+		// then
+		expectMsgEquals("Failure(java.lang.RuntimeException)");
+		Mockito.verifyZeroInteractions(graph, graphFactory, accountVertex1,accountVertex2,accountVertex3);
 	}
 
 }
