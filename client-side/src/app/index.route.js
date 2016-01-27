@@ -21,11 +21,11 @@
         controller: 'MainController',
         controllerAs: 'main'
       })
-      .state('main.user-list', {
-        url: '/user-list',
-        templateUrl: 'app/pages/main/user-list/user-list.html',
-        controller: 'UserListController',
-        controllerAs: 'userList'
+      .state('main.users', {
+        url: '/users',
+        templateUrl: 'app/pages/main/users/users.html',
+        controller: 'UsersController',
+        controllerAs: 'users'
       })
       .state('main.audit', {
         url: '/audit',

@@ -1,0 +1,14 @@
+<div layout-padding class="section padding-large">
+  <md-input-container class="search-query-wrapper">
+    <label>Search user:</label>
+    <input ng-model="vm.searchQuery" type="text">
+  </md-input-container>
+  <md-list class="user-list">
+    <md-list-item ng-repeat="user in vm.data.users | filter: vm.searchQuery"
+                  ng-click="vm.updateSelected($index)"
+                  ng-class="{selected: user.selected}">
+      {{user.firstName}} {{user.lastName}}
+    </md-list-item>
+  </md-list>
+  <md-button class="md-primary md-raised">New User</md-button>
+</div>

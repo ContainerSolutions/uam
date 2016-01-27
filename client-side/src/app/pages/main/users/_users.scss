@@ -1,18 +1,4 @@
-.user-list-wrapper {
-  .search-query-wrapper {
-    padding-bottom: 0;
-  }
-
-  .user-list {
-    height: calc(100vh - 228px);
-    min-height: 100px;
-    overflow-y: auto;
-
-    md-list-item.md-no-proxy {
-      padding: 0 $offset-small;
-    }
-  }
-
+.users-wrapper {
   .cards-wrapper {
     height: calc(100vh - 171px);
     overflow-y: auto;
@@ -27,7 +13,7 @@
     position: relative;
     left: -$offset-small;
     padding-top: $offset-small;
-    border-top: 1px solid #ccc;
+    border-top: 1px solid $color-gray;
   }
 
   .actions-wrapper {

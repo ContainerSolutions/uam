@@ -1,0 +1,19 @@
+.audit-wrapper {
+  .events-table {
+    width: 100%;
+    border-collapse: collapse;
+
+    &, th, td {
+      border: 1px solid $color-gray;
+    }
+
+    th, td {
+      padding: $offset-standard $offset-small;
+    }
+
+    th {
+      background-color: lighten($color-gray, 10%);
+      text-align: left;
+    }
+  }
+}

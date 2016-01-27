@@ -1,1 +1,32 @@
-this is audit
+<div layout="row" class="audit-wrapper">
+  <div flex="25">
+    <mantl-user-select data="audit.usersData"></mantl-user-select>
+  </div>
+  <div class="section-divider"></div>
+  <div flex class="section padding-large">
+    <md-input-container class="search-query-wrapper">
+      <label>Search event:</label>
+      <input ng-model="audit.searchQuery" type="text">
+    </md-input-container>
+    <table class="events-table">
+      <thead>
+      <tr>
+        <th>Datetime</th>
+        <th>Application</th>
+        <th>Action</th>
+        <th>Executor</th>
+        <th>Request number</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr ng-repeat="event in audit.usersData.selected.events | filter: audit.searchQuery">
+        <td>{{::event.datetime}}</td>
+        <td>{{::event.application}}</td>
+        <td>{{::event.action}}</td>
+        <td>{{::event.executor}}</td>
+        <td>{{::event.requestNumber}}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
