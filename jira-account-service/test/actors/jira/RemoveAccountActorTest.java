@@ -9,8 +9,10 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import actors.jira.RemoveAccountActor.RemoveAccount;
+import actors.repository.RemoveAccountVertexActor.RemoveVertex;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
+import akka.actor.Status.Failure;
 import akka.testkit.JavaTestKit;
 import play.libs.F.Promise;
 import play.libs.ws.WSClient;
@@ -49,7 +51,7 @@ public class RemoveAccountActorTest extends JavaTestKit {
 
 	@Mock
 	private WSResponse wsResponse;
-
+	
 	@Test
 	public void testOnReceive() throws Exception {
 		// given
@@ -58,12 +60,29 @@ public class RemoveAccountActorTest extends JavaTestKit {
 		Mockito.when(wsRequest.delete()).thenReturn(Promise.pure(wsResponse));
 		Mockito.when(wsResponse.getStatus()).thenReturn(204);
 
-		ActorRef unit = system.actorOf(RemoveAccountActor.props(client, url, user, password));
+		ActorRef unit = system.actorOf(RemoveAccountActor.props(getRef(), client, url, user, password));
 
 		// when
 		unit.tell(new RemoveAccount(name), getRef());
 
 		// then
-		expectMsgEquals("Ok");
+		expectMsgClass(RemoveVertex.class);
+	}
+	
+	@Test
+	public void testOnReceive_whenInvalidJiraResponse() throws Exception {
+		// given
+		Mockito.when(client.url(url + "/user?username=" + name)).thenReturn(wsRequest);
+		Mockito.when(wsRequest.setAuth(user, password)).thenReturn(wsRequest);
+		Mockito.when(wsRequest.delete()).thenReturn(Promise.pure(wsResponse));
+		Mockito.when(wsResponse.getStatus()).thenReturn(500);
+
+		ActorRef unit = system.actorOf(RemoveAccountActor.props(getRef(), client, url, user, password));
+
+		// when
+		unit.tell(new RemoveAccount(name), getRef());
+
+		// then
+		expectMsgClass(Failure.class);
 	}
 }

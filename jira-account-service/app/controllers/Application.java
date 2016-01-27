@@ -67,7 +67,6 @@ public class Application extends Controller {
 	private final ActorRef getAccountActor;
 
 	private final ActorRef removeAccountActor;
-	private final ActorRef removeAccountVertexActor;
 
 	@Inject
 	public Application(ActorSystem system) {
@@ -79,14 +78,14 @@ public class Application extends Controller {
 		
 		userVertexActor = system.actorOf(Props.create(GetUserVertexActor.class, graphFactory));
 		createVertexActor = system.actorOf(Props.create(CreateAccountVertexActor.class, graphFactory));
-		removeAccountVertexActor = system.actorOf(Props.create(RemoveAccountVertexActor.class, graphFactory));
+		ActorRef removeAccountVertexActor = system.actorOf(Props.create(RemoveAccountVertexActor.class, graphFactory));
 		
 		ServiceAccountCredentials jiraCredentials = MantlConfigFactory.getCredentials(configuration.getString(vaultUrlKey), token, jiraKey);
 		createActor = system.actorOf(CreateAccountActor.props(WS.client(), configuration.getString(jiraUrlKey), jiraCredentials.getUser(), jiraCredentials.getPassword()));
 
 		getAllActor = system.actorOf(GetAllAccountsActor.props(WS.client(), configuration.getString(jiraUrlKey), jiraCredentials.getUser(), jiraCredentials.getPassword()));
 		getAccountActor = system.actorOf(GetAccountActor.props(WS.client(), configuration.getString(jiraUrlKey), jiraCredentials.getUser(), jiraCredentials.getPassword()));
-		removeAccountActor = system.actorOf(RemoveAccountActor.props(WS.client(), configuration.getString(jiraUrlKey), jiraCredentials.getUser(), jiraCredentials.getPassword()));
+		removeAccountActor = system.actorOf(RemoveAccountActor.props(removeAccountVertexActor, WS.client(), configuration.getString(jiraUrlKey), jiraCredentials.getUser(), jiraCredentials.getPassword()));
 	}
 
 	public Result index() {
@@ -120,12 +119,7 @@ public class Application extends Controller {
 	}
 
 	public Promise<Result> delete(String name) throws Exception {
-		String status = Await.result(ask(removeAccountActor, new RemoveAccount(name), TIMEOUT), TIMEOUT.duration())
-				.toString();
-		if (!StringUtils.equals("Ok", status)) {
-			return Promise.pure(internalServerError(status));
-		}
-		return Promise.wrap(ask(removeAccountVertexActor, new RemoveVertex(name), TIMEOUT))
-				.map(response -> ok((String) response));
+		return Promise.wrap(ask(removeAccountActor, new RemoveAccount(name), TIMEOUT))
+				.map(response -> ok(response.toString()));
 	}
 }

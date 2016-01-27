@@ -1,42 +1,38 @@
 package actors.jira;
 
-import java.util.concurrent.TimeUnit;
-
+import actors.repository.RemoveAccountVertexActor.RemoveVertex;
+import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.actor.UntypedActor;
+import akka.pattern.Patterns;
 import play.Logger;
 import play.Logger.ALogger;
 import play.libs.ws.WSClient;
+import scala.concurrent.Future;
 
 public class RemoveAccountActor extends UntypedActor {
 	private static final ALogger logger = Logger.of(RemoveAccountActor.class);
 
 	public static class RemoveAccount {
-		public String name;
-
-		public RemoveAccount() {
-		}
+		public final String name;
 
 		public RemoveAccount(String name) {
 			this.name = name;
 		}
-
-		@Override
-		public String toString() {
-			return "GetAccount [name=" + name + "]";
-		}
 	}
 
-	public static Props props(WSClient client, String url, String user, String password) {
-		return Props.create(RemoveAccountActor.class, () -> new RemoveAccountActor(client, url, user, password));
+	public static Props props(ActorRef next, WSClient client, String url, String user, String password) {
+		return Props.create(RemoveAccountActor.class, () -> new RemoveAccountActor(next, client, url, user, password));
 	}
 
+	private final ActorRef next;
 	private final WSClient client;
 	private final String url;
 	private final String user;
 	private final String password;
 
-	public RemoveAccountActor(WSClient client, String url, String user, String password) {
+	public RemoveAccountActor(ActorRef next, WSClient client, String url, String user, String password) {
+		this.next = next;
 		this.client = client;
 		this.url = url;
 		this.user = user;
@@ -53,13 +49,17 @@ public class RemoveAccountActor extends UntypedActor {
 	}
 
 	private void removeAccount(RemoveAccount msg) {
-		sender().tell(
-				client.url(url + "/user?username=" + msg.name).setAuth(user, password).delete().map(response -> {
+		logger.info(String.format("Remove Jira account [%s] started", msg.name));
+		Future<RemoveVertex> future = client.url(url + "/user?username=" + msg.name).setAuth(user, password).delete()
+				.map(response -> {
 					if (response.getStatus() != 204) {
-						return response.getBody();
+						logger.error(String.format("Jira account [%s] was not removed: %s", msg.name, response.getBody()));
+						throw new RuntimeException(response.getBody());
 					}
 
-					return "Ok";
-				}).get(10, TimeUnit.SECONDS), self());
+					logger.info(String.format("Jira account [%s] removed", msg.name));
+					return new RemoveVertex(msg.name);
+				}).wrapped();
+		Patterns.pipe(future, context().dispatcher().prepare()).pipeTo(next, sender());
 	}
 }

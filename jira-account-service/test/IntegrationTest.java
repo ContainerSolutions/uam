@@ -74,24 +74,28 @@ public class IntegrationTest {
 		running(testServer(3333), new Runnable() {
 			public void run() {
 
+				// User does not exist in all Jira accounts
 				WSResponse response = WS.url("http://localhost:3333/account/all").get().get(5000);
 				Assert.assertEquals(200, response.getStatus());
 				JsonNode jsonNode = response.asJson();
 				Assert.assertTrue(jsonNode.isArray());
 				Assert.assertFalse(jsonNode.toString().contains(name));
 
+				// Create account in Jira
 				response = WS.url("http://localhost:3333/account")
-						.post(Json.parse("{\"userId\":\"" + userId + "\", \"flowId\":\"#17:0\", \"appId\":\"#19:0\"}"))
+						.post(Json.parse("{\"userId\":\"" + userId + "\", \"flowId\":\"" + flowId + "\", \"appId\":\"" + appId + "\"}"))
 						.get(5000);
 				Assert.assertEquals(200, response.getStatus());
 				Assert.assertEquals("Ok", response.getBody());
 
+				// User exists in all Jira accounts
 				response = WS.url("http://localhost:3333/account/all").get().get(5000);
 				Assert.assertEquals(200, response.getStatus());
 				jsonNode = response.asJson();
 				Assert.assertTrue(jsonNode.isArray());
 				Assert.assertTrue(jsonNode.toString().contains(name));
 
+				// Get Jira account info
 				response = WS.url("http://localhost:3333/account/" + name).get().get(5000);
 				Assert.assertEquals(200, response.getStatus());
 				jsonNode = response.asJson();
@@ -99,10 +103,12 @@ public class IntegrationTest {
 						"{\"name\":\"" + name + "\",\"email\":\"anEmail@fake.fake\",\"displayName\":\"aFirstName aLastName\",\"active\":true}",
 						jsonNode.toString());
 
+				// Remove Jira account
 				response = WS.url("http://localhost:3333/account/" + name).delete().get(5000);
 				Assert.assertEquals(200, response.getStatus());
 				Assert.assertEquals("Ok", response.getBody());
 
+				// User does not exist
 				response = WS.url("http://localhost:3333/account/" + name).get().get(5000);
 				Assert.assertEquals(200, response.getStatus());
 				jsonNode = response.asJson();
