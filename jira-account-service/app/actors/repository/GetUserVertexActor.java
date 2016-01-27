@@ -1,40 +1,33 @@
 package actors.repository;
 
 import java.util.Arrays;
+import java.util.concurrent.Callable;
 
 import com.tinkerpop.blueprints.impls.orient.OrientGraph;
 import com.tinkerpop.blueprints.impls.orient.OrientGraphFactory;
 import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 
 import actors.jira.CreateAccountActor.CreateJiraAccountMessage;
+import actors.jira.CreateAccountActor.JiraPostMessage;
+import actors.repository.CreateAccountVertexActor.CreateVertex;
+import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
+import akka.dispatch.Futures;
+import akka.pattern.Patterns;
 import play.Logger;
 import play.Logger.ALogger;
+import scala.concurrent.ExecutionContext;
+import scala.concurrent.Future;
 
 public class GetUserVertexActor extends UntypedActor {
 	private static final ALogger logger = Logger.of(GetUserVertexActor.class);
 
-	public static class GetUserData {
-		public String userId;
-
-		public GetUserData() {
-		}
-
-		public GetUserData(String userId) {
-			this.userId = userId;
-		}
-
-		@Override
-		public String toString() {
-			return "GetUserData [userId=" + userId + "]";
-		}
-
-	}
-
+	private final ActorRef next;
 	private final OrientGraphFactory graphFactory;
 
-	public GetUserVertexActor(OrientGraphFactory graph) {
-		this.graphFactory = graph;
+	public GetUserVertexActor(ActorRef next, OrientGraphFactory graphFactory) {
+		this.next = next;
+		this.graphFactory = graphFactory;
 	}
 
 	@Override
@@ -44,30 +37,33 @@ public class GetUserVertexActor extends UntypedActor {
 	}
 
 	public void onReceive(Object msg) throws Exception {
-		if (msg instanceof GetUserData) {
-			getUserData((GetUserData) msg);
+		if (msg instanceof CreateVertex) {
+			getUserData((CreateVertex) msg);
 		} else {
 			logger.warn("Unhandled msg: " + msg.getClass());
 			unhandled(msg);
 		}
 	}
 
-	private void getUserData(GetUserData msg) {
+	private void getUserData(CreateVertex msg) {
 		logger.info("Get user vertex started: " + msg.userId);
-		OrientGraph graph = graphFactory.getTx();
-		try {
-			sender().tell(createMessage(graph.getVertex(msg.userId)), self());
-		} catch (Exception e) {
-			logger.error(e.getMessage(), e);
-			sender().tell(e.getMessage(), self());
-		} finally {
-			graph.shutdown();
-		}
-	}
 
-	private CreateJiraAccountMessage createMessage(OrientVertex user) {
-		return new CreateJiraAccountMessage(user.getProperty("uniqueId"), user.getProperty("email"),
-				String.format("%s %s", user.getProperty("firstName"), user.getProperty("lastName")),
-				Arrays.asList("jira-core"));
+		final ExecutionContext context = context().dispatcher().prepare();
+		Future<CreateJiraAccountMessage> future = Futures.future(new Callable<CreateJiraAccountMessage>() {
+			public CreateJiraAccountMessage call() throws Exception {
+				OrientGraph graph = graphFactory.getTx();
+				try {
+					OrientVertex user = graph.getVertex(msg.userId);
+					return new CreateJiraAccountMessage(msg,
+							new JiraPostMessage(user.getProperty("uniqueId"), user.getProperty("email"),
+									String.format("%s %s", user.getProperty("firstName"), user.getProperty("lastName")),
+									Arrays.asList("jira-core")));
+				} finally {
+					graph.shutdown();
+				}
+			};
+		}, context);
+
+		Patterns.pipe(future, context).pipeTo(next, sender());
 	}
 }

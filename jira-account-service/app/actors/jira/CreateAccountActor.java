@@ -1,96 +1,65 @@
 package actors.jira;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
+import actors.repository.CreateAccountVertexActor.CreateVertex;
+import akka.actor.ActorRef;
 import akka.actor.Props;
+import akka.actor.Status.Failure;
 import akka.actor.UntypedActor;
+import akka.pattern.Patterns;
 import play.Logger;
 import play.Logger.ALogger;
 import play.libs.Json;
 import play.libs.ws.WSClient;
 import play.mvc.Http.MimeTypes;
+import scala.concurrent.Future;
 
 public class CreateAccountActor extends UntypedActor {
 	private static final ALogger logger = Logger.of(CreateAccountActor.class);
 
 	public static class CreateJiraAccountMessage {
+		public CreateVertex orientDbMessage;
+		public JiraPostMessage jiraMessage;
+
+		public CreateJiraAccountMessage(CreateVertex orientDbMessage, JiraPostMessage jiraMessage) {
+			this.orientDbMessage = orientDbMessage;
+			this.jiraMessage = jiraMessage;
+		}
+	}
+	
+	public static class JiraPostMessage {
 		public String name;
 		public String emailAddress;
 		public String displayName;
 		public List<String> applicationKeys;
 
-		public CreateJiraAccountMessage() {
-		}
-
-		public CreateJiraAccountMessage(String name, String email, String displayName, List<String> applicationKeys) {
+		public JiraPostMessage(String name, String emailAddress, String displayName, List<String> applicationKeys) {
 			this.name = name;
-			this.emailAddress = email;
+			this.emailAddress = emailAddress;
 			this.displayName = displayName;
 			this.applicationKeys = applicationKeys;
 		}
 
 		@Override
-		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + ((applicationKeys == null) ? 0 : applicationKeys.hashCode());
-			result = prime * result + ((displayName == null) ? 0 : displayName.hashCode());
-			result = prime * result + ((emailAddress == null) ? 0 : emailAddress.hashCode());
-			result = prime * result + ((name == null) ? 0 : name.hashCode());
-			return result;
-		}
-
-		@Override
-		public boolean equals(Object obj) {
-			if (this == obj)
-				return true;
-			if (obj == null)
-				return false;
-			if (getClass() != obj.getClass())
-				return false;
-			CreateJiraAccountMessage other = (CreateJiraAccountMessage) obj;
-			if (applicationKeys == null) {
-				if (other.applicationKeys != null)
-					return false;
-			} else if (!applicationKeys.equals(other.applicationKeys))
-				return false;
-			if (displayName == null) {
-				if (other.displayName != null)
-					return false;
-			} else if (!displayName.equals(other.displayName))
-				return false;
-			if (emailAddress == null) {
-				if (other.emailAddress != null)
-					return false;
-			} else if (!emailAddress.equals(other.emailAddress))
-				return false;
-			if (name == null) {
-				if (other.name != null)
-					return false;
-			} else if (!name.equals(other.name))
-				return false;
-			return true;
-		}
-
-		@Override
 		public String toString() {
-			return "CreateJiraAccountMessage [name=" + name + ", emailAddress=" + emailAddress + ", displayName="
-					+ displayName + ", applicationKeys=" + applicationKeys + "]";
+			return "JiraPostMessage [name=" + name + ", emailAddress=" + emailAddress + ", displayName=" + displayName
+					+ ", applicationKeys=" + applicationKeys + "]";
 		}
-
 	}
 
-	public static Props props(WSClient client, String url, String user, String password) {
-		return Props.create(CreateAccountActor.class, () -> new CreateAccountActor(client, url, user, password));
+	public static Props props(ActorRef next, WSClient client, String url, String user, String password) {
+		return Props.create(CreateAccountActor.class, () -> new CreateAccountActor(next, client, url, user, password));
 	}
 
+	private final ActorRef next;
 	private final WSClient client;
 	private final String url;
 	private final String user;
 	private final String password;
 
-	public CreateAccountActor(WSClient client, String url, String user, String password) {
+	public CreateAccountActor(ActorRef next, WSClient client, String url, String user, String password) {
+		this.next = next;
 		this.client = client;
 		this.url = url;
 		this.user = user;
@@ -100,6 +69,8 @@ public class CreateAccountActor extends UntypedActor {
 	public void onReceive(Object msg) throws Exception {
 		if (msg instanceof CreateJiraAccountMessage) {
 			createJiraAccount((CreateJiraAccountMessage) msg);
+		} else if (msg instanceof Failure) {
+			sender().tell(msg.toString(), self());
 		} else {
 			logger.warn("unhandled msg: " + msg.getClass());
 			unhandled(msg);
@@ -107,14 +78,18 @@ public class CreateAccountActor extends UntypedActor {
 	}
 
 	private void createJiraAccount(CreateJiraAccountMessage msg) {
-		logger.info("Create jira account started: " + msg);
+		logger.info("Create jira account started: " + msg.jiraMessage);
 
-		sender().tell(client.url(url + "/user").setContentType(MimeTypes.JSON).setAuth(user, password)
-				.post(Json.toJson(msg)).map(response -> {
+		Future<CreateVertex> future = client.url(url + "/user").setContentType(MimeTypes.JSON).setAuth(user, password).post(Json.toJson(msg.jiraMessage))
+				.map(response -> {
 					if (response.getStatus() != 201) {
-						return response.getBody();
+						logger.error(String.format("Jira account [%s] was not created: %s", msg.jiraMessage.name, response.getBody()));
+						throw new RuntimeException(response.getBody());
 					}
-					return "Ok";
-				}).get(10, TimeUnit.SECONDS), self());
+
+					logger.info(String.format("Jira account [%s] created", msg.jiraMessage.name));
+					return msg.orientDbMessage;
+				}).wrapped();
+		Patterns.pipe(future, context().dispatcher().prepare()).pipeTo(next, sender());
 	}
 }

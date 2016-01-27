@@ -54,13 +54,14 @@ public class RemoveAccountVertexActorTest extends JavaTestKit {
 	@Mock
 	private OrientVertex accountVertex3;
 
-	private ActorRef unit = system.actorOf(Props.create(RemoveAccountVertexActor.class, graphFactory));
 	@Test
 	public void testOnReceive() throws Exception {
 		// given
 		Mockito.when(graphFactory.getTx()).thenReturn(graph);
 		Mockito.when(graph.getVerticesOfClass("JiraAccount")).thenReturn(Arrays.asList(accountVertex1, accountVertex2, accountVertex3));
 		Mockito.when(accountVertex2.getProperty("name")).thenReturn(name);
+
+		ActorRef unit = system.actorOf(Props.create(RemoveAccountVertexActor.class, graphFactory));
 
 		// when
 		unit.tell(new RemoveVertex(name), getRef());
@@ -82,6 +83,8 @@ public class RemoveAccountVertexActorTest extends JavaTestKit {
 		Mockito.when(graphFactory.getTx()).thenReturn(graph);
 		Mockito.when(graph.getVerticesOfClass(Matchers.anyString())).thenThrow(new RuntimeException(message));
 
+		ActorRef unit = system.actorOf(Props.create(RemoveAccountVertexActor.class, graphFactory));
+
 		// when
 		unit.tell(new RemoveVertex(name), getRef());
 
@@ -95,6 +98,8 @@ public class RemoveAccountVertexActorTest extends JavaTestKit {
 	
 	@Test
 	public void testOnReceive_whenFailure() throws Exception {
+		// given
+		ActorRef unit = system.actorOf(Props.create(RemoveAccountVertexActor.class, graphFactory));
 		// when
 		unit.tell(new Failure(new RuntimeException()), getRef());
 
