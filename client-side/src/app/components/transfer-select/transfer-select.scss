@@ -1,0 +1,26 @@
+mantl-transfer-select {
+  md-list-item {
+    position: relative;
+    padding: 0 $offset-small;
+    cursor: pointer;
+    transition: background-color .1s;
+
+    i {
+      position: absolute;
+      right: $offset-standard;
+      top: 10px;
+      opacity: 0;
+      transition: opacity .1s;
+    }
+
+    &:hover {
+      &, button {
+        background-color: #FAFAFA !important;
+      }
+
+      i {
+        opacity: 1;
+      }
+    }
+  }
+}

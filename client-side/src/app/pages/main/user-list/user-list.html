@@ -47,7 +47,12 @@
                 <span class="md-headline">GApps</span>
               </md-card-title-text>
             </md-card-title>
-            Olol GApps
+            <mantl-transfer-select templates="userList.templates"
+                                   possible-options-title="'All Mailgroups:'"
+                                   selected-options-title="'User Mailgroups:'"
+                                   possible-options="userList.possibleOptions"
+                                   selected-options="userList.selectedOptions">
+            </mantl-transfer-select>
           </md-card>
           <md-card>
             <md-card-title>
@@ -55,7 +60,13 @@
                 <span class="md-headline">AD</span>
               </md-card-title-text>
             </md-card-title>
-            Olol AD
+            <md-datepicker md-placeholder="Date of Birth:" ng-model="userList.birthday"></md-datepicker>
+            <mantl-transfer-select templates="userList.templates"
+                                   possible-options-title="'All Groups:'"
+                                   selected-options-title="'User Groups:'"
+                                   possible-options="userList.possibleOptions"
+                                   selected-options="userList.selectedOptions">
+            </mantl-transfer-select>
           </md-card>
           <md-card>
             <md-card-title>
@@ -63,7 +74,12 @@
                 <span class="md-headline">Jira</span>
               </md-card-title-text>
             </md-card-title>
-            Olol JIRA
+            <mantl-transfer-select templates="userList.templates"
+                                   possible-options-title="'All Projects:'"
+                                   selected-options-title="'User Projects:'"
+                                   possible-options="userList.possibleOptions"
+                                   selected-options="userList.selectedOptions">
+            </mantl-transfer-select>
           </md-card>
         </div>
         <div layout="column" class="buttons-wrapper">
