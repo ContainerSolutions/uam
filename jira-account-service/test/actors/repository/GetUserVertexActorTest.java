@@ -1,8 +1,5 @@
 package actors.repository;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -16,21 +13,18 @@ import com.tinkerpop.blueprints.impls.orient.OrientGraphFactory;
 import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 
 import actors.jira.CreateAccountActor.CreateJiraAccountMessage;
-import actors.repository.GetUserVertexActor.GetUserData;
+import actors.repository.CreateAccountVertexActor.CreateVertex;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
+import akka.actor.Status.Failure;
 import akka.testkit.JavaTestKit;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GetUserVertexActorTest extends JavaTestKit {
 	private static final String userId = "testUserId";
-	private static final String name = "testName";
-	private static final String email = "testMail";
-	private static final String firstName = "testFirst";
-	private static final String lastName = "testLast";
-	private static final String displayName = "testFirst testLast";
-	private static final List<String> applicationKeys = Arrays.asList("jira-core");
+	private static final String flowId = "testFlowId";
+	private static final String appId = "testAppId";
 
 	public GetUserVertexActorTest() {
 		super(system);
@@ -59,41 +53,38 @@ public class GetUserVertexActorTest extends JavaTestKit {
 	@Test
 	public void testOnReceive() throws Exception {
 		// given
-		CreateJiraAccountMessage createMessage = new CreateJiraAccountMessage(name, email, displayName, applicationKeys);
-
 		Mockito.when(graphFactory.getTx()).thenReturn(graph);
 		Mockito.when(graph.getVertex(userId)).thenReturn(userVertex);
-		Mockito.when(userVertex.getProperty("uniqueId")).thenReturn(name);
-		Mockito.when(userVertex.getProperty("email")).thenReturn(email);
-		Mockito.when(userVertex.getProperty("firstName")).thenReturn(firstName);
-		Mockito.when(userVertex.getProperty("lastName")).thenReturn(lastName);
-		Mockito.when(userVertex.getProperty("lastName")).thenReturn(lastName);
 
-		ActorRef unit = system.actorOf(Props.create(GetUserVertexActor.class, graphFactory));
+		ActorRef unit = system.actorOf(Props.create(GetUserVertexActor.class, getRef(), graphFactory));
 
 		// when
-		unit.tell(new GetUserData(userId), getRef());
+		unit.tell(new CreateVertex(userId, flowId, appId), getRef());
 
 		// then
-		expectMsgEquals(createMessage);
+		expectMsgClass(CreateJiraAccountMessage.class);
 
+		Mockito.verify(userVertex).getProperty("uniqueId");
+		Mockito.verify(userVertex).getProperty("email");
+		Mockito.verify(userVertex).getProperty("firstName");
+		Mockito.verify(userVertex).getProperty("lastName");
+		Mockito.verify(userVertex).getProperty("lastName");
 		Mockito.verify(graph).shutdown();
 	}
 
 	@Test
 	public void testOnReceive_whenOrientDbError() throws Exception {
 		// given
-		String message = "Orient DB error";
 		Mockito.when(graphFactory.getTx()).thenReturn(graph);
-		Mockito.when(graph.getVertex(userId)).thenThrow(new RuntimeException(message));
+		Mockito.when(graph.getVertex(userId)).thenThrow(new RuntimeException());
 
-		ActorRef unit = system.actorOf(Props.create(GetUserVertexActor.class, graphFactory));
+		ActorRef unit = system.actorOf(Props.create(GetUserVertexActor.class, getRef(), graphFactory));
 
 		// when
-		unit.tell(new GetUserData(userId), getRef());
+		unit.tell(new CreateVertex(userId, flowId, appId), getRef());
 
 		// then
-		expectMsgEquals(message);
+		expectMsgClass(Failure.class);
 
 		Mockito.verify(graph).shutdown();
 		Mockito.verifyZeroInteractions(userVertex);

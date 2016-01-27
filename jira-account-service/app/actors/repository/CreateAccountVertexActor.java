@@ -7,6 +7,7 @@ import com.tinkerpop.blueprints.impls.orient.OrientGraph;
 import com.tinkerpop.blueprints.impls.orient.OrientGraphFactory;
 import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 
+import akka.actor.Status.Failure;
 import akka.actor.UntypedActor;
 import play.Logger;
 import play.Logger.ALogger;
@@ -22,18 +23,12 @@ public class CreateAccountVertexActor extends UntypedActor {
 
 		public CreateVertex() {
 		}
-
+		
 		public CreateVertex(String userId, String flowId, String appId) {
 			this.userId = userId;
 			this.flowId = flowId;
 			this.appId = appId;
 		}
-
-		@Override
-		public String toString() {
-			return "CreateVertex [userId=" + userId + ", flowId=" + flowId + ", appId=" + appId + "]";
-		}
-
 	}
 
 	private final OrientGraphFactory graphFactory;
@@ -51,6 +46,8 @@ public class CreateAccountVertexActor extends UntypedActor {
 	public void onReceive(Object msg) throws Exception {
 		if (msg instanceof CreateVertex) {
 			createAccount((CreateVertex) msg);
+		} else if (msg instanceof Failure) {
+			sender().tell(msg.toString(), self());
 		} else {
 			logger.warn("Unhandled msg: " + msg.getClass());
 			unhandled(msg);
@@ -58,7 +55,7 @@ public class CreateAccountVertexActor extends UntypedActor {
 	}
 
 	private void createAccount(CreateVertex msg) {
-		logger.info("Create account vertex started: " + msg);
+		logger.info("Create account vertex started: " + msg.userId);
 		OrientGraph graph = graphFactory.getTx();
 		try {
 			OrientVertex user = graph.getVertex(msg.userId);
