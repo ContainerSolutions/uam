@@ -3,28 +3,16 @@
 
   angular
     .module('mantl')
-    .controller('UserListController', UserListController);
+    .controller('UsersController', UsersController);
 
   /** @ngInject */
-  function UserListController() {
+  function UsersController(UsersService) {
     var vm = this;
 
-    //mock data
     vm.searchQuery = '';
-    vm.users = [
-      {
-        name: 'Petia'
-      },
-      {
-        name: 'Vasia'
-      },
-      {
-        name: 'Lyosha'
-      },
-      {
-        name: 'Misha'
-      }
-    ];
+
+    //mock data
+    vm.usersData = angular.copy(UsersService.getData());
     vm.templates = [
       {
         name: 'Template1'

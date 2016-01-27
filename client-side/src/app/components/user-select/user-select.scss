@@ -1,0 +1,23 @@
+mantl-user-select {
+  .search-query-wrapper {
+    padding-bottom: 0;
+  }
+
+  .user-list {
+    height: calc(100vh - 228px);
+    min-height: 100px;
+    overflow-y: auto;
+
+    md-list-item {
+      padding: 0;
+      transition: all .15s;
+
+      &.selected {
+        &, & button:hover {
+          background-color: $color-blue;
+          color: #fff;
+        }
+      }
+    }
+  }
+}
