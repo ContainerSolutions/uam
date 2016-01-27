@@ -26,7 +26,7 @@
 
       vm.links = [
         {
-          state: 'main.user-list',
+          state: 'main.users',
           text: 'User List'
         },
         {

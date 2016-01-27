@@ -1,17 +1,6 @@
-<div layout="row" class="user-list-wrapper">
+<div layout="row" class="users-wrapper">
   <div flex="25">
-    <div layout-padding class="section padding-large">
-      <md-input-container class="search-query-wrapper">
-        <label>User Name</label>
-        <input ng-model="userList.searchQuery" type="text">
-      </md-input-container>
-      <md-list class="user-list">
-        <md-list-item ng-repeat="user in userList.users | filter: userList.searchQuery">
-          {{::user.name}}
-        </md-list-item>
-      </md-list>
-      <md-button class="md-primary md-raised">New User</md-button>
-    </div>
+    <mantl-user-select data="users.usersData"></mantl-user-select>
   </div>
   <div class="section-divider"></div>
   <div flex layout="column">
@@ -26,19 +15,19 @@
             </md-card-title>
             <md-input-container>
               <label>First Name</label>
-              <input ng-model="userList.selectedUser.firstName" type="text">
+              <input ng-model="users.usersData.selected.firstName" type="text">
             </md-input-container>
             <md-input-container>
               <label>Last Name</label>
-              <input ng-model="userList.selectedUser.lastName" type="text">
+              <input ng-model="users.usersData.selected.lastName" type="text">
             </md-input-container>
             <md-input-container>
               <label>Unique ID</label>
-              <input ng-model="userList.selectedUser.id" type="text">
+              <input ng-model="users.usersData.selected.id" type="text">
             </md-input-container>
             <md-input-container>
               <label>Email</label>
-              <input ng-model="userList.selectedUser.email" type="email">
+              <input ng-model="users.usersData.selected.email" type="email">
             </md-input-container>
           </md-card>
           <md-card>
@@ -47,11 +36,11 @@
                 <span class="md-headline">GApps</span>
               </md-card-title-text>
             </md-card-title>
-            <mantl-transfer-select templates="userList.templates"
+            <mantl-transfer-select templates="users.templates"
                                    possible-options-title="'All Mailgroups:'"
                                    selected-options-title="'User Mailgroups:'"
-                                   possible-options="userList.possibleOptions"
-                                   selected-options="userList.selectedOptions">
+                                   possible-options="users.possibleOptions"
+                                   selected-options="users.selectedOptions">
             </mantl-transfer-select>
           </md-card>
           <md-card>
@@ -60,12 +49,15 @@
                 <span class="md-headline">AD</span>
               </md-card-title-text>
             </md-card-title>
-            <md-datepicker md-placeholder="Date of Birth:" ng-model="userList.birthday"></md-datepicker>
-            <mantl-transfer-select templates="userList.templates"
+            <p>
+              <b>Date of birth:</b>
+            </p>
+            <md-datepicker ng-model="users.birthday"></md-datepicker>
+            <mantl-transfer-select templates="users.templates"
                                    possible-options-title="'All Groups:'"
                                    selected-options-title="'User Groups:'"
-                                   possible-options="userList.possibleOptions"
-                                   selected-options="userList.selectedOptions">
+                                   possible-options="users.possibleOptions"
+                                   selected-options="users.selectedOptions">
             </mantl-transfer-select>
           </md-card>
           <md-card>
@@ -74,11 +66,11 @@
                 <span class="md-headline">Jira</span>
               </md-card-title-text>
             </md-card-title>
-            <mantl-transfer-select templates="userList.templates"
+            <mantl-transfer-select templates="users.templates"
                                    possible-options-title="'All Projects:'"
                                    selected-options-title="'User Projects:'"
-                                   possible-options="userList.possibleOptions"
-                                   selected-options="userList.selectedOptions">
+                                   possible-options="users.possibleOptions"
+                                   selected-options="users.selectedOptions">
             </mantl-transfer-select>
           </md-card>
         </div>
