@@ -56,6 +56,7 @@ public class Application extends Controller {
 
 	private final ActorRef removeAccountActor;
 
+	// TODO move actors init to factory
 	@Inject
 	public Application(ActorSystem system) {
 		Configuration configuration = MantlConfigFactory.load(consulUrlKey, serviceName);
@@ -80,6 +81,7 @@ public class Application extends Controller {
 		return ok("Welcome");
 	}
 
+	// TODO add error handling for correct response statuses
 	public Promise<Result> getAll() {
 		return Promise.wrap(ask(getAllActor, new GetAllAccounts(), TIMEOUT)).map(response -> ok(response.toString()));
 	}
