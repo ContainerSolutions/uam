@@ -11,7 +11,7 @@ import play.libs.ws.WS;
 import play.libs.ws.WSResponse;
 import com.fasterxml.jackson.databind.JsonNode;
 
-public class StoreTest extends WithApplication
+public class StoreTest
 {
 
 	@Test
