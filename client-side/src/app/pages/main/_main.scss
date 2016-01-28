@@ -20,6 +20,34 @@ label {
   font-weight: 700;
 }
 
+md-list {
+  md-list-item {
+    padding: 0;
+    &, & button {
+      transition: all .1s;
+    }
+
+    &.selected {
+      &, & button:hover {
+        background-color: $color-blue !important;
+        color: #fff;
+      }
+    }
+  }
+}
+
+.buttons-wrapper-divider {
+  width: calc(100% + #{$offset-standard});
+  position: relative;
+  left: -$offset-small;
+  padding-top: $offset-small;
+  border-top: 1px solid $color-gray;
+}
+
+.mt {
+  margin-top: $offset-standard;
+}
+
 //datepicker issue temp fix
 .md-datepicker-calendar, .md-datepicker-input-mask-opaque {
   background: rgb(255, 255, 255);

@@ -1,0 +1,36 @@
+<md-input-container>
+  <label>Template</label>
+  <md-select ng-model="vm.selected">
+    <md-option ng-repeat="template in vm.templates"
+               ng-click="vm.updateSelectedTemplate($index)"
+               value="{{::template.id}}">
+      {{::template.name}}
+    </md-option>
+  </md-select>
+</md-input-container>
+<div layout="row">
+  <div flex>
+    <div ng-if="vm.selectedTemplate.possibleOptions">
+      <label>{{::vm.possibleOptionsTitle}}</label>
+    </div>
+    <md-list>
+      <md-list-item ng-repeat="option in vm.selectedTemplate.possibleOptions track by $index"
+                    ng-click="vm.addOptionToSelected($index)"
+                    ng-cloak>
+        <p>{{::option.name}}<i class="material-icons">arrow_forward</i></p>
+      </md-list-item>
+    </md-list>
+  </div>
+  <div flex>
+    <div ng-if="vm.selectedTemplate.selectedOptions">
+      <label>{{::vm.selectedOptionsTitle}}</label>
+    </div>
+    <md-list>
+      <md-list-item ng-repeat="option in vm.selectedTemplate.selectedOptions track by $index"
+                    ng-click="vm.removeOptionFromSelected($index)"
+                    ng-cloak>
+        <p>{{::option.name}}<i class="material-icons">arrow_back</i></p>
+      </md-list-item>
+    </md-list>
+  </div>
+</div>
