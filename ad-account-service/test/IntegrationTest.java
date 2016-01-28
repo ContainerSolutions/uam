@@ -1,4 +1,3 @@
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Module;
@@ -13,7 +12,6 @@ import play.ApplicationLoader;
 import play.Environment;
 import play.inject.guice.GuiceApplicationBuilder;
 import play.inject.guice.GuiceApplicationLoader;
-import play.libs.Json;
 import play.libs.ws.WS;
 import play.libs.ws.WSResponse;
 import play.test.Helpers;
@@ -50,7 +48,7 @@ public class IntegrationTest {
     }
 
     @After
-    public void stopServer() {
+    public void tearDown() {
         if (testServer != null) {
             testServer.stop();
             testServer = null;

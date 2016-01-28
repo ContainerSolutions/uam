@@ -69,6 +69,7 @@ public class AdMicroservice extends Controller {
 
     @BodyParser.Of(BodyParser.Json.class)
     public Result deleteAccount() {
+        //TODO process and test account not found case
         JsonNode request = request().body().asJson();
         LOG.debug("AD account deletion request: " + request);
 
@@ -85,6 +86,7 @@ public class AdMicroservice extends Controller {
 
     @BodyParser.Of(BodyParser.Json.class)
     public Result addAccount() {
+        //TODO process and test account already exists case
         JsonNode request = request().body().asJson();
         LOG.debug("AD account creation request: " + request);
 

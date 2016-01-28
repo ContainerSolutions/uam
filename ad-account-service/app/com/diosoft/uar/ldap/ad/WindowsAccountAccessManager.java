@@ -26,10 +26,10 @@ public class WindowsAccountAccessManager implements AccessManager<WindowsAccount
     public static final String ATTR_USER_ACCOUNT_CONTROL = "userAccountControl";
 
     //some useful constants from lmaccess.h
-    public static int UF_ACCOUNTDISABLE = 0x0002;
-    public static int UF_PASSWD_NOTREQD = 0x0020;
-    public static int UF_NORMAL_ACCOUNT = 0x0200;
-    public static int UF_PASSWORD_EXPIRED = 0x800000;
+    public static final int UF_ACCOUNTDISABLE = 0x0002;
+    public static final int UF_PASSWD_NOTREQD = 0x0020;
+    public static final int UF_NORMAL_ACCOUNT = 0x0200;
+    public static final int UF_PASSWORD_EXPIRED = 0x800000;
 
     private LDAPInterface ldapConnection;
     private String domainAccountsRoot;
@@ -47,21 +47,7 @@ public class WindowsAccountAccessManager implements AccessManager<WindowsAccount
     }
 
     public void grant(WindowsAccountAccess access) throws AccessManagerException {
-        Entry newAccountEntry = new  Entry("CN=" + access.getCnValue() + "," + domainAccountsRoot);
-        newAccountEntry.setAttribute("objectClass","user");
-        newAccountEntry.setAttribute(ATTR_CN, access.getCnValue());
-
-        newAccountEntry.setAttribute(ATTR_LOGIN, access.getLogin());
-        newAccountEntry.setAttribute(ATTR_UID, access.getLogin());
-
-        newAccountEntry.setAttribute(ATTR_FIRST_NAME, access.getFirstName());
-        newAccountEntry.setAttribute(ATTR_LAST_NAME, access.getLastName());
-        newAccountEntry.setAttribute(ATTR_NAME, access.getFullName());
-        newAccountEntry.setAttribute(ATTR_DISPLAY_NAME, access.getFullName());
-        newAccountEntry.setAttribute(ATTR_USER_PRINCIPAL_NAME,access.getEmail());
-        newAccountEntry.setAttribute(ATTR_MAIL,access.getEmail());
-
-        newAccountEntry.setAttribute(ATTR_USER_ACCOUNT_CONTROL,Integer.toString(UF_NORMAL_ACCOUNT + UF_PASSWD_NOTREQD + UF_PASSWORD_EXPIRED+ UF_ACCOUNTDISABLE));
+        Entry newAccountEntry = toLdapEntry(access, domainAccountsRoot);
 
         try {
             ldapConnection.add(newAccountEntry);
@@ -113,12 +99,7 @@ public class WindowsAccountAccessManager implements AccessManager<WindowsAccount
             SearchResult searchResult = ldapConnection.search(roSearchRequest);
             if(searchResult.getEntryCount() > 0) {
                 for (SearchResultEntry entry : searchResult.getSearchEntries()) {
-                    WindowsAccountAccess access = new WindowsAccountAccess(
-                            entry.getAttributeValue(ATTR_LOGIN),
-                            entry.getAttributeValue(ATTR_FIRST_NAME),
-                            entry.getAttributeValue(ATTR_LAST_NAME),
-                            entry.getAttributeValue(ATTR_USER_PRINCIPAL_NAME)
-                            );
+                    WindowsAccountAccess access = fromLdapEntry(entry);
                     result.add(access);
                 }
             }
@@ -128,6 +109,34 @@ public class WindowsAccountAccessManager implements AccessManager<WindowsAccount
             throw new AccessManagerException("Can't list AD accounts", e);
         }
         return result;
+    }
+
+    private static Entry toLdapEntry(WindowsAccountAccess access, String domainUsersRoot) {
+        Entry newAccountEntry = new  Entry("CN=" + access.getCnValue() + "," + domainUsersRoot);
+        newAccountEntry.setAttribute("objectClass","user");
+        newAccountEntry.setAttribute(ATTR_CN, access.getCnValue());
+
+        newAccountEntry.setAttribute(ATTR_LOGIN, access.getLogin());
+        newAccountEntry.setAttribute(ATTR_UID, access.getLogin());
+
+        newAccountEntry.setAttribute(ATTR_FIRST_NAME, access.getFirstName());
+        newAccountEntry.setAttribute(ATTR_LAST_NAME, access.getLastName());
+        newAccountEntry.setAttribute(ATTR_NAME, access.getFullName());
+        newAccountEntry.setAttribute(ATTR_DISPLAY_NAME, access.getFullName());
+        newAccountEntry.setAttribute(ATTR_USER_PRINCIPAL_NAME,access.getEmail());
+        newAccountEntry.setAttribute(ATTR_MAIL,access.getEmail());
+
+        newAccountEntry.setAttribute(ATTR_USER_ACCOUNT_CONTROL,Integer.toString(UF_NORMAL_ACCOUNT + UF_PASSWD_NOTREQD + UF_PASSWORD_EXPIRED+ UF_ACCOUNTDISABLE));
+        return newAccountEntry;
+    }
+
+    private static WindowsAccountAccess fromLdapEntry(SearchResultEntry entry) {
+        return new WindowsAccountAccess(
+                entry.getAttributeValue(ATTR_LOGIN),
+                entry.getAttributeValue(ATTR_FIRST_NAME),
+                entry.getAttributeValue(ATTR_LAST_NAME),
+                entry.getAttributeValue(ATTR_USER_PRINCIPAL_NAME)
+        );
     }
 
 }
