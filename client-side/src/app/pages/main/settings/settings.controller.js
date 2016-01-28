@@ -6,9 +6,27 @@
     .controller('SettingsController', SettingsController);
 
   /** @ngInject */
-  function SettingsController() {
+  function SettingsController(TemplatesService) {
     var vm = this;
 
-    vm.awesomeThings = [];
+    vm.templates = angular.copy(TemplatesService.getTemplates());
+    vm.selectedAccount = 0;
+    vm.accounts = [
+      {
+        name: 'General'
+      },
+      {
+        name: 'GApps'
+      },
+      {
+        name: 'Git'
+      },
+      {
+        name: 'Jira'
+      },
+      {
+        name: 'AD'
+      }
+    ];
   }
 })();
