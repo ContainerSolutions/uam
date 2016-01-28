@@ -1,1 +1,13 @@
-this is settings
+<div layout="row" class="settings-wrapper">
+  <div flex="25" class="section padding-large">
+    <md-list>
+      <md-list-item ng-repeat="account in settings.accounts"
+                    ng-click="settings.selectedAccount = $index"
+                    ng-class="{selected: settings.selectedAccount === $index}">
+        {{::account.name}}
+      </md-list-item>
+    </md-list>
+  </div>
+  <div class="section-divider"></div>
+  <div flex class="section padding-large"></div>
+</div>

@@ -9,6 +9,23 @@
   function SettingsController() {
     var vm = this;
 
-    vm.awesomeThings = [];
+    vm.selectedAccount = 0;
+    vm.accounts = [
+      {
+        name: 'General'
+      },
+      {
+        name: 'GApps'
+      },
+      {
+        name: 'Git'
+      },
+      {
+        name: 'Jira'
+      },
+      {
+        name: 'AD'
+      }
+    ];
   }
 })();
