@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Collections;
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
@@ -27,19 +28,28 @@ import com.google.api.services.admin.directory.DirectoryScopes;
 import com.google.api.services.admin.directory.model.*;
 import com.google.api.services.admin.directory.Directory;
 
+//import com.google.api.services.gmai.Gmail;
+
 public class GoogleServiceFactoryImpl implements GoogleServiceFactory
 {
-
+	private static final String ADMIN_ACCOUNT_EMAIL = "pghukasyan@dio-soft.com";
+	private static final String SERVICE_ACCOUNT_EMAIL = "763062422166-compute@developer.gserviceaccount.com";
 	private final HttpTransport httpTransport;
 	private final JsonFactory jsonFactory;
 	private final FileDataStoreFactory dataStoreFactory;
-	private static final List<String> SCOPES = Arrays.asList(DirectoryScopes.ADMIN_DIRECTORY_USER_READONLY);
+	private static final List<String> SCOPES = Arrays.asList(
+	            DirectoryScopes.ADMIN_DIRECTORY_USER_READONLY
+	        );
 
 	public GoogleServiceFactoryImpl() throws GeneralSecurityException, IOException
 	{
 		httpTransport = GoogleNetHttpTransport.newTrustedTransport();
 		jsonFactory = JacksonFactory.getDefaultInstance();
-		dataStoreFactory = new FileDataStoreFactory(new java.io.File(System.getProperty("user.home"), ".credential/admin-directory"));
+		File dataStoreDirectory = new File(
+		    System.getProperty("user.home"),
+		    ".credential/admin-directory"
+		);
+		dataStoreFactory = new FileDataStoreFactory(dataStoreDirectory);
 
 
 	}
@@ -49,16 +59,89 @@ public class GoogleServiceFactoryImpl implements GoogleServiceFactory
 
 		//local code review (vtegza): key should be loaded from Vault @ 26.01.16
 		InputStream in = GoogleServiceFactoryImpl.class.getResourceAsStream("/client_secret.json");
-		GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(jsonFactory, new InputStreamReader(in));
+		InputStreamReader stream = new InputStreamReader(in);
+		GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(jsonFactory, stream);
 
-		GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(httpTransport, jsonFactory, clientSecrets, SCOPES)
+		GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
+		    httpTransport,
+		    jsonFactory,
+		    clientSecrets,
+		    SCOPES)
 		.setDataStoreFactory(dataStoreFactory)
 		.setAccessType("offline")
 		.build();
 
-		Credential credential = new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("pghukasyan@dio-soft.com");
+		Credential credential = new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize(ADMIN_ACCOUNT_EMAIL);
 		return credential;
 	}
+//@Override
+	public Credential createDomainWideDirectoryCredential() throws GeneralSecurityException, IOException, URISyntaxException
+	{
+
+		//local code review (vtegza): key should be loaded from Vault @ 26.01.16
+		File secFile = new File(GoogleServiceFactoryImpl.class.getResource("/uar-mantlio-0c5273f07730.p12").toURI());
+
+		GoogleCredential cred = new GoogleCredential.Builder()
+		.setTransport(httpTransport)
+		.setJsonFactory(jsonFactory)
+		.setServiceAccountId(SERVICE_ACCOUNT_EMAIL)
+		.setServiceAccountScopes(Collections.singletonList(DirectoryScopes.ADMIN_DIRECTORY_USER))
+		.setServiceAccountUser(ADMIN_ACCOUNT_EMAIL)
+		.setServiceAccountPrivateKeyFromP12File(secFile)
+		.build();
+
+		Directory service = new Directory.Builder(httpTransport, jsonFactory, null).setHttpRequestInitializer(cred).build();
+
+		List<User> results = service.users().list()
+		                     .setMaxResults(10)
+		                     //.setCustomer("dio-soft.com")
+		                     .setOrderBy("email")
+		                     .execute().getUsers();
+
+		results.forEach( user ->
+		{
+			System.out.println(user.getName().getFullName());
+		});
+
+
+		return cred;
+	}
+
+
+	@Override
+	public Directory creatDirectoryService() throws IOException, GeneralSecurityException, URISyntaxException
+	{
+		//createDomainWideDirectoryCredential();
+
+		Credential credential = createDirectoryCredential();
+
+		Directory service = new Directory.Builder(
+		    httpTransport,
+		    jsonFactory,
+		    credential
+		)
+		.setApplicationName("uar-mantlio")
+		//.setDomain("dio-soft.com")
+		.build();
+		return service;
+	}
+
+	/* @Override*/
+	//public Gmail creatGmailService() throws IOException, GeneralSecurityException, URISyntaxException
+	//{
+	////createDomainWideDirectoryCredential();
+
+	//Credential credential = createDirectoryCredential();
+
+	//Gmail service = new Gmail.Builder(
+	//httpTransport,
+	//jsonFactory,
+	//credential
+	//)
+	//.setApplicationName("uar-mantlio")
+	//.build();
+	//return service;
+	//}
 
 
 }

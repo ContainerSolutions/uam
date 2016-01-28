@@ -23,7 +23,6 @@ public class ApplicationTest
 				                        .get().get(5000);
 				int status = response.getStatus();
 				//default user should be added here for all requests
-				System.out.println("body = " + response.getBody());
 				JsonNode body = response.asJson();
 				Assert.assertNotNull(body);
 				Assert.assertEquals(200, status);

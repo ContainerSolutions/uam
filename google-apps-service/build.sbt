@@ -7,8 +7,6 @@ lazy val root = (project in file(".")).enablePlugins(PlayJava)
 scalaVersion := "2.11.6"
 
 libraryDependencies ++= Seq(
-		javaJdbc,
-		cache,
 		javaWs,
 		"com.orientechnologies" % "orientdb-core" % "2.1.6",
 		"com.orientechnologies" % "orientdb-graphdb" % "2.1.6",
@@ -18,7 +16,8 @@ libraryDependencies ++= Seq(
 		"com.google.oauth-client" % "google-oauth-client-java6" % "1.21.0",
 		"com.google.oauth-client" % "google-oauth-client-jetty" % "1.21.0",
 		"com.google.oauth-client" % "google-oauth-client" % "1.21.0",
-		"com.google.apis" % "google-api-services-admin" % "reports_v1-rev26-1.16.0-rc"
+		"com.google.apis" % "google-api-services-admin" % "reports_v1-rev26-1.16.0-rc",
+		"com.google.apis" % "google-api-services-gmail" % "v1-rev36-1.21.0"
 		)
 
 
