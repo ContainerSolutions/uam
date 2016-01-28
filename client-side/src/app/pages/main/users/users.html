@@ -7,7 +7,7 @@
     <div class="section">
       <div flex layout="row">
         <div flex class="cards-wrapper">
-          <md-card>
+          <md-card ng-if="users.selectedAccount === 0">
             <md-card-title>
               <md-card-title-text>
                 <span class="md-headline">General</span>
@@ -30,7 +30,7 @@
               <input ng-model="users.usersData.selected.email" type="email">
             </md-input-container>
           </md-card>
-          <md-card>
+          <md-card ng-if="users.selectedAccount === 1">
             <md-card-title>
               <md-card-title-text>
                 <span class="md-headline">GApps</span>
@@ -43,7 +43,33 @@
                                    selected-options="users.selectedOptions">
             </mantl-transfer-select>
           </md-card>
-          <md-card>
+          <md-card ng-if="users.selectedAccount === 2">
+            <md-card-title>
+              <md-card-title-text>
+                <span class="md-headline">Git</span>
+              </md-card-title-text>
+            </md-card-title>
+            <mantl-transfer-select templates="users.templates"
+                                   possible-options-title="'All Projects:'"
+                                   selected-options-title="'User Projects:'"
+                                   possible-options="users.possibleOptions"
+                                   selected-options="users.selectedOptions">
+            </mantl-transfer-select>
+          </md-card>
+          <md-card ng-if="users.selectedAccount === 3">
+            <md-card-title>
+              <md-card-title-text>
+                <span class="md-headline">Jira</span>
+              </md-card-title-text>
+            </md-card-title>
+            <mantl-transfer-select templates="users.templates"
+                                   possible-options-title="'All Projects:'"
+                                   selected-options-title="'User Projects:'"
+                                   possible-options="users.possibleOptions"
+                                   selected-options="users.selectedOptions">
+            </mantl-transfer-select>
+          </md-card>
+          <md-card ng-if="users.selectedAccount === 4">
             <md-card-title>
               <md-card-title-text>
                 <span class="md-headline">AD</span>
@@ -60,26 +86,14 @@
                                    selected-options="users.selectedOptions">
             </mantl-transfer-select>
           </md-card>
-          <md-card>
-            <md-card-title>
-              <md-card-title-text>
-                <span class="md-headline">Jira</span>
-              </md-card-title-text>
-            </md-card-title>
-            <mantl-transfer-select templates="users.templates"
-                                   possible-options-title="'All Projects:'"
-                                   selected-options-title="'User Projects:'"
-                                   possible-options="users.possibleOptions"
-                                   selected-options="users.selectedOptions">
-            </mantl-transfer-select>
-          </md-card>
         </div>
         <div layout="column" class="buttons-wrapper">
-          <md-button class="md-primary md-raised">General</md-button>
-          <md-button class="md-raised">GApps</md-button>
-          <md-button class="md-raised">AD</md-button>
-          <md-button class="md-raised">Jira</md-button>
-          <md-button class="md-raised">Git</md-button>
+          <md-button ng-repeat="account in users.accounts"
+                     ng-click="users.selectedAccount = $index"
+                     ng-class="{'md-primary': users.selectedAccount === $index}"
+                     class="md-raised">
+            {{::account.name}}
+          </md-button>
         </div>
       </div>
       <div class="actions-wrapper-divider"></div>

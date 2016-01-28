@@ -20,6 +20,22 @@ label {
   font-weight: 700;
 }
 
+md-list {
+  md-list-item {
+    padding: 0;
+    &, & button {
+      transition: all .1s;
+    }
+
+    &.selected {
+      &, & button:hover {
+        background-color: $color-blue !important;
+        color: #fff;
+      }
+    }
+  }
+}
+
 //datepicker issue temp fix
 .md-datepicker-calendar, .md-datepicker-input-mask-opaque {
   background: rgb(255, 255, 255);

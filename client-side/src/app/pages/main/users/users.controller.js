@@ -13,6 +13,24 @@
 
     //mock data
     vm.usersData = angular.copy(UsersService.getData());
+    vm.selectedAccount = 0;
+    vm.accounts = [
+      {
+        name: 'General'
+      },
+      {
+        name: 'GApps'
+      },
+      {
+        name: 'Git'
+      },
+      {
+        name: 'Jira'
+      },
+      {
+        name: 'AD'
+      }
+    ];
     vm.templates = [
       {
         name: 'Template1'
