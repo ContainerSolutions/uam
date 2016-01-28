@@ -40,9 +40,9 @@ public class Application extends Controller {
 	private static final String serviceName = "jiraservice";
 
 	private static final String consulUrlKey = "consul.url";
-	private static final String vaultUrlKey = "vault/url";
-	private static final String vaultUserKey = "vault/user";
-	private static final String vaultPassKey = "vault/pass";
+	private static final String vaultUrlKey = "jiraservice/vault/url";
+	private static final String vaultUserKey = "jiraservice/vault/user";
+	private static final String vaultPassKey = "jiraservice/vault/pass";
 
 	private static final String orientDbUrlKey = "jiraservice/orientdb/url";
 	private static final String orientDbKey = "jiraservice/orientdb";
@@ -68,7 +68,6 @@ public class Application extends Controller {
 		ActorRef createVertexActor = system.actorOf(Props.create(CreateAccountVertexActor.class, graphFactory));
 		ActorRef createActor = system.actorOf(CreateAccountActor.props(createVertexActor, WS.client(), configuration.getString(jiraUrlKey), jiraCredentials.getUser(), jiraCredentials.getPassword()));
 		userVertexActor = system.actorOf(Props.create(GetUserVertexActor.class, createActor, graphFactory));
-		
 
 		getAllActor = system.actorOf(GetAllAccountsActor.props(WS.client(), configuration.getString(jiraUrlKey), jiraCredentials.getUser(), jiraCredentials.getPassword()));
 		getAccountActor = system.actorOf(GetAccountActor.props(WS.client(), configuration.getString(jiraUrlKey), jiraCredentials.getUser(), jiraCredentials.getPassword()));
