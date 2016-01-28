@@ -43,6 +43,7 @@ public class GetAllAccountsActor extends UntypedActor {
 	}
 
 	private void getAllAccounts() {
+		//TODO move timeout to consul config
 		sender().tell(client.url(url + "/user/search?username=%25").setAuth(user, password)
 				.get().map(response -> {
 					if (response.getStatus() != 200) {
