@@ -43,11 +43,31 @@ public class GoogleServiceFactoryImplTest
 		GoogleServiceFactoryImpl testClass = new GoogleServiceFactoryImpl();
 
 		Credential returnedValue = testClass.createDirectoryCredential();
-		System.out.println("Credentials content " + returnedValue);
 
 		//asserts
 		Assert.assertNotNull(returnedValue);
 
+	}
+
+	@Test
+	public void testCreateDirectoryService() throws Exception
+	{
+		//test class
+		GoogleServiceFactoryImpl testClass = new GoogleServiceFactoryImpl();
+
+		Directory service = testClass.creatDirectoryService();
+
+		List<User> results = service.users().list()
+		                     .setMaxResults(10)
+		                     .setOrderBy("email")
+		                     .setDomain("dio-soft.com")
+		                     .execute().getUsers();
+
+		results.forEach( user ->
+		{
+			System.out.println(user.getName().getFullName());
+		});
+		Assert.assertEquals(10, results.size());
 	}
 
 }
