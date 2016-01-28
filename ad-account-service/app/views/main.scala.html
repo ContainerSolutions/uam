@@ -1,0 +1,28 @@
+@(title: String)
+
+<!DOCTYPE html>
+
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>@title</title>
+        <link rel="stylesheet" class="theme" type="text/css" href="@routes.Assets.versioned("raml/styles/api-console-light-theme.css")" />
+        <link rel="stylesheet" class="theme" type="text/css" href="@routes.Assets.versioned("raml/styles/api-console-dark-theme.css")" />
+        <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">
+        <script src="@routes.Assets.versioned("javascripts/adapp.js")" type="text/javascript"></script>
+    </head>
+    <body ng-app="ramlConsoleApp" ng-cloak class="raml-console-body">
+        <raml-console src="@routes.Assets.versioned("raml/api/ad.raml")"
+                      disable-try-it
+                      disable-raml-client-generator
+                      disable-theme-switcher>
+        </raml-console>
+        <script src="@routes.Assets.versioned("raml/scripts/api-console-vendor.js")"></script>
+        <script src="@routes.Assets.versioned("raml/scripts/api-console.js")"></script>
+        <script>
+            $.noConflict();
+        </script>
+    </body>
+
+</html>
