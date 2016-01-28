@@ -6,9 +6,10 @@
     .controller('SettingsController', SettingsController);
 
   /** @ngInject */
-  function SettingsController() {
+  function SettingsController(TemplatesService) {
     var vm = this;
 
+    vm.templates = angular.copy(TemplatesService.getTemplates());
     vm.selectedAccount = 0;
     vm.accounts = [
       {

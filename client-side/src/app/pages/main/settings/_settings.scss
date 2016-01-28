@@ -1,0 +1,15 @@
+.settings-wrapper {
+  .accounts-list {
+    height: calc(100vh - 128px);
+    overflow-y: auto;
+  }
+
+  .cards-wrapper {
+    height: calc(100vh - 200px);
+    overflow-y: auto;
+  }
+
+  md-card {
+    padding: $offset-standard;
+  }
+}
