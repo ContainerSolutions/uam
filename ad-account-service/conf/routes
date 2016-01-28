@@ -1,0 +1,13 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET     /                    controllers.AdMicroservice.index()
+GET     /users               controllers.AdMicroservice.getAccounts()
+GET     /user/:login         controllers.AdMicroservice.getAccount(login: String)
+POST    /user                controllers.AdMicroservice.addAccount()
+DELETE  /user                controllers.AdMicroservice.deleteAccount()
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file        controllers.Assets.versioned(path="/public", file: Asset)
