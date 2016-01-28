@@ -36,6 +36,18 @@ md-list {
   }
 }
 
+.buttons-wrapper-divider {
+  width: calc(100% + #{$offset-standard});
+  position: relative;
+  left: -$offset-small;
+  padding-top: $offset-small;
+  border-top: 1px solid $color-gray;
+}
+
+.mt {
+  margin-top: $offset-standard;
+}
+
 //datepicker issue temp fix
 .md-datepicker-calendar, .md-datepicker-input-mask-opaque {
   background: rgb(255, 255, 255);

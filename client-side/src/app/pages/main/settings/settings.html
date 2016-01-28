@@ -1,6 +1,6 @@
 <div layout="row" class="settings-wrapper">
   <div flex="25" class="section padding-large">
-    <md-list>
+    <md-list class="accounts-list">
       <md-list-item ng-repeat="account in settings.accounts"
                     ng-click="settings.selectedAccount = $index"
                     ng-class="{selected: settings.selectedAccount === $index}">
@@ -9,5 +9,141 @@
     </md-list>
   </div>
   <div class="section-divider"></div>
-  <div flex class="section padding-large"></div>
+  <div flex layout="column" class="section">
+    <div flex class="cards-wrapper">
+      <div ng-if="settings.selectedAccount === 0">
+        <md-card>
+          <md-card-title>
+            <md-card-title-text>
+              <span class="md-headline">General Settings</span>
+            </md-card-title-text>
+          </md-card-title>
+          //todo
+        </md-card>
+      </div>
+      <div ng-if="settings.selectedAccount === 1">
+        <md-card>
+          <md-card-title>
+            <md-card-title-text>
+              <span class="md-headline">GApps Settings</span>
+            </md-card-title-text>
+          </md-card-title>
+          //todo
+        </md-card>
+        <md-card>
+          <md-card-title>
+            <md-card-title-text>
+              <span class="md-headline">Templates</span>
+            </md-card-title-text>
+          </md-card-title>
+          <mantl-templates-select templates="settings.templates"
+                                  possible-options-title="'All Groups:'"
+                                  selected-options-title="'User Groups:'">
+          </mantl-templates-select>
+          <div layout="row">
+            <md-button class="md-warn md-raised">Delete</md-button>
+            <div flex></div>
+            <md-button class="md-primary md-raised">Add New</md-button>
+          </div>
+        </md-card>
+      </div>
+      <div ng-if="settings.selectedAccount === 2">
+        <md-card>
+          <md-card-title>
+            <md-card-title-text>
+              <span class="md-headline">Git Settings</span>
+            </md-card-title-text>
+          </md-card-title>
+          //todo
+        </md-card>
+        <md-card>
+          <md-card-title>
+            <md-card-title-text>
+              <span class="md-headline">Templates</span>
+            </md-card-title-text>
+          </md-card-title>
+          <mantl-templates-select templates="settings.templates"
+                                  possible-options-title="'All Groups:'"
+                                  selected-options-title="'User Groups:'">
+          </mantl-templates-select>
+          <div layout="row">
+            <md-button class="md-warn md-raised">Delete</md-button>
+            <div flex></div>
+            <md-button class="md-primary md-raised">Add New</md-button>
+          </div>
+        </md-card>
+      </div>
+
+      <!--Jira Account-->
+      <div ng-if="settings.selectedAccount === 3">
+        <md-card>
+          <md-card-title>
+            <md-card-title-text>
+              <span class="md-headline">General</span>
+            </md-card-title-text>
+          </md-card-title>
+          <md-input-container>
+            <label>Jira URL:</label>
+            <input type="text">
+          </md-input-container>
+          <md-input-container>
+            <label>System Account:</label>
+            <input type="text">
+          </md-input-container>
+          <md-input-container>
+            <label>Password:</label>
+            <input type="password">
+          </md-input-container>
+        </md-card>
+        <md-card>
+          <md-card-title>
+            <md-card-title-text>
+              <span class="md-headline">Templates</span>
+            </md-card-title-text>
+          </md-card-title>
+          <mantl-templates-select templates="settings.templates"
+                                  possible-options-title="'All Groups:'"
+                                  selected-options-title="'User Groups:'">
+          </mantl-templates-select>
+          <div layout="row">
+            <md-button class="md-warn md-raised">Delete</md-button>
+            <div flex></div>
+            <md-button class="md-primary md-raised">Add New</md-button>
+          </div>
+        </md-card>
+      </div>
+      <div ng-if="settings.selectedAccount === 4">
+        <md-card>
+          <md-card-title>
+            <md-card-title-text>
+              <span class="md-headline">AD Settings</span>
+            </md-card-title-text>
+          </md-card-title>
+          //todo
+        </md-card>
+        <md-card>
+          <md-card-title>
+            <md-card-title-text>
+              <span class="md-headline">Templates</span>
+            </md-card-title-text>
+          </md-card-title>
+          <mantl-templates-select templates="settings.templates"
+                                  possible-options-title="'All Groups:'"
+                                  selected-options-title="'User Groups:'">
+          </mantl-templates-select>
+          <div layout="row">
+            <md-button class="md-warn md-raised">Delete</md-button>
+            <div flex></div>
+            <md-button class="md-primary md-raised">Add New</md-button>
+          </div>
+        </md-card>
+      </div>
+    </div>
+    <div class="buttons-wrapper-divider"></div>
+    <div layout="row">
+      <div flex></div>
+      <md-button class="md-primary md-raised">Save</md-button>
+      <md-button class="md-raised">Discard</md-button>
+    </div>
+  </div>
 </div>

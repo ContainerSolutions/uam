@@ -36,12 +36,10 @@
                 <span class="md-headline">GApps</span>
               </md-card-title-text>
             </md-card-title>
-            <mantl-transfer-select templates="users.templates"
-                                   possible-options-title="'All Mailgroups:'"
-                                   selected-options-title="'User Mailgroups:'"
-                                   possible-options="users.possibleOptions"
-                                   selected-options="users.selectedOptions">
-            </mantl-transfer-select>
+            <mantl-templates-select templates="users.templates"
+                                    possible-options-title="'All Mailgroups:'"
+                                    selected-options-title="'User Mailgroups:'">
+            </mantl-templates-select>
           </md-card>
           <md-card ng-if="users.selectedAccount === 2">
             <md-card-title>
@@ -49,12 +47,10 @@
                 <span class="md-headline">Git</span>
               </md-card-title-text>
             </md-card-title>
-            <mantl-transfer-select templates="users.templates"
-                                   possible-options-title="'All Projects:'"
-                                   selected-options-title="'User Projects:'"
-                                   possible-options="users.possibleOptions"
-                                   selected-options="users.selectedOptions">
-            </mantl-transfer-select>
+            <mantl-templates-select templates="users.templates"
+                                    possible-options-title="'All Projects:'"
+                                    selected-options-title="'User Projects:'">
+            </mantl-templates-select>
           </md-card>
           <md-card ng-if="users.selectedAccount === 3">
             <md-card-title>
@@ -62,12 +58,10 @@
                 <span class="md-headline">Jira</span>
               </md-card-title-text>
             </md-card-title>
-            <mantl-transfer-select templates="users.templates"
-                                   possible-options-title="'All Projects:'"
-                                   selected-options-title="'User Projects:'"
-                                   possible-options="users.possibleOptions"
-                                   selected-options="users.selectedOptions">
-            </mantl-transfer-select>
+            <mantl-templates-select templates="users.templates"
+                                    possible-options-title="'All Projects:'"
+                                    selected-options-title="'User Projects:'">
+            </mantl-templates-select>
           </md-card>
           <md-card ng-if="users.selectedAccount === 4">
             <md-card-title>
@@ -79,12 +73,10 @@
               <b>Date of birth:</b>
             </p>
             <md-datepicker ng-model="users.birthday"></md-datepicker>
-            <mantl-transfer-select templates="users.templates"
-                                   possible-options-title="'All Groups:'"
-                                   selected-options-title="'User Groups:'"
-                                   possible-options="users.possibleOptions"
-                                   selected-options="users.selectedOptions">
-            </mantl-transfer-select>
+            <mantl-templates-select templates="users.templates"
+                                    possible-options-title="'All Groups:'"
+                                    selected-options-title="'User Groups:'">
+            </mantl-templates-select>
           </md-card>
         </div>
         <div layout="column" class="buttons-wrapper">
@@ -96,7 +88,7 @@
           </md-button>
         </div>
       </div>
-      <div class="actions-wrapper-divider"></div>
+      <div class="buttons-wrapper-divider"></div>
       <div layout="row" class="actions-wrapper">
         <div flex>
           <md-button class="md-warn md-raised">Retire</md-button>
