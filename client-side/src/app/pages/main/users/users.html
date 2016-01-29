@@ -75,7 +75,8 @@
             <md-datepicker ng-model="users.birthday"></md-datepicker>
             <mantl-templates-select templates="users.templates"
                                     possible-options-title="'All Groups:'"
-                                    selected-options-title="'User Groups:'">
+                                    selected-options-title="'User Groups:'"
+                                    class="mt">
             </mantl-templates-select>
           </md-card>
         </div>
@@ -91,7 +92,10 @@
       <div class="buttons-wrapper-divider"></div>
       <div layout="row" class="actions-wrapper">
         <div flex>
-          <md-button class="md-warn md-raised">Retire</md-button>
+          <md-button ng-click="users.retireUser()"
+                     ng-if="users.selected.firstName"
+                     class="md-warn md-raised">Retire
+          </md-button>
         </div>
         <md-button class="md-primary md-raised">Save</md-button>
         <md-button class="md-raised">Discard</md-button>
