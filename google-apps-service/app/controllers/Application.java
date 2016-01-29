@@ -18,7 +18,6 @@ public class Application extends Controller
 	public Result getUserInfo(String email)
 	{
 
-		System.out.println("Here is url : " + DIRECTORY_REST + " and parameter : " + email );
 		String response = WS.client().url(DIRECTORY_REST + "users/" + email).get().get(5000).asJson().toString();
 		return ok(response);
 	}

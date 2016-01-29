@@ -62,11 +62,18 @@ public class GoogleServiceFactoryImplTest
 		                     .setOrderBy("email")
 		                     .setDomain("dio-soft.com")
 		                     .execute().getUsers();
+		/*         List<Group> res = service.groups().list()*/
+		//.setMaxResults(10)
+		//.setUserKey("vtegza@dio-soft.com")
+		//.setDomain("dio-soft.com")
+		//.execute().getGroups();
 
-		results.forEach( user ->
-		{
-			System.out.println(user.getName().getFullName());
-		});
+		//res.forEach( group ->
+		//{
+		//System.out.println(group.getEmail());
+		/*});*/
+
+
 		Assert.assertEquals(10, results.size());
 	}
 
