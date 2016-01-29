@@ -6,10 +6,8 @@
     .config(config);
 
   /** @ngInject */
-  function config($logProvider) {
-
-    //enable log based on ENV variable
-    $logProvider.debugEnabled(true);
+  function config($logProvider, ENV) {
+    $logProvider.debugEnabled(ENV.debugEnabled);
   }
 
 })();

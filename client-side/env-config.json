@@ -1,0 +1,20 @@
+{
+  "local": {
+    "ENV": {
+      "api": "http://localhost:8083/",
+      "debugEnabled": true
+    }
+  },
+  "qa": {
+    "ENV": {
+      "api": "http://api.qa:8083/",
+      "debugEnabled": true
+    }
+  },
+  "dist": {
+    "ENV": {
+      "api": "https://api.prod.com/",
+      "debugEnabled": false
+    }
+  }
+}

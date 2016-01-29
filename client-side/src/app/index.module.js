@@ -3,6 +3,7 @@
 
   angular
     .module('mantl', [
+      'mantl.ENV',
       'ngAnimate',
       'ngMessages',
       'ngAria',

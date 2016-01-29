@@ -6,7 +6,7 @@
     .factory('UsersService', UsersService);
 
   /** @ngInject */
-  function UsersService() {
+  function UsersService(ENV) {
 
     //mock data
     var data = {
@@ -104,11 +104,16 @@
     };
 
     return {
-      getData: getData
+      getData: getData,
+      fetchUsers: fetchUsers
     };
 
     function getData() {
       return data;
+    }
+
+    function fetchUsers() {
+      return ENV.api;
     }
   }
 })();
