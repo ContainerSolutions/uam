@@ -10,7 +10,7 @@
     <md-progress-circular md-mode="indeterminate"></md-progress-circular>
   </div>
   <md-list ng-class="{opaque: vm.loadersData.fetchingUsers}" class="user-list">
-    <md-list-item ng-repeat="user in vm.data.users | filter: vm.searchQuery"
+    <md-list-item ng-repeat="user in vm.data.users | filter: vm.searchQuery track by $index"
                   ng-click="vm.updateSelected($index)"
                   ng-class="{selected: vm.selectedIndex === $index}">
       {{user.firstName}} {{user.lastName}}
