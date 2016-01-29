@@ -28,8 +28,6 @@ import com.google.api.services.admin.directory.DirectoryScopes;
 import com.google.api.services.admin.directory.model.*;
 import com.google.api.services.admin.directory.Directory;
 
-//import com.google.api.services.gmai.Gmail;
-
 public class GoogleServiceFactoryImpl implements GoogleServiceFactory
 {
 	private static final String ADMIN_ACCOUNT_EMAIL = "pghukasyan@dio-soft.com";
