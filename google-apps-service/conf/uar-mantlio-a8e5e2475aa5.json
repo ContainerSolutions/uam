@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "uar-mantlio",
+  "private_key_id": "a8e5e2475aa5cf8839a03c098e7064ec159b2142",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCY35gKZFnI3jUa\nHRgRr1w4MNHNn7qQFrwqBDMJS9A+XxvTARUMU0rgVrpMEkOwmQUkrwLTHqG5Rrzr\nVPUfmsumz42sGV6rtw0ZiQSqh0gzpiJT7JHo6WSBvUP8ZcmWhZ/bJ1MDfMIWuVYk\nCb+bIueDvV6FE+ninYDwI0wZO5ZV/UhgXQfnwPksowmyHZ5G6a5p/BbDxQzm8JjJ\nlBGOR8MxuEgoZU8GsMTnk/34qAYPacw5Il1+sFfI/dl/bTSJKv3b2SM47hPH1qFV\ngwOB4tZM1/9nQT5MwLTAjhwCFyJMusLjSEvCe162S7FkYSLfPhV2yW2YaKJZzheW\nJkpCGTWBAgMBAAECggEADKXDAGkY/INVxVlO2ne1m3h+gxKJ7s3St28tgcFh8ycP\nOD/IrAJgGXtTYmPIcd3XDRflle3c12VAz/9xYDIAU0aso+ZdbLtyPACYADu8/3jp\nMiRKVgipJgqwizsomGlptknklk9GB3dB5y1fSshyevW50iy5luQM/NEOxK+nWmm/\nE83nfSNDeSG9zxbqXgWZxz9S5VIxGnZFwvo8cKfkhFlDH/0RK5r7zdHcHR8b/Xt7\nzsLvHiiEdvA3Xujtwvir6bg+VEOTKLIFGCbGhOpgqmCbPV82qMNlRT0Ql49lUjAG\nqv+1Td39/UxfsxdDEhzZTQHPJ7/j8+Cd5IQqbsQ6GQKBgQDeZ41QJ5KJ+xQggoMb\nO6kdN2I6F+LDYwXLiNjkLOyI6g2J+mrOJYpNmqeVMRNgp6Fa6xJ/nkZzvA9H/WJV\nJMcMYDKO9ZAH3Q4fdv6kO6JNIwHXpN5mwZCslrRfzvzjzm3Ab9fqP5NNVdVHXp5O\nY0EdYdQXNGJBz54sy+0leBi20wKBgQCv90EROKN/sz9zZHNBLpIR3agFDptBdTcv\nZrEx9xtWaKIssrz5h4dhEkxaeW3glcuXoclVR3Q/rGRnDkHMmvNXQpuHTWGpghlZ\nce25eEH41q2RhaVp6VTz1MDQSKIWYVdzb3SFgl+HWn8N+np9Kn+wIggfE1UNK0IO\n/2J1k8SV2wKBgQCuGNWQF0oo5Pjecgv7d3psunwUCbqjRJK2v0s5YslObBlpFzQg\nZ1aaZSQmL6KBmPdAWp/Ccr2nv2Ee84TULdP7JhqtuiCjZzG1A8tV+LCWPX8ltZO7\nUG7WC6rrDPb9xQw5BdQ5NMc0VKp+Ed1Oc3f3bis+du0ro0CoxIHBQP/nrQKBgFWH\nujHTtO0KRGojRj5Fk6xpcBTdL6vWfLdmk/R0Zu5ON53AV0h2juApE8HaSgUi6m3O\nrtzruV6Fvdu1u1fnbSZZ8t0GSNUqroWicel3waFhP8Z/DpL3XlqSbBIRa++y6t3q\nK9oFL8fLvfweZtFWCfCj6gyoyet3vkkp60K5S5GHAoGAb831IlQnEK2PfpNUk9iE\nQLcxvujlRGXy/YZk1W7Z2sFVWzEee5tuj+doqn0oqFx7vT8dRpb2R7iRPcq7Ziiy\np0KiP8NWM45/rhY+/jCAIy2j56PlMvMA+sWw+P/b7uTD4bvLk1ANRrtt2ZS1u56k\nGU+mwc4pRjK4RcGfcDFSkwU=\n-----END PRIVATE KEY-----\n",
+  "client_email": "uar-629@uar-mantlio.iam.gserviceaccount.com",
+  "client_id": "112754992005284040140",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://accounts.google.com/o/oauth2/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/uar-629%40uar-mantlio.iam.gserviceaccount.com"
+}
