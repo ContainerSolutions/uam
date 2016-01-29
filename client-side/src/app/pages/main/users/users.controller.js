@@ -11,8 +11,7 @@
 
     vm.searchQuery = '';
 
-    //mock data
-    vm.usersData = angular.copy(UsersService.getData());
+    vm.selected = {};
     vm.templates = angular.copy(TemplatesService.getTemplates());
     vm.selectedAccount = 0;
     vm.accounts = [

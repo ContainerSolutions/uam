@@ -11,7 +11,7 @@
       restrict: 'E',
       templateUrl: 'app/components/user-select/user-select.html',
       scope: {
-        data: '='
+        selected: '='
       },
       controller: UserSelectController,
       controllerAs: 'vm',
@@ -19,22 +19,19 @@
     };
 
     /** @ngInject */
-    function UserSelectController() {
+    function UserSelectController(UsersService) {
       var vm = this;
 
       vm.searchQuery = '';
+      vm.data = UsersService.getData();
+      vm.loadersData = UsersService.getLoadersData();
       vm.updateSelected = updateSelected;
 
+      UsersService.fetchUsers();
+
       function updateSelected(index) {
-        var users = vm.data.users,
-          selectedUser = users[index];
-
-        for (var i = 0, len = users.length; i < len; i++) {
-          users[i].selected = false;
-        }
-
-        selectedUser.selected = true;
-        vm.data.selected = selectedUser;
+        vm.selected = vm.data.users[index];
+        vm.selectedIndex = index;
       }
     }
   }

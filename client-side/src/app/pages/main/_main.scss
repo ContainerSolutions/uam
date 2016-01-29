@@ -48,6 +48,11 @@ md-list {
   margin-top: $offset-standard;
 }
 
+.loader-wrapper {
+  text-align: center;
+  padding: $offset-standard 0;
+}
+
 //datepicker issue temp fix
 .md-datepicker-calendar, .md-datepicker-input-mask-opaque {
   background: rgb(255, 255, 255);

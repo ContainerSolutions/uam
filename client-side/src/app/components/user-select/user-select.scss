@@ -7,5 +7,10 @@ mantl-user-select {
     height: calc(100vh - 226px);
     min-height: 100px;
     overflow-y: auto;
+
+    &.opaque {
+      height: calc(100vh - 226px - 130px); //130 is the height of loader spinner
+      opacity: 0;
+    }
   }
 }

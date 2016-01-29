@@ -76,41 +76,46 @@
 
       <!--Jira Account-->
       <div ng-if="settings.selectedAccount === 3">
-        <md-card>
-          <md-card-title>
-            <md-card-title-text>
-              <span class="md-headline">General</span>
-            </md-card-title-text>
-          </md-card-title>
-          <md-input-container>
-            <label>Jira URL:</label>
-            <input type="text">
-          </md-input-container>
-          <md-input-container>
-            <label>System Account:</label>
-            <input type="text">
-          </md-input-container>
-          <md-input-container>
-            <label>Password:</label>
-            <input type="password">
-          </md-input-container>
-        </md-card>
-        <md-card>
-          <md-card-title>
-            <md-card-title-text>
-              <span class="md-headline">Templates</span>
-            </md-card-title-text>
-          </md-card-title>
-          <mantl-templates-select templates="settings.templates"
-                                  possible-options-title="'All Groups:'"
-                                  selected-options-title="'User Groups:'">
-          </mantl-templates-select>
-          <div layout="row">
-            <md-button class="md-warn md-raised">Delete</md-button>
-            <div flex></div>
-            <md-button class="md-primary md-raised">Add New</md-button>
-          </div>
-        </md-card>
+        <form autocomplete="off">
+          <!-- Fix Chrome auto-complete off -->
+          <input style="display:none">
+          <input type="password" style="display:none">
+          <md-card>
+            <md-card-title>
+              <md-card-title-text>
+                <span class="md-headline">General</span>
+              </md-card-title-text>
+            </md-card-title>
+            <md-input-container>
+              <label>Jira URL:</label>
+              <input type="text">
+            </md-input-container>
+            <md-input-container>
+              <label>System Account:</label>
+              <input type="text" autocomplete="off">
+            </md-input-container>
+            <md-input-container>
+              <label>Password:</label>
+              <input type="password" autocomplete="off">
+            </md-input-container>
+          </md-card>
+          <md-card>
+            <md-card-title>
+              <md-card-title-text>
+                <span class="md-headline">Templates</span>
+              </md-card-title-text>
+            </md-card-title>
+            <mantl-templates-select templates="settings.templates"
+                                    possible-options-title="'All Groups:'"
+                                    selected-options-title="'User Groups:'">
+            </mantl-templates-select>
+            <div layout="row">
+              <md-button class="md-warn md-raised">Delete</md-button>
+              <div flex></div>
+              <md-button class="md-primary md-raised">Add New</md-button>
+            </div>
+          </md-card>
+        </form>
       </div>
       <div ng-if="settings.selectedAccount === 4">
         <md-card>

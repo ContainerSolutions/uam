@@ -1,6 +1,6 @@
 <div layout="row" class="users-wrapper">
   <div flex="25">
-    <mantl-user-select data="users.usersData"></mantl-user-select>
+    <mantl-user-select selected="users.selected"></mantl-user-select>
   </div>
   <div class="section-divider"></div>
   <div flex layout="column">
@@ -15,19 +15,19 @@
             </md-card-title>
             <md-input-container>
               <label>First Name</label>
-              <input ng-model="users.usersData.selected.firstName" type="text">
+              <input ng-model="users.selected.firstName" type="text">
             </md-input-container>
             <md-input-container>
               <label>Last Name</label>
-              <input ng-model="users.usersData.selected.lastName" type="text">
+              <input ng-model="users.selected.lastName" type="text">
             </md-input-container>
             <md-input-container>
               <label>Unique ID</label>
-              <input ng-model="users.usersData.selected.id" type="text">
+              <input ng-model="users.selected.id" type="text">
             </md-input-container>
             <md-input-container>
               <label>Email</label>
-              <input ng-model="users.usersData.selected.email" type="email">
+              <input ng-model="users.selected.email" type="email">
             </md-input-container>
           </md-card>
           <md-card ng-if="users.selectedAccount === 1">

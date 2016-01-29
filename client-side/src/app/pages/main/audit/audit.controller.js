@@ -6,10 +6,10 @@
     .controller('AuditController', AuditController);
 
   /** @ngInject */
-  function AuditController(UsersService) {
+  function AuditController() {
     var vm = this;
 
-    vm.usersData = angular.copy(UsersService.getData());
+    vm.selected = {};
     vm.searchQuery = '';
   }
 })();

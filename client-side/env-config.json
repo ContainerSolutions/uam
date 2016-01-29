@@ -1,7 +1,7 @@
 {
   "local": {
     "ENV": {
-      "api": "http://localhost:8083/",
+      "api": "http://192.168.3.60:8080/",
       "debugEnabled": true
     }
   },

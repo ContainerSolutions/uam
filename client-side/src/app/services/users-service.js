@@ -6,11 +6,10 @@
     .factory('UsersService', UsersService);
 
   /** @ngInject */
-  function UsersService(ENV) {
+  function UsersService($resource, ENV, $log) {
 
     //mock data
-    var data = {
-      selected: {},
+    var usersData = {
       users: [
         {
           firstName: 'Petia',
@@ -102,18 +101,44 @@
         }
       ]
     };
+    var loadersData = {
+      fetchingUsers: false,
+      fetchingEvents: false,
+      addingUser: false,
+      deletingUser: false
+    };
 
     return {
       getData: getData,
+      getLoadersData: getLoadersData,
       fetchUsers: fetchUsers
     };
 
     function getData() {
-      return data;
+      return usersData;
+    }
+
+    function getLoadersData() {
+      return loadersData;
     }
 
     function fetchUsers() {
-      return ENV.api;
+      var url = 'users';
+
+      loadersData.fetchingUsers = true;
+      $resource(ENV.api + url).query({}, onSuccess, onError);
+
+      function onSuccess(response) {
+        usersData.users = response.data.users;
+        loadersData.fetchingUsers = false;
+        $log.debug('XHR Success: GET ' + ENV.api + url);
+        return response.data.users;
+      }
+
+      function onError(error) {
+        loadersData.fetchingUsers = false;
+        $log.debug('XHR FAIL: GET ' + ENV.api + url + '\n' + error.data);
+      }
     }
   }
 })();
