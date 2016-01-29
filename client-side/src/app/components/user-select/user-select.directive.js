@@ -24,7 +24,6 @@
 
       vm.searchQuery = '';
       vm.data = UsersService.getData();
-      vm.loadersData = UsersService.getLoadersData();
       vm.updateSelected = updateSelected;
 
       UsersService.fetchUsers();

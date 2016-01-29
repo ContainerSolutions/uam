@@ -12,47 +12,41 @@
     var usersData = {
       users: []
     };
-    var loadersData = {
-      fetchingUsers: false,
-      fetchingEvents: false,
-      addingUser: false,
-      deletingUser: false
-    };
 
     return {
       getData: getData,
-      getLoadersData: getLoadersData,
-      fetchUsers: fetchUsers
+      fetchUsers: fetchUsers,
+      deleteUser: deleteUser
     };
 
     function getData() {
       return usersData;
     }
 
-    function getLoadersData() {
-      return loadersData;
-    }
-
     function fetchUsers() {
       var url = 'users';
 
-      loadersData.fetchingUsers = true;
-      $resource(ENV.api + url).query({}, onSuccess, onError);
+      $resource(ENV.api + url).query({}, onSuccess);
 
       function onSuccess(users) {
         if (!angular.isArray(users)) {
-          onError({data: 'Expected array. Got ' + angular.toJson(users)});
-          return
+          $log.debug('Expected array. Got ' + angular.toJson(users));
+          return;
         }
 
         usersData.users = users;
-        loadersData.fetchingUsers = false;
         $log.debug('XHR Success: GET ' + ENV.api + url);
       }
+    }
 
-      function onError(error) {
-        loadersData.fetchingUsers = false;
-        $log.debug('XHR FAIL: GET ' + ENV.api + url + '\n' + error.data);
+    function deleteUser(id) {
+      var url = 'users/' + id;
+
+      $resource(ENV.api + url).remove({}, onSuccess);
+
+      function onSuccess(data) {
+        fetchUsers();
+        $log.debug('XHR Success: DELETE ' + ENV.api + url + '\n' + data);
       }
     }
   }

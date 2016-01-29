@@ -6,7 +6,7 @@
     .controller('UsersController', UsersController);
 
   /** @ngInject */
-  function UsersController(TemplatesService, $mdDialog) {
+  function UsersController($mdDialog, UsersService, TemplatesService) {
     var vm = this;
 
     vm.searchQuery = '';
@@ -35,14 +35,6 @@
     vm.retireUser = retireUser;
 
     function retireUser(ev) {
-      //var confirm = $mdDialog.confirm()
-      //  .title('Confirm User Dismissal')
-      //  .textContent('Are you sure you want to delete user ' + vm.selected.firstName + ' ' + vm.selected.lastName + '?')
-      //  .ariaLabel('Retire user')
-      //  .targetEvent(ev)
-      //  .ok('Retire')
-      //  .cancel('Cancel');
-
       var confirm = $mdDialog.confirm({
         title: 'Confirm User Dismissal',
         textContent: 'Are you sure you want to delete user ' + vm.selected.firstName + ' ' + vm.selected.lastName + '?',
@@ -53,7 +45,7 @@
       });
 
       $mdDialog.show(confirm).then(function () {
-
+        UsersService.deleteUser(vm.selected.id);
       });
     }
   }

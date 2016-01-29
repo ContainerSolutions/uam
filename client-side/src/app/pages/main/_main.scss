@@ -69,3 +69,15 @@ md-card md-card-title {
   text-align: center;
   padding: $offset-standard 0;
 }
+
+#loading-bar {
+  position: absolute;
+  width: 100vw;
+  .bar {
+    background: none;
+    background-image: linear-gradient(to right, $color-gray, $color-blue);
+    .peg {
+      box-shadow: $color-light-green 5px 2px 15px 2px;
+    }
+  }
+}

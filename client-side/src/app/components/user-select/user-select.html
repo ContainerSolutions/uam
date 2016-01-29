@@ -3,13 +3,7 @@
     <label>Search user:</label>
     <input ng-model="vm.searchQuery" type="text">
   </md-input-container>
-  <div layout="row"
-       layout-align="center center"
-       ng-show="vm.loadersData.fetchingUsers"
-       class="loader-wrapper">
-    <md-progress-circular md-mode="indeterminate"></md-progress-circular>
-  </div>
-  <md-list ng-class="{opaque: vm.loadersData.fetchingUsers}" class="user-list">
+  <md-list class="user-list">
     <md-list-item ng-repeat="user in vm.data.users | filter: vm.searchQuery track by $index"
                   ng-click="vm.updateSelected($index)"
                   ng-class="{selected: vm.selectedIndex === $index}">
