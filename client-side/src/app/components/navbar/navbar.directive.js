@@ -17,12 +17,13 @@
     };
 
     /** @ngInject */
-    function NavbarController($rootScope) {
+    function NavbarController($rootScope, $state) {
       var vm = this;
 
       vm.user = {
         name: 'John Galt'
       };
+      vm.activeState = $state.current.name;
 
       vm.links = [
         {
