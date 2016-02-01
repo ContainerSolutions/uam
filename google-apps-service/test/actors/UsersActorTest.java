@@ -12,7 +12,7 @@ import akka.actor.UntypedActor;
 import akka.testkit.JavaTestKit;
 import scala.concurrent.duration.Duration;
 
-public class GetAllUsersActorTest
+public class UsersActorTest
 {
 
 	private static ActorSystem system;
@@ -36,7 +36,7 @@ public class GetAllUsersActorTest
 		new JavaTestKit(system)
 		{
 			{
-				final Props props = Props.create(GetAllUsersActor.class);
+				final Props props = Props.create(UsersActor.class);
 				final ActorRef subject = system.actorOf(props);
 
 				final JavaTestKit probe = new JavaTestKit(system);

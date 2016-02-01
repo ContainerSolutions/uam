@@ -2,8 +2,8 @@ package actors;
 
 import akka.actor.UntypedActor;
 import akka.actor.ActorRef;
-//local code review (vtegza): Breake model to domain specific. ex: UserActor, GroupActor, etc @ 29.01.16
-public class GetAllUsersActor extends UntypedActor
+//local code review (vtegza): Breake model to domain specific ex UserActor, GroupActor, etc @ 29.01.16
+public class UsersActor extends UntypedActor
 {
 
 	private ActorRef target = null ;
@@ -30,25 +30,4 @@ public class GetAllUsersActor extends UntypedActor
 
 	}
 
-	public static class AllGroups
-	{
-
-	}
-
-	public static class GetUserGroups
-	{
-
-		private final String user;
-
-		public GetUserGroups(String user)
-		{
-			this.user = user;
-		}
-
-		public String getUser()
-		{
-			return user;
-		}
-
-	}
 }

@@ -79,41 +79,49 @@ public class GoogleServiceFactoryImpl implements GoogleServiceFactory
 		return credential;
 	}
 //@Override
-	public Credential createDomainWideDirectoryCredential() throws GeneralSecurityException, IOException, URISyntaxException
+	public Credential createDomainWideDirectoryCredential() throws GeneralSecurityException, IOException
 	{
 
-		//local code review (vtegza): key should be loaded from Vault @ 26.01.16
-		File secFile = new File(GoogleServiceFactoryImpl.class.getResource("/uar-mantlio-0c5273f07730.p12").toURI());
-
-		GoogleCredential cred = new GoogleCredential.Builder()
-		.setTransport(httpTransport)
-		.setJsonFactory(jsonFactory)
-		.setServiceAccountId(SERVICE_ACCOUNT_EMAIL)
-		.setServiceAccountScopes(Collections.singletonList(DirectoryScopes.ADMIN_DIRECTORY_USER))
-		.setServiceAccountUser(ADMIN_ACCOUNT_EMAIL)
-		.setServiceAccountPrivateKeyFromP12File(secFile)
-		.build();
-
-		Directory service = new Directory.Builder(httpTransport, jsonFactory, null).setHttpRequestInitializer(cred).build();
-
-		List<User> results = service.users().list()
-		                     .setMaxResults(10)
-		                     //.setCustomer("dio-soft.com")
-		                     .setOrderBy("email")
-		                     .execute().getUsers();
-
-		results.forEach( user ->
+		try
 		{
-			System.out.println(user.getName().getFullName());
-		});
+			//local code review (vtegza): key should be loaded from Vault @ 26.01.16
+			File secFile = new File(GoogleServiceFactoryImpl.class.getResource("/uar-mantlio-0c5273f07730.p12").toURI());
+
+			GoogleCredential cred = new GoogleCredential.Builder()
+			.setTransport(httpTransport)
+			.setJsonFactory(jsonFactory)
+			.setServiceAccountId(SERVICE_ACCOUNT_EMAIL)
+			.setServiceAccountScopes(Collections.singletonList(DirectoryScopes.ADMIN_DIRECTORY_USER))
+			.setServiceAccountUser(ADMIN_ACCOUNT_EMAIL)
+			.setServiceAccountPrivateKeyFromP12File(secFile)
+			.build();
+
+			Directory service = new Directory.Builder(httpTransport, jsonFactory, null).setHttpRequestInitializer(cred).build();
+
+			List<User> results = service.users().list()
+			                     .setMaxResults(10)
+			                     //.setCustomer("dio-soft.com")
+			                     .setOrderBy("email")
+			                     .execute().getUsers();
+
+			results.forEach( user ->
+			{
+				System.out.println(user.getName().getFullName());
+			});
 
 
-		return cred;
+			return cred;
+		}
+		catch (URISyntaxException ex )
+		{
+			// inaproporate system sate
+			throw new IllegalStateException(ex.getMessage());
+		}
 	}
 
 
 	@Override
-	public Directory creatDirectoryService() throws IOException, GeneralSecurityException, URISyntaxException
+	public Directory creatDirectoryService() throws IOException, GeneralSecurityException
 	{
 		//createDomainWideDirectoryCredential();
 
