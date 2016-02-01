@@ -1,6 +1,8 @@
 <div layout="row" class="users-wrapper">
   <div flex="25">
-    <mantl-user-select selected="users.selected"></mantl-user-select>
+    <mantl-user-select selected="users.selected"
+                       selected-backup-copy="users.selectedBackupCopy">
+    </mantl-user-select>
   </div>
   <div class="section-divider"></div>
   <div flex layout="column">
@@ -13,22 +15,9 @@
                 <span class="md-headline">General</span>
               </md-card-title-text>
             </md-card-title>
-            <md-input-container>
-              <label>First Name</label>
-              <input ng-model="users.selected.firstName" type="text">
-            </md-input-container>
-            <md-input-container>
-              <label>Last Name</label>
-              <input ng-model="users.selected.lastName" type="text">
-            </md-input-container>
-            <md-input-container>
-              <label>Unique ID</label>
-              <input ng-model="users.selected.id" type="text">
-            </md-input-container>
-            <md-input-container>
-              <label>Email</label>
-              <input ng-model="users.selected.email" type="email">
-            </md-input-container>
+            <form name="users.userForm">
+              <mantl-user-form user="users.selected" form="users.userForm"></mantl-user-form>
+            </form>
           </md-card>
           <md-card ng-if="users.selectedAccount === 1">
             <md-card-title>
@@ -91,13 +80,13 @@
       </div>
       <div class="buttons-wrapper-divider"></div>
       <div layout="row" class="actions-wrapper">
-        <div flex>
-          <md-button ng-click="users.retireUser()"
-                     ng-if="users.selected.firstName"
-                     class="md-warn md-raised">Retire
-          </md-button>
-        </div>
-        <md-button class="md-primary md-raised">Save</md-button>
+        <md-button ng-click="users.retireUser()"
+                   ng-if="users.selected.firstName"
+                   class="md-warn md-raised">Retire
+        </md-button>
+        <span flex></span>
+        <md-button ng-click="users.save()" ng-if="users.selected.firstName" class="md-primary md-raised">Save
+        </md-button>
         <md-button class="md-raised">Discard</md-button>
       </div>
     </div>

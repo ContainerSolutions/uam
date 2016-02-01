@@ -8,9 +8,15 @@
       <md-list-item ng-repeat="user in vm.data.users | filter: vm.searchQuery track by $index"
                     ng-click="vm.updateSelected($index)"
                     ng-class="{selected: vm.selectedIndex === $index}">
-        {{user.firstName}} {{user.lastName}}
+        <p>{{user.firstName}} {{user.lastName}}</p>
       </md-list-item>
     </md-list>
   </div>
-  <md-button class="md-primary md-raised">New User</md-button>
+  <div layout="row">
+    <md-button ng-click="vm.addUser()"
+               class="md-primary md-raised"
+               id="add-user-btn">
+      New User
+    </md-button>
+  </div>
 </div>

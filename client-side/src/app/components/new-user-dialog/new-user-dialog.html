@@ -1,0 +1,33 @@
+<md-dialog ng-controller="NewUserDialogController as newUser"
+           class="new-user-dialog"
+           aria-label="Add New User"
+           ng-cloak>
+  <form name="newUser.form">
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Add New User</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="newUser.close()">
+          <i class="material-icons">clear</i>
+        </md-button>
+      </div>
+    </md-toolbar>
+    <md-dialog-content>
+      <div class="md-dialog-content">
+        <p ng-if="newUser.error" class="error-msg">
+          {{newUser.error}}
+        </p>
+        <mantl-user-form user="newUser.user" form="newUser.form"></mantl-user-form>
+      </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+      <span flex></span>
+      <md-button class="md-primary md-raised" ng-click="newUser.save()">
+        Save
+      </md-button>
+      <md-button class=" md-raised" ng-click="newUser.close()">
+        Cancel
+      </md-button>
+    </md-dialog-actions>
+  </form>
+</md-dialog>

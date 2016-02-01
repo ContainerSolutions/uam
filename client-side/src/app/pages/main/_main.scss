@@ -79,9 +79,19 @@ md-card md-card-title {
   width: 100vw;
   .bar {
     background: none;
-    background-image: linear-gradient(to right, $color-gray, $color-blue);
+    background-image: linear-gradient(to right, $color-gray, $color-red);
     .peg {
-      box-shadow: $color-blue 5px 2px 15px 2px;
+      box-shadow: $color-red 5px 2px 15px 2px;
     }
   }
 }
+
+.warn {
+  color: $color-red;
+}
+
+.md-dialog-content .error-msg {
+  margin: 0 0 $offset-standard * 2 0;
+  @extend .warn;
+}
+

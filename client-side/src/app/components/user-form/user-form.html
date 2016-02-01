@@ -1,0 +1,41 @@
+<md-input-container>
+  <label>First Name</label>
+  <input ng-model="vm.user.firstName"
+         name="firstName"
+         type="text"
+         required>
+  <div ng-messages="vm.form.firstName.$error">
+    <div ng-message="required">This field is required.</div>
+  </div>
+</md-input-container>
+<md-input-container>
+  <label>Last Name</label>
+  <input ng-model="vm.user.lastName"
+         name="lastName"
+         type="text"
+         required>
+  <div ng-messages="vm.form.lastName.$error">
+    <div ng-message="required">This field is required.</div>
+  </div>
+</md-input-container>
+<md-input-container>
+  <label>Unique ID</label>
+  <input ng-model="vm.user.id"
+         name="id"
+         type="text"
+         required>
+  <div ng-messages="vm.form.id.$error">
+    <div ng-message="required">This field is required.</div>
+  </div>
+</md-input-container>
+<md-input-container>
+  <label>Email</label>
+  <input ng-model="vm.user.email"
+         name="email"
+         type="email"
+         required>
+  <div ng-messages="vm.form.email.$error">
+    <div ng-message="required">This field is required.</div>
+    <div ng-message="email">Please provide valid email address.</div>
+  </div>
+</md-input-container>

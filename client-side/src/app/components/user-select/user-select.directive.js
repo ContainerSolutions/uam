@@ -11,7 +11,8 @@
       restrict: 'E',
       templateUrl: 'app/components/user-select/user-select.html',
       scope: {
-        selected: '='
+        selected: '=',
+        selectedBackupCopy: '='
       },
       controller: UserSelectController,
       controllerAs: 'vm',
@@ -19,18 +20,27 @@
     };
 
     /** @ngInject */
-    function UserSelectController(UsersService) {
+    function UserSelectController(UsersService, $mdDialog) {
       var vm = this;
 
       vm.searchQuery = '';
       vm.data = UsersService.getData();
       vm.updateSelected = updateSelected;
+      vm.addUser = addUser;
 
-      UsersService.fetchUsers();
+      UsersService.fetch();
 
       function updateSelected(index) {
         vm.selected = vm.data.users[index];
+        vm.selectedBackupCopy = angular.copy(vm.selected);
         vm.selectedIndex = index;
+      }
+
+      function addUser(ev) {
+        $mdDialog.show({
+          targetEvent: ev,
+          templateUrl: 'app/components/new-user-dialog/new-user-dialog.html'
+        });
       }
     }
   }
