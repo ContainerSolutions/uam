@@ -3,6 +3,7 @@
 var path = require('path');
 var gulp = require('gulp');
 var conf = require('./conf');
+var envConfig = require('./env-config.js');
 
 var browserSync = require('browser-sync');
 var browserSyncSpa = require('browser-sync-spa');
@@ -46,12 +47,28 @@ browserSync.use(browserSyncSpa({
   selector: '[ng-app]'// Only needed for angular apps
 }));
 
-gulp.task('serve', ['watch'], function () {
+gulp.task('config:local', function () {
+  envConfig.setVariables('local');
+});
+
+gulp.task('config:qa', function () {
+  envConfig.setVariables('qa');
+});
+
+gulp.task('config:dist', function () {
+  envConfig.setVariables('dist');
+});
+
+gulp.task('serve:local', ['config:local', 'watch'], function () {
   browserSyncInit([path.join(conf.paths.tmp, '/serve'), conf.paths.src]);
 });
 
-gulp.task('serve:dist', ['build'], function () {
-  browserSyncInit(conf.paths.dist);
+gulp.task('serve:qa', ['config:qa', 'watch'], function () {
+  browserSyncInit([path.join(conf.paths.tmp, '/serve'), conf.paths.src]);
+});
+
+gulp.task('serve:dist', ['config:dist', 'watch'], function () {
+  browserSyncInit([path.join(conf.paths.tmp, '/serve'), conf.paths.src]);
 });
 
 gulp.task('serve:e2e', ['inject'], function () {

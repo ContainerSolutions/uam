@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
@@ -28,8 +29,6 @@ import com.google.api.services.admin.directory.DirectoryScopes;
 import com.google.api.services.admin.directory.model.*;
 import com.google.api.services.admin.directory.Directory;
 
-//import com.google.api.services.gmai.Gmail;
-
 public class GoogleServiceFactoryImpl implements GoogleServiceFactory
 {
 	private static final String ADMIN_ACCOUNT_EMAIL = "pghukasyan@dio-soft.com";
@@ -37,9 +36,14 @@ public class GoogleServiceFactoryImpl implements GoogleServiceFactory
 	private final HttpTransport httpTransport;
 	private final JsonFactory jsonFactory;
 	private final FileDataStoreFactory dataStoreFactory;
-	private static final List<String> SCOPES = Arrays.asList(
-	            DirectoryScopes.ADMIN_DIRECTORY_USER_READONLY
-	        );
+	private static final List<String> SCOPES = new ArrayList(DirectoryScopes.all());/*Arrays.asList(*/
+	//DirectoryScopes.ADMIN_DIRECTORY_USER_READONLY,
+	//DirectoryScopes.ADMIN_DIRECTORY_GROUP,
+	//DirectoryScopes.ADMIN_DIRECTORY_USER,
+	//DirectoryScopes.ADMIN_DIRECTORY_GROUP_MEMBER_READONLY,
+	//DirectoryScopes.ADMIN_DIRECTORY_GROUP_READONLY,
+	//DirectoryScopes.ADMIN_DIRECTORY_GROUP_MEMBER
+	/*);*/
 
 	public GoogleServiceFactoryImpl() throws GeneralSecurityException, IOException
 	{

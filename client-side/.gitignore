@@ -7,3 +7,4 @@ coverage/
 dist/
 /.project
 /.tern-project
+src/app/env-config.js

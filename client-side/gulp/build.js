@@ -3,6 +3,7 @@
 var path = require('path');
 var gulp = require('gulp');
 var conf = require('./conf');
+var envConfig = require('./env-config.js');
 
 var $ = require('gulp-load-plugins')({
   pattern: ['gulp-*', 'main-bower-files', 'uglify-save-license', 'del']
@@ -95,4 +96,13 @@ gulp.task('clean', function () {
   return $.del([path.join(conf.paths.dist, '/'), path.join(conf.paths.tmp, '/')]);
 });
 
-gulp.task('build', ['html', 'fonts', 'other']);
+gulp.task('config:local', function () {
+  envConfig.setVariables('local');
+});
+
+gulp.task('config:prod', function () {
+  envConfig.setVariables('prod');
+});
+
+gulp.task('build:qa', ['config:qa', 'html', 'fonts', 'other']);
+gulp.task('build:dist', ['config:dist', 'html', 'fonts', 'other']);

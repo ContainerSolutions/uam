@@ -3,6 +3,8 @@
 
   angular
     .module('mantl', [
+      'mantl.ENV',
+      'angular-loading-bar',
       'ngAnimate',
       'ngMessages',
       'ngAria',

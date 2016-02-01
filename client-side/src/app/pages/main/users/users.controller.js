@@ -6,13 +6,12 @@
     .controller('UsersController', UsersController);
 
   /** @ngInject */
-  function UsersController(UsersService, TemplatesService) {
+  function UsersController($mdDialog, UsersService, TemplatesService) {
     var vm = this;
 
     vm.searchQuery = '';
 
-    //mock data
-    vm.usersData = angular.copy(UsersService.getData());
+    vm.selected = {};
     vm.templates = angular.copy(TemplatesService.getTemplates());
     vm.selectedAccount = 0;
     vm.accounts = [
@@ -32,5 +31,22 @@
         name: 'AD'
       }
     ];
+
+    vm.retireUser = retireUser;
+
+    function retireUser(ev) {
+      var confirm = $mdDialog.confirm({
+        title: 'Confirm User Dismissal',
+        textContent: 'Are you sure you want to delete user ' + vm.selected.firstName + ' ' + vm.selected.lastName + '?',
+        ariaLabel: 'Retire user',
+        targetEvent: ev,
+        ok: 'Retire',
+        cancel: 'Cancel'
+      });
+
+      $mdDialog.show(confirm).then(function () {
+        UsersService.deleteUser(vm.selected.id);
+      });
+    }
   }
 })();
