@@ -6,8 +6,8 @@
     </md-input-container>
     <md-list class="user-list">
       <md-list-item ng-repeat="user in vm.data.users | filter: vm.searchQuery track by $index"
-                    ng-click="vm.updateSelected($index)"
-                    ng-class="{selected: vm.selectedIndex === $index}">
+                    ng-click="vm.updateSelected(user)"
+                    ng-class="{selected: user.selected}">
         <p>{{user.firstName}} {{user.lastName}}</p>
       </md-list-item>
     </md-list>

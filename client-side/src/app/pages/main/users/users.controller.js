@@ -61,6 +61,8 @@
     }
 
     function updateUserGeneralInfo() {
+      var user;
+
       if (!vm.userForm.$valid) {
         angular.forEach(vm.userForm.$error.required, function (field) {
           field.$setTouched()
@@ -69,7 +71,10 @@
         return;
       }
 
-      UsersService.update(vm.selectedBackupCopy.id, vm.selected, onSuccess);
+      user = angular.copy(vm.selected);
+      delete user.selected;
+
+      UsersService.update(vm.selectedBackupCopy.id, user, onSuccess);
 
       function onSuccess() {
         vm.selectedBackupCopy = angular.copy(vm.selected);

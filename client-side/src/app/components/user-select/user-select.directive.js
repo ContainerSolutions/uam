@@ -30,10 +30,14 @@
 
       UsersService.fetch();
 
-      function updateSelected(index) {
-        vm.selected = vm.data.users[index];
+      function updateSelected(user) {
+        angular.forEach(vm.data.users, function (user) {
+          user.selected = false;
+        });
+
+        vm.selected = user;
         vm.selectedBackupCopy = angular.copy(vm.selected);
-        vm.selectedIndex = index;
+        vm.selected.selected = true;
       }
 
       function addUser(ev) {
