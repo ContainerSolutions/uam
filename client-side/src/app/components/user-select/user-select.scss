@@ -4,13 +4,8 @@ mantl-user-select {
   }
 
   .user-list {
-    height: calc(100vh - 261px);
+    height: calc(100vh - 264px);
     min-height: 100px;
     overflow-y: auto;
-
-    &.opaque {
-      height: calc(100vh - 254px - 80px); //80 is the height of loader spinner
-      opacity: 0;
-    }
   }
 }
