@@ -14,6 +14,8 @@ import actors.RemoveUserActor;
 import actors.RemoveUserActor.RemoveUserMessage;
 import actors.CreateUserActor;
 import actors.CreateUserActor.CreateUserMessage;
+import actors.UpdateUserActor;
+import actors.UpdateUserActor.UpdateUserMessage;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
@@ -32,6 +34,7 @@ public class Application extends Controller {
 	private static final Timeout TIMEOUT = new Timeout(10, TimeUnit.SECONDS);
 	private final ActorRef getUsersActor;
 	private final ActorRef createUserActor;
+	private final ActorRef updateUserActor;
 	private final ActorRef removeUserActor;
 
 	@Inject
@@ -39,6 +42,7 @@ public class Application extends Controller {
 		OrientGraphFactory graphFactory = new OrientGraphFactory("remote:192.168.99.100:32782/UserAccessControl");
 		getUsersActor = system.actorOf(Props.create(GetUsersActor.class, graphFactory));
 		createUserActor = system.actorOf(Props.create(CreateUserActor.class, graphFactory));
+		updateUserActor = system.actorOf(Props.create(UpdateUserActor.class, graphFactory));
 		removeUserActor = system.actorOf(Props.create(RemoveUserActor.class, graphFactory));
 	}
 
@@ -55,6 +59,13 @@ public class Application extends Controller {
 	public Promise<Result> post() {
 		return Promise.wrap(Patterns.ask(createUserActor, new CreateUserMessage(Json.fromJson(request().body().asJson(), User.class)), TIMEOUT))
 				.map(response -> StringUtils.equals("Ok", response.toString()) ? created()
+						: internalServerError(response.toString()));
+	}
+	
+	@BodyParser.Of(BodyParser.Json.class)
+	public Promise<Result> update(String id) {
+		return Promise.wrap(Patterns.ask(updateUserActor, new UpdateUserMessage(id, Json.fromJson(request().body().asJson(), User.class)), TIMEOUT))
+				.map(response -> StringUtils.equals("Ok", response.toString()) ? ok()
 						: internalServerError(response.toString()));
 	}
 

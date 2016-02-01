@@ -13,7 +13,7 @@ public class MantlConfigFactoryTest {
 	@Test
 	public void testLoad() throws Exception {
 		running(fakeApplication(), () -> {
-			Configuration config = MantlConfigFactory.load("consul.url", "testKey");
+			Configuration config = MantlConfigFactory.load("consul.url", "jiraservice");
 
 			Assert.assertEquals("http://192.168.99.100:32780/rest/api/2", config.getString("jiraservice/jira/url"));
 		});

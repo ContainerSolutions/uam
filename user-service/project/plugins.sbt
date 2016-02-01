@@ -22,3 +22,6 @@ addSbtPlugin("com.typesafe.sbt" % "sbt-play-enhancer" % "1.1.0")
 
 // Eclipse plugin to add/update eclipse project files
 addSbtPlugin("com.typesafe.sbteclipse" % "sbteclipse-plugin" % "4.0.0")
+
+// Used latest packager plugin to stage docker without error on windows
+addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.0.6")

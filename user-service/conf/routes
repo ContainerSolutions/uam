@@ -6,6 +6,7 @@
 GET     /                           controllers.Application.index()
 GET     /users                      controllers.Application.getAll()
 POST    /users                      controllers.Application.post()
+PUT     /users/:id                  controllers.Application.update(id)
 DELETE  /users/:id                  controllers.Application.delete(id)
 
 # Map static resources from the /public folder to the /assets URL path
