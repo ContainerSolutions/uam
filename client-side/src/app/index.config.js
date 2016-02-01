@@ -18,7 +18,7 @@
     $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
     cfpLoadingBarProvider.includeSpinner = false;
-    cfpLoadingBarProvider.latencyThreshold = 100;
+    cfpLoadingBarProvider.latencyThreshold = 200;
 
   }
 
