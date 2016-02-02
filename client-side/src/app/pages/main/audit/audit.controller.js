@@ -10,6 +10,7 @@
     var vm = this;
 
     vm.selected = {};
+    vm.selectedBackupCopy = {};
     vm.searchQuery = '';
   }
 })();

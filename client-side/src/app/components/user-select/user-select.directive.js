@@ -25,6 +25,7 @@
 
       vm.searchQuery = '';
       vm.data = UsersService.getData();
+
       vm.updateSelected = updateSelected;
       vm.addUser = addUser;
 
