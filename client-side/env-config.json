@@ -7,13 +7,13 @@
   },
   "qa": {
     "ENV": {
-      "api": "http://api.qa:8083/",
+      "api": "http://192.168.3.60:8080/",
       "debugEnabled": true
     }
   },
   "dist": {
     "ENV": {
-      "api": "https://api.prod.com/",
+      "api": "http://192.168.3.60:8080/",
       "debugEnabled": false
     }
   }
