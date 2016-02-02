@@ -59,6 +59,10 @@ gulp.task('config:dist', function () {
   envConfig.setVariables('dist');
 });
 
+gulp.task('serve', ['config:local', 'watch'], function () {
+  browserSyncInit([path.join(conf.paths.tmp, '/serve'), conf.paths.src]);
+});
+
 gulp.task('serve:local', ['config:local', 'watch'], function () {
   browserSyncInit([path.join(conf.paths.tmp, '/serve'), conf.paths.src]);
 });
