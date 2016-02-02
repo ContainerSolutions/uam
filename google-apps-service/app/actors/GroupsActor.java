@@ -48,7 +48,6 @@ public class GroupsActor extends UntypedActor
 			try
 			{
 				directory = gFactory.creatDirectoryService();
-
 			}
 			catch (GeneralSecurityException | IOException  ex)
 			{
@@ -61,7 +60,7 @@ public class GroupsActor extends UntypedActor
 
 			GetUserGroups message = (GetUserGroups) msg;
 
-			List<String> groups = directoryHelper.excetuteGetUserGroups(directory, message.getDomain(), message.getUser());
+			List<String> groups = directoryHelper.executeGetUserGroups(directory, message.getDomain(), message.getUser());
 			System.out.println("requested " + message.getUser() + " " + message.getDomain() + " " + groups );
 			getSender().tell(groups, getSelf());
 		}
