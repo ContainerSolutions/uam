@@ -3,11 +3,10 @@
 # ~~~~
 
 # Home page
-GET     /                           controllers.Application.index()
-GET     /account/all                controllers.Application.getAll()
-GET     /account/:name              controllers.Application.get(name)
+GET     /accounts                   controllers.Application.getAll()
+GET     /account/:id                controllers.Application.get(id: String)
 POST    /account                    controllers.Application.post()
-DELETE  /account/:name              controllers.Application.delete(name)
+DELETE  /account/:id                controllers.Application.delete(id: String)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

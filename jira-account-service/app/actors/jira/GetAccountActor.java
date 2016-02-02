@@ -3,10 +3,10 @@ package actors.jira;
 import java.util.concurrent.TimeUnit;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import akka.actor.Props;
 import akka.actor.UntypedActor;
+import models.JiraUser;
 import play.Logger;
 import play.Logger.ALogger;
 import play.libs.Json;
@@ -57,21 +57,19 @@ public class GetAccountActor extends UntypedActor {
 	}
 
 	private void getAccount(GetAccount msg) {
-		sender().tell(client.url(url + "/user?username=" + msg.name).setAuth(user, password).get().map(response -> {
-			if (response.getStatus() != 200) {
-				return response.getBody();
-			}
-			JsonNode jsonNode = response.asJson();
+		sender().tell(client.url(url + "/rest/api/2/user?username=" + msg.name).setAuth(user, password).get()
+				.map(response -> {
+					if (response.getStatus() != 200) {
+						return response.getBody();
+					}
+					JsonNode jsonNode = response.asJson();
 
-			ObjectNode result = Json.newObject();
-			result.set("name", jsonNode.findValue("name"));
-			result.set("email", jsonNode.findValue("emailAddress"));
-			result.set("displayName", jsonNode.findValue("displayName"));
-			result.set("active", jsonNode.findValue("active"));
+					JsonNode result = Json.toJson(new JiraUser(jsonNode.findValue("name").asText(),
+							jsonNode.findValue("emailAddress").asText(), jsonNode.findValue("displayName").asText()));
 
-			logger.info("Result: " + result.toString());
+					logger.info("Result: " + result.toString());
 
-			return result.toString();
-		}).get(10, TimeUnit.SECONDS), self());
+					return result.toString();
+				}).get(10, TimeUnit.SECONDS), self());
 	}
 }

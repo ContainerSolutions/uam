@@ -1,8 +1,9 @@
 package actors.repository;
 
-
 import org.apache.commons.lang.StringUtils;
 
+import com.tinkerpop.blueprints.Vertex;
+import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph;
 import com.tinkerpop.blueprints.impls.orient.OrientGraph;
 import com.tinkerpop.blueprints.impls.orient.OrientGraphFactory;
 import com.tinkerpop.blueprints.impls.orient.OrientVertex;
@@ -14,20 +15,15 @@ import play.Logger.ALogger;
 
 public class CreateAccountVertexActor extends UntypedActor {
 	private static final ALogger logger = Logger.of(CreateAccountVertexActor.class);
-	private static final String vertexClassName = "JiraAccount";
 
 	public static class CreateVertex {
-		public String userId;
-		public String flowId;
-		public String appId;
+		public String userUniqueId;
 
 		public CreateVertex() {
 		}
-		
-		public CreateVertex(String userId, String flowId, String appId) {
-			this.userId = userId;
-			this.flowId = flowId;
-			this.appId = appId;
+
+		public CreateVertex(String userUniqueId) {
+			this.userUniqueId = userUniqueId;
 		}
 	}
 
@@ -55,18 +51,14 @@ public class CreateAccountVertexActor extends UntypedActor {
 	}
 
 	private void createAccount(CreateVertex msg) {
-		logger.info("Create account vertex started: " + msg.userId);
+		logger.info("Create account vertex started: " + msg.userUniqueId);
 		OrientGraph graph = graphFactory.getTx();
 		try {
-			OrientVertex user = graph.getVertex(msg.userId);
-			OrientVertex flow = graph.getVertex(msg.flowId);
-			OrientVertex app = graph.getVertex(msg.appId);
+			Vertex user = getUserVertex(msg.userUniqueId, graph);
 
-			OrientVertex account = graph.addVertex(vertexClassName, StringUtils.lowerCase(vertexClassName));
-			account.setProperty("name", user.getProperty("uniqueId"));
-			account.addEdge("createdIn", flow);
+			OrientVertex account = graph.addVertex("JiraAccount", "jiraaccount");
+			account.setProperty("name", msg.userUniqueId);
 			user.addEdge("hasAccount", account);
-			app.addEdge("forApplication", account);
 
 			graph.commit();
 			sender().tell("Ok", self());
@@ -78,5 +70,15 @@ public class CreateAccountVertexActor extends UntypedActor {
 		} finally {
 			graph.shutdown();
 		}
+	}
+
+	private Vertex getUserVertex(String userUniqueId, OrientBaseGraph graph) throws Exception {
+		for (Vertex user : graph.getVerticesOfClass("User")) {
+			if (StringUtils.equals(user.getProperty("uniqueId"), userUniqueId)) {
+				return user;
+			}
+		}
+
+		throw new Exception("User vertex not found: " + userUniqueId);
 	}
 }

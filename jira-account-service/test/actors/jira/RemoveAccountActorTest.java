@@ -55,7 +55,7 @@ public class RemoveAccountActorTest extends JavaTestKit {
 	@Test
 	public void testOnReceive() throws Exception {
 		// given
-		Mockito.when(client.url(url + "/user?username=" + name)).thenReturn(wsRequest);
+		Mockito.when(client.url(url + "/rest/api/2/user?username=" + name)).thenReturn(wsRequest);
 		Mockito.when(wsRequest.setAuth(user, password)).thenReturn(wsRequest);
 		Mockito.when(wsRequest.delete()).thenReturn(Promise.pure(wsResponse));
 		Mockito.when(wsResponse.getStatus()).thenReturn(204);
@@ -72,7 +72,7 @@ public class RemoveAccountActorTest extends JavaTestKit {
 	@Test
 	public void testOnReceive_whenInvalidJiraResponse() throws Exception {
 		// given
-		Mockito.when(client.url(url + "/user?username=" + name)).thenReturn(wsRequest);
+		Mockito.when(client.url(url + "/rest/api/2/user?username=" + name)).thenReturn(wsRequest);
 		Mockito.when(wsRequest.setAuth(user, password)).thenReturn(wsRequest);
 		Mockito.when(wsRequest.delete()).thenReturn(Promise.pure(wsResponse));
 		Mockito.when(wsResponse.getStatus()).thenReturn(500);

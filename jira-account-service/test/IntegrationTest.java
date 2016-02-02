@@ -14,15 +14,19 @@ import com.tinkerpop.blueprints.impls.orient.OrientGraph;
 import com.tinkerpop.blueprints.impls.orient.OrientGraphFactory;
 import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 
+import models.JiraUser;
 import play.libs.Json;
 import play.libs.ws.WS;
 import play.libs.ws.WSResponse;
 
 public class IntegrationTest {
-	private static final String name = RandomStringUtils.randomAlphabetic(10);
+	private static final String id = RandomStringUtils.randomAlphabetic(10);
+	private static final String firstName = RandomStringUtils.randomAlphabetic(10);
+	private static final String lastName = RandomStringUtils.randomAlphabetic(10);
+	private static final String displayName = firstName + ' ' + lastName;
+	private static final String email = firstName.charAt(0) + lastName + "@dio-soft.com";
+
 	private static String userId = null;
-	private static String flowId = null;
-	private static String appId = null;
 
 	@BeforeClass
 	public static void setUp() {
@@ -30,12 +34,10 @@ public class IntegrationTest {
 		OrientGraph graph = new OrientGraphFactory("remote:192.168.99.100:32782/UserAccessControl").getTx();
 		try {
 			OrientVertex user = graph.addVertex("User", "user");
-			OrientVertex flow = graph.addVertex("Flow", "flow");
-			OrientVertex app = graph.addVertex("Application", "application");
-			user.setProperty("uniqueId", name);
-			user.setProperty("firstName", "aFirstName");
-			user.setProperty("lastName", "aLastName");
-			user.setProperty("email", "anEmail@fake.fake");
+			user.setProperty("uniqueId", id);
+			user.setProperty("firstName", firstName);
+			user.setProperty("lastName", lastName);
+			user.setProperty("email", email);
 			user.setProperty("created", new Date());
 			user.setProperty("updated", new Date());
 			user.setProperty("active", true);
@@ -43,8 +45,6 @@ public class IntegrationTest {
 			graph.commit();
 
 			userId = user.getId().toString();
-			flowId = flow.getId().toString();
-			appId = app.getId().toString();
 		} catch (Exception e) {
 			graph.rollback();
 		} finally {
@@ -58,8 +58,6 @@ public class IntegrationTest {
 		OrientGraph graph = new OrientGraphFactory("remote:192.168.99.100:32782/UserAccessControl").getTx();
 		try {
 			graph.removeVertex(graph.getVertex(userId));
-			graph.removeVertex(graph.getVertex(flowId));
-			graph.removeVertex(graph.getVertex(appId));
 
 			graph.commit();
 		} catch (Exception e) {
@@ -75,45 +73,42 @@ public class IntegrationTest {
 			public void run() {
 
 				// User does not exist in all Jira accounts
-				WSResponse response = WS.url("http://localhost:3333/account/all").get().get(5000);
+				WSResponse response = WS.url("http://localhost:3333/accounts").get().get(5000);
 				Assert.assertEquals(200, response.getStatus());
 				JsonNode jsonNode = response.asJson();
 				Assert.assertTrue(jsonNode.isArray());
-				Assert.assertFalse(jsonNode.toString().contains(name));
+				Assert.assertFalse(jsonNode.toString().contains(id));
 
 				// Create account in Jira
 				response = WS.url("http://localhost:3333/account")
-						.post(Json.parse("{\"userId\":\"" + userId + "\", \"flowId\":\"" + flowId + "\", \"appId\":\"" + appId + "\"}"))
-						.get(5000);
-				Assert.assertEquals(200, response.getStatus());
-				Assert.assertEquals("Ok", response.getBody());
+						.post(Json.toJson(new JiraUser(id, email, displayName))).get(5000);
+				Assert.assertEquals(201, response.getStatus());
 
 				// User exists in all Jira accounts
-				response = WS.url("http://localhost:3333/account/all").get().get(5000);
+				response = WS.url("http://localhost:3333/accounts").get().get(5000);
 				Assert.assertEquals(200, response.getStatus());
 				jsonNode = response.asJson();
 				Assert.assertTrue(jsonNode.isArray());
-				Assert.assertTrue(jsonNode.toString().contains(name));
+				Assert.assertTrue(jsonNode.toString().contains(id));
 
 				// Get Jira account info
-				response = WS.url("http://localhost:3333/account/" + name).get().get(5000);
+				response = WS.url("http://localhost:3333/account/" + id).get().get(5000);
 				Assert.assertEquals(200, response.getStatus());
 				jsonNode = response.asJson();
 				Assert.assertEquals(
-						"{\"name\":\"" + name + "\",\"email\":\"anEmail@fake.fake\",\"displayName\":\"aFirstName aLastName\",\"active\":true}",
+						"{\"id\":\"" + id + "\",\"email\":\"" + email + "\",\"displayName\":\"" + displayName + "\"}",
 						jsonNode.toString());
 
 				// Remove Jira account
-				response = WS.url("http://localhost:3333/account/" + name).delete().get(5000);
-				Assert.assertEquals(200, response.getStatus());
-				Assert.assertEquals("Ok", response.getBody());
+				response = WS.url("http://localhost:3333/account/" + id).delete().get(5000);
+				Assert.assertEquals(204, response.getStatus());
 
 				// User does not exist
-				response = WS.url("http://localhost:3333/account/" + name).get().get(5000);
+				response = WS.url("http://localhost:3333/account/" + id).get().get(5000);
 				Assert.assertEquals(200, response.getStatus());
 				jsonNode = response.asJson();
 				Assert.assertEquals(
-						"{\"errorMessages\":[\"The user named '" + name + "' does not exist\"],\"errors\":{}}",
+						"{\"errorMessages\":[\"The user named '" + id + "' does not exist\"],\"errors\":{}}",
 						jsonNode.toString());
 			}
 		});

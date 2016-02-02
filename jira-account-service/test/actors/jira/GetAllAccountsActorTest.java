@@ -53,7 +53,7 @@ public class GetAllAccountsActorTest extends JavaTestKit {
 	@Test
 	public void testOnReceive() throws Exception {
 		// given
-		Mockito.when(client.url(url + "/user/search?username=%25")).thenReturn(wsRequest);
+		Mockito.when(client.url(url + "/rest/api/2/user/search?username=%25")).thenReturn(wsRequest);
 		Mockito.when(wsRequest.setAuth(user, password)).thenReturn(wsRequest);
 		Mockito.when(wsRequest.get()).thenReturn(Promise.pure(wsResponse));
 		Mockito.when(wsResponse.getStatus()).thenReturn(200);
@@ -66,6 +66,7 @@ public class GetAllAccountsActorTest extends JavaTestKit {
 		unit.tell(new GetAllAccounts(), getRef());
 
 		// then
-		expectMsgEquals("[\"testName\"]");
+		expectMsgEquals("[{\"id\":\"testName\",\"email\":\"test@email.test\",\"displayName\":\"testDN\"}]");
 	}
 }
+

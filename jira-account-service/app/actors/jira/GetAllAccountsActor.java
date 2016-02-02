@@ -2,10 +2,12 @@ package actors.jira;
 
 import java.util.concurrent.TimeUnit;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
 import akka.actor.Props;
 import akka.actor.UntypedActor;
+import models.JiraUser;
 import play.Logger;
 import play.Logger.ALogger;
 import play.libs.Json;
@@ -43,18 +45,23 @@ public class GetAllAccountsActor extends UntypedActor {
 	}
 
 	private void getAllAccounts() {
-		//TODO move timeout to consul config
-		sender().tell(client.url(url + "/user/search?username=%25").setAuth(user, password)
-				.get().map(response -> {
+		// TODO move timeout to consul config
+		sender().tell(
+				client.url(url + "/rest/api/2/user/search?username=%25").setAuth(user, password).get().map(response -> {
 					if (response.getStatus() != 200) {
 						return response.getBody();
 					}
-					
+
 					ArrayNode result = Json.newArray();
-				    response.asJson().forEach(jsonNode -> result.add(jsonNode.findValue("name")));
+					response.asJson().forEach(jsonNode -> result.add(createJiraUserJson(jsonNode)));
 					logger.info("Result: " + result.toString());
 
 					return result.toString();
 				}).get(10, TimeUnit.SECONDS), self());
+	}
+
+	private JsonNode createJiraUserJson(JsonNode jsonNode) {
+		return Json.toJson(new JiraUser(jsonNode.findValue("name").asText(),
+				jsonNode.findValue("emailAddress").asText(), jsonNode.findValue("displayName").asText()));
 	}
 }

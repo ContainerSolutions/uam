@@ -1,13 +1,14 @@
 package actors.jira;
 
+import java.util.Arrays;
 import java.util.List;
 
 import actors.repository.CreateAccountVertexActor.CreateVertex;
 import akka.actor.ActorRef;
 import akka.actor.Props;
-import akka.actor.Status.Failure;
 import akka.actor.UntypedActor;
 import akka.pattern.Patterns;
+import models.JiraUser;
 import play.Logger;
 import play.Logger.ALogger;
 import play.libs.Json;
@@ -17,34 +18,13 @@ import scala.concurrent.Future;
 
 public class CreateAccountActor extends UntypedActor {
 	private static final ALogger logger = Logger.of(CreateAccountActor.class);
+	private static final String JIRA_CORE_KEY = "jira-core";
 
 	public static class CreateJiraAccountMessage {
-		public CreateVertex orientDbMessage;
-		public JiraPostMessage jiraMessage;
+		public JiraUser jiraUser;
 
-		public CreateJiraAccountMessage(CreateVertex orientDbMessage, JiraPostMessage jiraMessage) {
-			this.orientDbMessage = orientDbMessage;
-			this.jiraMessage = jiraMessage;
-		}
-	}
-	
-	public static class JiraPostMessage {
-		public String name;
-		public String emailAddress;
-		public String displayName;
-		public List<String> applicationKeys;
-
-		public JiraPostMessage(String name, String emailAddress, String displayName, List<String> applicationKeys) {
-			this.name = name;
-			this.emailAddress = emailAddress;
-			this.displayName = displayName;
-			this.applicationKeys = applicationKeys;
-		}
-
-		@Override
-		public String toString() {
-			return "JiraPostMessage [name=" + name + ", emailAddress=" + emailAddress + ", displayName=" + displayName
-					+ ", applicationKeys=" + applicationKeys + "]";
+		public CreateJiraAccountMessage(JiraUser jiraUser) {
+			this.jiraUser = jiraUser;
 		}
 	}
 
@@ -69,8 +49,6 @@ public class CreateAccountActor extends UntypedActor {
 	public void onReceive(Object msg) throws Exception {
 		if (msg instanceof CreateJiraAccountMessage) {
 			createJiraAccount((CreateJiraAccountMessage) msg);
-		} else if (msg instanceof Failure) {
-			sender().tell(msg.toString(), self());
 		} else {
 			logger.warn("unhandled msg: " + msg.getClass());
 			unhandled(msg);
@@ -78,18 +56,34 @@ public class CreateAccountActor extends UntypedActor {
 	}
 
 	private void createJiraAccount(CreateJiraAccountMessage msg) {
-		logger.info("Create jira account started: " + msg.jiraMessage);
-
-		Future<CreateVertex> future = client.url(url + "/user").setContentType(MimeTypes.JSON).setAuth(user, password).post(Json.toJson(msg.jiraMessage))
-				.map(response -> {
+		logger.info("Create jira account started: " + msg.jiraUser);
+		Future<CreateVertex> future = client.url(url + "/rest/api/2/user").setContentType(MimeTypes.JSON)
+				.setAuth(user, password).post(Json.toJson(new JiraPostBody(msg.jiraUser))).map(response -> {
 					if (response.getStatus() != 201) {
-						logger.error(String.format("Jira account [%s] was not created: %s", msg.jiraMessage.name, response.getBody()));
+						logger.error(String.format("Jira account [%s] was not created: %s", msg.jiraUser.id,
+								response.getBody()));
 						throw new RuntimeException(response.getBody());
 					}
 
-					logger.info(String.format("Jira account [%s] created", msg.jiraMessage.name));
-					return msg.orientDbMessage;
+					logger.info(String.format("Jira account [%s] created", msg.jiraUser.id));
+					return new CreateVertex(msg.jiraUser.id);
 				}).wrapped();
 		Patterns.pipe(future, context().dispatcher().prepare()).pipeTo(next, sender());
+	}
+
+	public static class JiraPostBody {
+		public String name;
+		public String emailAddress;
+		public String displayName;
+		public List<String> applicationKeys;
+
+		public JiraPostBody() {}
+
+		public JiraPostBody(JiraUser jiraUser) {
+			this.name = jiraUser.id;
+			this.emailAddress = jiraUser.email;
+			this.displayName = jiraUser.displayName;
+			this.applicationKeys = Arrays.asList(JIRA_CORE_KEY);
+		}
 	}
 }

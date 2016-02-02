@@ -27,6 +27,7 @@ public class MantlConfigFactory {
 					Map<String, String> configMap = new HashMap<>();
 					response.asJson().forEach(jsonNode -> configMap.put(jsonNode.get("Key").asText(),
 							new String(Base64.getDecoder().decode(jsonNode.get("Value").asText()))));
+					System.out.println(configMap);
 					return configMap;
 				}).get(10, TimeUnit.SECONDS))));
 	}

@@ -1,5 +1,8 @@
 package actors.repository;
 
+import java.util.Arrays;
+import java.util.Collections;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -21,9 +24,6 @@ import akka.testkit.JavaTestKit;
 @RunWith(MockitoJUnitRunner.class)
 public class CreateAccountVertexActorTest extends JavaTestKit {
 	private static final String userId = "testUserId";
-	private static final String flowId = "testFlowId";
-	private static final String appId = "testAppId";
-	private static final String name = "testName";
 
 	public CreateAccountVertexActorTest() {
 		super(system);
@@ -59,38 +59,34 @@ public class CreateAccountVertexActorTest extends JavaTestKit {
 	public void testOnReceive() throws Exception {
 		// given
 		Mockito.when(graphFactory.getTx()).thenReturn(graph);
-		Mockito.when(graph.getVertex(userId)).thenReturn(userVertex);
-		Mockito.when(graph.getVertex(flowId)).thenReturn(flowVertex);
-		Mockito.when(graph.getVertex(appId)).thenReturn(appVertex);
+		Mockito.when(graph.getVerticesOfClass("User")).thenReturn(Arrays.asList(userVertex));
 		Mockito.when(graph.addVertex("JiraAccount", "jiraaccount")).thenReturn(accountVertex);
-		Mockito.when(userVertex.getProperty("uniqueId")).thenReturn(name);
+		Mockito.when(userVertex.getProperty("uniqueId")).thenReturn(userId);
 
 		ActorRef unit = system.actorOf(Props.create(CreateAccountVertexActor.class, graphFactory));
 
 		// when
-		unit.tell(new CreateVertex(userId, flowId, appId), getRef());
+		unit.tell(new CreateVertex(userId), getRef());
 
 		// then
 		expectMsgEquals("Ok");
 
-		Mockito.verify(accountVertex).addEdge("createdIn", flowVertex);
 		Mockito.verify(userVertex).addEdge("hasAccount", accountVertex);
-		Mockito.verify(appVertex).addEdge("forApplication", accountVertex);
 		Mockito.verify(graph).commit();
 		Mockito.verify(graph).shutdown();
 	}
 
 	@Test
-	public void testOnReceive_whenOrientDbError() throws Exception {
+	public void testOnReceive_whenUserNotFound() throws Exception {
 		// given
-		String message = "Orient DB error";
+		String message = "User vertex not found: " + userId;
 		Mockito.when(graphFactory.getTx()).thenReturn(graph);
-		Mockito.when(graph.getVertex(userId)).thenThrow(new RuntimeException(message));
+		Mockito.when(graph.getVerticesOfClass("User")).thenReturn(Collections.emptyList());
 
 		ActorRef unit = system.actorOf(Props.create(CreateAccountVertexActor.class, graphFactory));
 
 		// when
-		unit.tell(new CreateVertex(userId, flowId, appId), getRef());
+		unit.tell(new CreateVertex(userId), getRef());
 
 		// then
 		expectMsgEquals(message);

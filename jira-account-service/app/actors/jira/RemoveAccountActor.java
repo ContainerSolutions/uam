@@ -50,7 +50,7 @@ public class RemoveAccountActor extends UntypedActor {
 
 	private void removeAccount(RemoveAccount msg) {
 		logger.info(String.format("Remove Jira account [%s] started", msg.name));
-		Future<RemoveVertex> future = client.url(url + "/user?username=" + msg.name).setAuth(user, password).delete()
+		Future<RemoveVertex> future = client.url(url + "/rest/api/2/user?username=" + msg.name).setAuth(user, password).delete()
 				.map(response -> {
 					if (response.getStatus() != 204) {
 						logger.error(String.format("Jira account [%s] was not removed: %s", msg.name, response.getBody()));
