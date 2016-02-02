@@ -20,7 +20,7 @@
 
       responseError: function (rejection) {
         var $mdToast = $injector.get('$mdToast');
-        var msg = rejection.data || 'Unknown Error';
+        var msg = rejection.statusText || 'Unknown Error';
 
         $log.debug(rejection);
 
