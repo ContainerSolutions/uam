@@ -21,6 +21,16 @@ import commons.GoogleServiceFactory;
 public interface DirectoryHelper
 {
 
-	List<String> excetuteGetUserGroups(Directory directory, String domain, String user);
+	List<String> executeGetUserGroups(Directory directory, String domain, String user);
+
+	int executeInsertUser(
+	    Directory directory,
+	    String domain,
+	    String primaryEmail,
+	    String firstName,
+	    String lastName,
+	    String password
+	);
+
 
 }
