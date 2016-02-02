@@ -12,7 +12,7 @@
     vm.searchQuery = '';
 
     vm.selected = {};
-    vm.selectedBackupCopy = {};
+    vm.selectedUserBackupCopy = {};
     vm.userForm = {};
     vm.templates = angular.copy(TemplatesService.getTemplates());
     vm.selectedAccount = 0;
@@ -74,10 +74,10 @@
       user = angular.copy(vm.selected);
       delete user.selected;
 
-      UsersService.update(vm.selectedBackupCopy.id, user, onSuccess);
+      UsersService.update(vm.selectedUserBackupCopy.id, user, onSuccess);
 
       function onSuccess() {
-        vm.selectedBackupCopy = angular.copy(vm.selected);
+        vm.selectedUserBackupCopy = angular.copy(vm.selected);
         $mdToast.show(
           $mdToast.simple()
             .content('User info has been successfully updated!')

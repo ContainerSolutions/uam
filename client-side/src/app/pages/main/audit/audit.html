@@ -1,7 +1,7 @@
 <div layout="row" class="audit-wrapper">
   <div flex="25">
-    <mantl-user-select selected="audit.selected"
-                       selected-backup-copy="audit.selectedBackupCopy">
+    <mantl-user-select selected="audit.selectedUser"
+                       selected-backup-copy="audit.selectedUserBackupCopy">
     </mantl-user-select>
   </div>
   <div class="section-divider"></div>
@@ -21,7 +21,7 @@
       </tr>
       </thead>
       <tbody>
-      <tr ng-repeat="event in audit.selected.events | filter: audit.searchQuery">
+      <tr ng-repeat="event in audit.eventData.events | filter: audit.searchQuery track by $index">
         <td>{{::event.datetime}}</td>
         <td>{{::event.application}}</td>
         <td>{{::event.action}}</td>

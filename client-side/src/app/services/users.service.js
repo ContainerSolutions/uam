@@ -40,7 +40,13 @@
     }
 
     function remove(id) {
-      var requestUrl = url + '/' + id;
+      var requestUrl;
+
+      if (!id) {
+        return;
+      }
+
+      requestUrl = url + '/' + id;
 
       $resource(requestUrl).remove({}, onSuccess);
 
@@ -51,23 +57,32 @@
     }
 
     function addNew(user, successCallback, errorCallback) {
-      $log.debug('Adding user: ' + angular.toString(user));
+      if (!user) {
+        return;
+      }
 
+      $log.debug('Adding user: ' + angular.toString(user));
       $resource(url).save(user, onSuccess, onError);
 
       function onSuccess(data) {
         $log.debug('XHR Success: POST: ' + url, data);
         fetch();
-        successCallback();
+        successCallback && successCallback();
       }
 
       function onError(error) {
-        errorCallback(error.data);
+        errorCallback && errorCallback(error.data);
       }
     }
 
     function update(id, user, successCallback) {
-      var requestUrl = url + '/' + id;
+      var requestUrl;
+
+      if (!id || !user) {
+        return;
+      }
+
+      requestUrl = url + '/' + id;
       $log.debug('Updating user with id ' + id + ' to: ', user);
 
       $resource(requestUrl, null, {
@@ -76,7 +91,7 @@
 
       function onSuccess(data) {
         $log.debug('XHR Success: PUT: ' + requestUrl, data);
-        successCallback();
+        successCallback && successCallback();
       }
     }
   }

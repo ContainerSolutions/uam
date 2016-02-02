@@ -37,7 +37,7 @@
         });
 
         vm.selected = user;
-        vm.selectedBackupCopy = angular.copy(vm.selected);
+        vm.selectedUserBackupCopy = angular.copy(vm.selected);
         vm.selected.selected = true;
       }
 
