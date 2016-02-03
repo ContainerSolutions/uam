@@ -7,7 +7,6 @@ import com.tinkerpop.blueprints.impls.orient.OrientGraphFactory;
 import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 
 import akka.actor.UntypedActor;
-import models.User;
 import play.Logger;
 import play.Logger.ALogger;
 import java.time.LocalDateTime;
