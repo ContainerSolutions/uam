@@ -6,7 +6,7 @@ public class WindowsAccountAccess extends Access {
 
     public static final String FIELD_FIRST_NAME = "firstName";
     public static final String FIELD_LAST_NAME = "lastName";
-    public static final String FIELD_LOGIN = "login";
+    public static final String FIELD_ID = "id";
     public static final String FIELD_EMAIL = "email";
 
     private final String cnValue;
@@ -15,13 +15,13 @@ public class WindowsAccountAccess extends Access {
     private final String fullName;
     private final String email;
 
-    public WindowsAccountAccess(String login, String firstName, String lastName, String email) {
-        super(login);
+    public WindowsAccountAccess(String id, String firstName, String lastName, String email) {
+        super(id);
         this.firstName = firstName;
         this.lastName = lastName;
         if(this.firstName == null || this.lastName == null) {
             this.fullName = null;
-            this.cnValue = login;
+            this.cnValue = id;
         } else {
             this.fullName = this.firstName + ' ' + this.lastName;
             this.cnValue = this.fullName;
@@ -75,7 +75,7 @@ public class WindowsAccountAccess extends Access {
     public String toString() {
         return "WindowsAccountAccess {" +
                 "cnValue='" + cnValue + '\'' +
-                ", login='" + getLogin() + '\'' +
+                ", id='" + getId() + '\'' +
                 ", fullName='" + fullName + '\'' +
                 ", email='" + email + '\'' +
                 '}';
