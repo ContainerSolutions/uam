@@ -21,8 +21,10 @@ import akka.actor.ActorSystem;
 import akka.actor.Props;
 import akka.pattern.Patterns;
 import akka.util.Timeout;
+import configurations.MantlConfigFactory;
 import models.User;
 import play.libs.F.Promise;
+import play.Configuration;
 import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Controller;
@@ -31,7 +33,11 @@ import play.mvc.Result;
 @Singleton
 public class Application extends Controller {
 
-	private static final Timeout TIMEOUT = new Timeout(10, TimeUnit.SECONDS);
+	private static final Timeout TIMEOUT = new Timeout(20, TimeUnit.SECONDS);
+	private static final String serviceName = "userservice";
+	private static final String consulUrlKey = "consul.url";
+	private static final String orientDbUrlKey = "userservice/orientdb/url";
+
 	private final ActorRef getUsersActor;
 	private final ActorRef createUserActor;
 	private final ActorRef updateUserActor;
@@ -39,7 +45,8 @@ public class Application extends Controller {
 
 	@Inject
 	public Application(ActorSystem system) {
-		OrientGraphFactory graphFactory = new OrientGraphFactory("remote:192.168.99.100:32782/UserAccessControl");
+		Configuration configuration = MantlConfigFactory.load(consulUrlKey, serviceName);
+		OrientGraphFactory graphFactory = new OrientGraphFactory(configuration.getString(orientDbUrlKey));
 		getUsersActor = system.actorOf(Props.create(GetUsersActor.class, graphFactory));
 		createUserActor = system.actorOf(Props.create(CreateUserActor.class, graphFactory));
 		updateUserActor = system.actorOf(Props.create(UpdateUserActor.class, graphFactory));

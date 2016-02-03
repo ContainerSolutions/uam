@@ -31,7 +31,7 @@ public class IntegrationTest {
 	@BeforeClass
 	public static void setUp() {
 
-		OrientGraph graph = new OrientGraphFactory("remote:192.168.99.100:32782/UserAccessControl").getTx();
+		OrientGraph graph = new OrientGraphFactory("remote:52.25.246.25:2424/UserAccessControl").getTx();
 		try {
 			OrientVertex user = graph.addVertex("User", "user");
 			user.setProperty("uniqueId", id);
@@ -55,7 +55,7 @@ public class IntegrationTest {
 	@AfterClass
 	public static void tearDown() {
 
-		OrientGraph graph = new OrientGraphFactory("remote:192.168.99.100:32782/UserAccessControl").getTx();
+		OrientGraph graph = new OrientGraphFactory("remote:52.25.246.25:2424/UserAccessControl").getTx();
 		try {
 			graph.removeVertex(graph.getVertex(userId));
 

@@ -61,28 +61,28 @@ public class Application extends Controller {
 	@Inject
 	public Application(ActorSystem system) {
 		Configuration configuration = MantlConfigFactory.load(consulUrlKey, serviceName);
-		String token = MantlConfigFactory.generateToken(configuration.getString(vaultUrlKey),
-				configuration.getString(vaultUserKey), configuration.getString(vaultPassKey));
+		// TODO use Vault app-id auth
+//		String token = MantlConfigFactory.generateToken(configuration.getString(vaultUrlKey),
+//				configuration.getString(vaultUserKey), configuration.getString(vaultPassKey));
 
-		ServiceAccountCredentials orientDbCredentials = MantlConfigFactory
-				.getCredentials(configuration.getString(vaultUrlKey), token, orientDbKey);
-		OrientGraphFactory graphFactory = new OrientGraphFactory(configuration.getString(orientDbUrlKey),
-				orientDbCredentials.getUser(), orientDbCredentials.getPassword()).setupPool(1, 10);
+//		ServiceAccountCredentials orientDbCredentials = MantlConfigFactory
+//				.getCredentials(configuration.getString(vaultUrlKey), token, orientDbKey);
+		OrientGraphFactory graphFactory = new OrientGraphFactory(configuration.getString(orientDbUrlKey)).setupPool(1, 10);
 
-		ServiceAccountCredentials jiraCredentials = MantlConfigFactory
-				.getCredentials(configuration.getString(vaultUrlKey), token, jiraKey);
+//		ServiceAccountCredentials jiraCredentials = MantlConfigFactory
+//				.getCredentials(configuration.getString(vaultUrlKey), token, jiraKey);
 		ActorRef createVertexActor = system.actorOf(Props.create(CreateAccountVertexActor.class, graphFactory));
 		createActor = system.actorOf(CreateAccountActor.props(createVertexActor, WS.client(),
-				configuration.getString(jiraUrlKey), jiraCredentials.getUser(), jiraCredentials.getPassword()));
+				configuration.getString(jiraUrlKey), "admin", "secret"));
 
 		getAllActor = system.actorOf(GetAllAccountsActor.props(WS.client(), configuration.getString(jiraUrlKey),
-				jiraCredentials.getUser(), jiraCredentials.getPassword()));
+				"admin", "secret"));
 		getAccountActor = system.actorOf(GetAccountActor.props(WS.client(), configuration.getString(jiraUrlKey),
-				jiraCredentials.getUser(), jiraCredentials.getPassword()));
+				"admin", "secret"));
 
 		ActorRef removeAccountVertexActor = system.actorOf(Props.create(RemoveAccountVertexActor.class, graphFactory));
 		removeAccountActor = system.actorOf(RemoveAccountActor.props(removeAccountVertexActor, WS.client(),
-				configuration.getString(jiraUrlKey), jiraCredentials.getUser(), jiraCredentials.getPassword()));
+				configuration.getString(jiraUrlKey), "admin", "secret"));
 	}
 
 	// TODO add error handling for correct response statuses
