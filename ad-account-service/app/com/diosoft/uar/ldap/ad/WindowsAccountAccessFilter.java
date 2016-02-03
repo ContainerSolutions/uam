@@ -4,19 +4,19 @@ import com.diosoft.uar.AccessFilter;
 
 public class WindowsAccountAccessFilter extends AccessFilter {
 
-    private String login;
+    private String id;
 
-    public WindowsAccountAccessFilter(String login) {
-        this.login = login;
+    public WindowsAccountAccessFilter(String id) {
+        this.id = id;
     }
 
     @Override
     public String getSearchString() {
-        return "(&(sAMAccountName=" + login + ")(objectclass=user)(objectcategory=person))";
+        return "(&(sAMAccountName=" + id + ")(objectclass=user)(objectcategory=person))";
     }
 
-    public String getLogin() {
-        return login;
+    public String getId() {
+        return id;
     }
 
     @Override
@@ -26,12 +26,12 @@ public class WindowsAccountAccessFilter extends AccessFilter {
 
         WindowsAccountAccessFilter that = (WindowsAccountAccessFilter) o;
 
-        return !(login != null ? !login.equals(that.login) : that.login != null);
+        return !(id != null ? !id.equals(that.id) : that.id != null);
 
     }
 
     @Override
     public int hashCode() {
-        return login != null ? login.hashCode() : 0;
+        return id != null ? id.hashCode() : 0;
     }
 }

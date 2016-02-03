@@ -6,7 +6,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
-import play.AdGuiceModule;
+import helpers.guice.AdGuiceModule;
 import play.Application;
 import play.ApplicationLoader;
 import play.Environment;
@@ -71,34 +71,40 @@ public class IntegrationTest {
     }
 
     @Test
+    public void testGetAll_Optimistic() {
+        WSResponse response = WS.url("http://localhost:" + port + "/accounts").get().get(2000);
+        assertTrue(response.getBody().contains("{\"firstName\":null,\"lastName\":null,\"id\":\"Administrator\",\"email\":null}"));
+    }
+
+    @Test
     public void testGrantListRevoke() {
         //given
-        String jsonTestAccount = "{\"firstName\":\"TestUser\",\"lastName\":\"Integrational\",\"login\":\"integrationuser\",\"email\":\"inttestuser@domain.com\"}";
+        String jsonTestAccount = "{\"firstName\":\"TestUser\",\"lastName\":\"Integrational\",\"id\":\"integrationuser\",\"email\":\"inttestuser@domain.com\"}";
         //cleanup
-        WS.url("http://localhost:" + port + "/user")
+        WS.url("http://localhost:" + port + "/account")
                 .setContentType("application/json").setBody(jsonTestAccount)
                 .delete().get(2000);
 
         //create account
-        WSResponse responseCreate = WS.url("http://localhost:" + port + "/user")
+        WSResponse responseCreate = WS.url("http://localhost:" + port + "/account")
                 .setContentType("application/json")
                 .post(jsonTestAccount).get(2000);
         assertEquals("Create account failed", Helpers.OK, responseCreate.getStatus());
 
         //list account
-        WSResponse responseCheckCreate = WS.url("http://localhost:" + port + "/user/integrationuser")
+        WSResponse responseCheckCreate = WS.url("http://localhost:" + port + "/account/integrationuser")
                 .get().get(2000);
         assertEquals("List account after creation failed", Helpers.OK, responseCheckCreate.getStatus());
         assertEquals("List account json differs", jsonTestAccount, responseCheckCreate.getBody());
 
         //delete account
-        WSResponse responseDelete = WS.url("http://localhost:" + port + "/user")
+        WSResponse responseDelete = WS.url("http://localhost:" + port + "/account")
                 .setContentType("application/json").setBody(jsonTestAccount)
                 .delete().get(2000);
         assertEquals("Delete account failed", Helpers.OK, responseDelete.getStatus());
 
         //verify
-        WSResponse responseCheckDelete = WS.url("http://localhost:" + port + "/user/integrationuser")
+        WSResponse responseCheckDelete = WS.url("http://localhost:" + port + "/account/integrationuser")
                 .get().get(2000);
         assertEquals("List account after deletion failed", Helpers.NOT_FOUND, responseCheckDelete.getStatus());
 

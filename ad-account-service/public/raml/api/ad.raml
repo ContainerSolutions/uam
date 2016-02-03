@@ -12,7 +12,7 @@ traits:
           required: true
   - unsecured:
       description: This is not secured
-/users:
+/accounts:
     description: "Get accounts list"
     get:
       is: [secured]
@@ -28,7 +28,7 @@ traits:
                     "properties": {
                       "firstName": { "type" : "string"},
                       "lastName": { "type" : "string"},
-                      "login": { "type" : "string"},
+                      "id": { "type" : "string"},
                       "email": { "type" : "string"}
                     }
                   }
@@ -39,11 +39,11 @@ traits:
           description: No account was found
         500:
           description: Returned in case error on the server. Contains description of the error. 
-/user:
+/account:
     description: "CRUD operation with accounts"
-    /{login}:
+    /{id}:
       get:
-        description: "Get account by login"
+        description: "Get account by id"
         is: [secured]
         responses:
           200:
@@ -55,14 +55,14 @@ traits:
                     "properties": {
                       "firstName": { "type" : "string"},
                       "lastName": { "type" : "string"},
-                      "login": { "type" : "string"},
+                      "id": { "type" : "string"},
                       "email": { "type" : "string"}
                     }
                   }
           401:
             description: Bad token was provided. Valid one can be get from authorization service.
           404:
-            description: No account was found for login
+            description: No account was found for id
           500:
             description: Returned in case error on the server. Contains description of the error. 
     delete:
@@ -77,7 +77,7 @@ traits:
             "properties": {
               "firstName": { "type" : "string"},
               "lastName": { "type" : "string"},
-              "login": { "type" : "string"},
+              "id": { "type" : "string"},
               "email": { "type" : "string"}
             }
           }
@@ -89,7 +89,7 @@ traits:
           description: |
            Bad token was provided. Valid one can be get from authorization service.
         404:
-          description: No account was found for login
+          description: No account was found for id
         500:
           description: Returned in case error on the server. Contains description of the error.
     post:
@@ -104,7 +104,7 @@ traits:
             "properties": {
               "firstName": { "type" : "string"},
               "lastName": { "type" : "string"},
-              "login": { "type" : "string"},
+              "id": { "type" : "string"},
               "email": { "type" : "string"}
             }
           }

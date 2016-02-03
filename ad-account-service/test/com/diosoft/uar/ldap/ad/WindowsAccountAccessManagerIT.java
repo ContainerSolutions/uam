@@ -4,10 +4,7 @@ import com.unboundid.ldap.sdk.LDAPConnection;
 import com.unboundid.ldap.sdk.LDAPConnectionPool;
 import com.unboundid.util.ssl.SSLUtil;
 import com.unboundid.util.ssl.TrustAllTrustManager;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 
 import javax.net.SocketFactory;
 import javax.net.ssl.TrustManager;
@@ -58,14 +55,14 @@ public class WindowsAccountAccessManagerIT {
         WindowsAccountAccess access = new WindowsAccountAccess("testuser", "MantlIO", "Test", "testuser@mantlio.local");
 
         //when
-        if(listTestUser(access.getLogin()).size() != 0) {
+        if(listTestUser(access.getId()).size() != 0) {
             revokeTestUser(access);
         }
         //then
         grantTestUser(access);
-        Collection<WindowsAccountAccess> actualCreated = listTestUser(access.getLogin());
+        Collection<WindowsAccountAccess> actualCreated = listTestUser(access.getId());
         revokeTestUser(access);
-        Collection<WindowsAccountAccess> actualDeleted = listTestUser(access.getLogin());
+        Collection<WindowsAccountAccess> actualDeleted = listTestUser(access.getId());
 
         Assert.assertEquals(expectedCreated,actualCreated);
         Assert.assertTrue(actualDeleted.size() == 0);
