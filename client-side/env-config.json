@@ -15,8 +15,8 @@
   },
   "dist": {
     "ENV": {
-      "usersApi": "http://192.168.3.60:8080/",
-      "jiraApi": "http://192.168.99.100:8081/",
+      "usersApi": "http://52.89.131.202:25077/",
+      "jiraApi": "http://52.89.131.202:9951/",
       "debugEnabled": false
     }
   }
