@@ -1,19 +1,22 @@
 {
   "local": {
     "ENV": {
-      "api": "http://192.168.3.60:8080/",
+      "usersApi": "http://192.168.3.60:8080/",
+      "jiraApi": "http://192.168.99.100:8081/",
       "debugEnabled": true
     }
   },
   "qa": {
     "ENV": {
-      "api": "http://192.168.3.60:8080/",
+      "usersApi": "http://192.168.3.60:8080/",
+      "jiraApi": "http://192.168.99.100:8081/",
       "debugEnabled": true
     }
   },
   "dist": {
     "ENV": {
-      "api": "http://192.168.3.60:8080/",
+      "usersApi": "http://192.168.3.60:8080/",
+      "jiraApi": "http://192.168.99.100:8081/",
       "debugEnabled": false
     }
   }

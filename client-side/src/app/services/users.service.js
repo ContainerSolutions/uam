@@ -11,17 +11,19 @@
     var usersData = {
       users: []
     };
-    var url = ENV.api + 'users';
+    var url = ENV.usersApi + 'users';
 
     return {
       getData: getData,
       fetch: fetch,
       remove: remove,
       addNew: addNew,
-      update: update
+      update: update,
+      clearSelected: clearSelected
     };
 
     function getData() {
+      clearSelected();
       return usersData;
     }
 
@@ -93,6 +95,12 @@
         $log.debug('XHR Success: PUT: ' + requestUrl, data);
         successCallback && successCallback();
       }
+    }
+
+    function clearSelected() {
+      angular.forEach(usersData.users, function (user) {
+        user.selected = false;
+      });
     }
   }
 })();

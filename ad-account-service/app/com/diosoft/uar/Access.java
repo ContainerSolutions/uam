@@ -2,14 +2,14 @@ package com.diosoft.uar;
 
 public abstract class Access {
 
-    private String login;
+    private String id;
 
-    public Access(String login) {
-        this.login = login;
+    public Access(String id) {
+        this.id = id;
     }
 
-    public String getLogin() {
-        return login;
+    public String getId() {
+        return id;
     }
 
     @Override
@@ -19,17 +19,17 @@ public abstract class Access {
 
         Access access = (Access) o;
 
-        return !(login != null ? !login.equals(access.login) : access.login != null);
+        return !(id != null ? !id.equals(access.id) : access.id != null);
 
     }
 
     @Override
     public int hashCode() {
-        return login != null ? login.hashCode() : 0;
+        return id != null ? id.hashCode() : 0;
     }
 
     @Override
     public String toString() {
-        return "Access [" + login  + "]";
+        return "Access [" + id + "]";
     }
 }

@@ -1,104 +1,136 @@
 package controllers;
 
+import akka.util.Timeout;
 import com.diosoft.uar.ldap.ad.WindowsAccountAccess;
-import com.diosoft.uar.ldap.ad.WindowsAccountAccessFilter;
-import com.diosoft.uar.ldap.ad.WindowsAccountAccessManager;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
 import play.Logger;
+import play.libs.F.Promise;
 import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
+import scala.concurrent.Future;
 import views.html.main;
-
+import akka.actor.*;
 import java.util.Collection;
+import java.util.concurrent.TimeUnit;
 
+import static helpers.akka.AdAccountsActorProtocol.*;
+import static akka.pattern.Patterns.ask;
+
+@Singleton
 public class AdMicroservice extends Controller {
 
-    public static final Logger.ALogger LOG = Logger.of(AdMicroservice.class);
+    private static final Logger.ALogger LOG = Logger.of(AdMicroservice.class);
 
-    private WindowsAccountAccessManager accessManager;
+    private ActorRef adActor;
+    private Timeout timeout;
 
     @Inject
-    public AdMicroservice(WindowsAccountAccessManager adAccessManager) {
-        this.accessManager = adAccessManager;
+    public AdMicroservice(@Named("adActor") ActorRef adActor) {
+        this.adActor = adActor;
+        this.timeout = new Timeout(2, TimeUnit.SECONDS);
     }
 
-    public Result getAccounts() {
-        WindowsAccountAccessFilter filter = new WindowsAccountAccessFilter("*");
-        try {
-            Collection<WindowsAccountAccess> accounts = accessManager.list(filter);
-            if(accounts.size() < 1) {
-                LOG.warn("No account found in AD");
-                return notFound();
-            } else {
-                LOG.info("Get " + accounts.size() + " accounts in AD");
-                ArrayNode result = toJsonArray(accounts);
-                return ok(result);
-            }
-        } catch (Exception e) {
-            LOG.error("Can't get accounts", e);
-            return internalServerError(getInternalErrorMessage(e));
-        }
+    public Promise<Result> getAccounts() {
+        return Promise.wrap(ask(adActor, new GetAllAdAccounts(), timeout)).map(response -> {
+                    if (response instanceof Throwable) {
+                        Throwable exception = (Throwable) response;
+                        LOG.error("Can't get accounts", exception);
+                        return internalServerError(getInternalErrorMessage(exception));
+                    } else {
+                        @SuppressWarnings("unchecked")
+                        Collection<WindowsAccountAccess> accounts = (Collection<WindowsAccountAccess>) response;
+                        if (accounts.size() < 1) {
+                            LOG.warn("No account found in AD");
+                            return notFound();
+                        } else {
+                            LOG.info("Get " + accounts.size() + " accounts in AD");
+                            ArrayNode result = toJsonArray(accounts);
+                            return ok(result);
+                        }
+                    }
+                }
+        );
     }
 
-    public Result getAccount(String login) {
-        WindowsAccountAccessFilter filter = new WindowsAccountAccessFilter(login);
-        try {
-            Collection<WindowsAccountAccess> accounts = accessManager.list(filter);
-            if(accounts.size() < 1) {
-                LOG.info("No account found for login " + login);
-                return notFound();
-            } else if(accounts.size() == 1){
-                LOG.info("Found account for login " + login);
-                ObjectNode result = toJsonObject(accounts.iterator().next());
-                return ok(result);
-            } else {
-                String warnMessage = "Found " + accounts.size() + " accounts for login " + login;
-                LOG.warn(warnMessage);
-                return internalServerError(warnMessage);
-            }
-        } catch (Exception e) {
-            LOG.error("Can't get account", e);
-            return internalServerError(getInternalErrorMessage(e));
-        }
+    public Promise<Result> getAccount(String id) {
+        return Promise.wrap(ask(adActor, new GetAdAccountById(id), timeout)).map(response -> {
+                    if (response instanceof Throwable) {
+                        Throwable exception = (Throwable) response;
+                        LOG.error("Can't get account", exception);
+                        return internalServerError(getInternalErrorMessage(exception));
+                    } else {
+                        @SuppressWarnings("unchecked")
+                        Collection<WindowsAccountAccess> accounts = (Collection<WindowsAccountAccess>) response;
+                        if (accounts.size() < 1) {
+                            LOG.info("No account found for id " + id);
+                            return notFound();
+                        } else if (accounts.size() == 1) {
+                            LOG.info("Found account for id " + id);
+                            ObjectNode result = toJsonObject(accounts.iterator().next());
+                            return ok(result);
+                        } else {
+                            String warnMessage = "Found " + accounts.size() + " accounts for id " + id;
+                            LOG.warn(warnMessage);
+                            return internalServerError(warnMessage);
+                        }
+                    }
+                }
+        );
     }
 
+    @SuppressWarnings("Duplicates")
     @BodyParser.Of(BodyParser.Json.class)
-    public Result deleteAccount() {
-        //TODO process and test account not found case
-        JsonNode request = request().body().asJson();
-        LOG.debug("AD account deletion request: " + request);
+    public Promise<Result> deleteAccount() {
+        JsonNode jsonRequest = request().body().asJson();
+        LOG.debug("AD account deletion request: " + jsonRequest);
 
-        WindowsAccountAccess account = fromJsonObject(request);
-        try {
-            accessManager.revoke(account);
-            LOG.info("Successfully deleted account " + account.getLogin());
-            return ok(toJsonObject(account));
-        } catch (Exception e) {
-            LOG.error("Can't delete account " + account.getLogin(), e);
-            return internalServerError(getInternalErrorMessage(e));
-        }
+        DeleteAdAccount deleteMessage = Json.fromJson(jsonRequest, DeleteAdAccount.class);
+        return Promise.wrap(ask(adActor, deleteMessage, timeout)).map(response -> {
+                    if (response instanceof Throwable) {
+                        Throwable exception = (Throwable) response;
+                        //TODO process and test account not found case
+                        LOG.error("Can't delete account " + deleteMessage.id, exception);
+                        return internalServerError(getInternalErrorMessage(exception));
+                    } else if (response instanceof Boolean) {
+                        LOG.info("Successfully deleted account " + deleteMessage.id);
+                        return ok();
+                    } else {
+                        LOG.error("Unexpected response for account " + deleteMessage.id + " delete request: " + response);
+                        return internalServerError(response.toString());
+                    }
+                }
+        );
     }
 
+    @SuppressWarnings("Duplicates")
     @BodyParser.Of(BodyParser.Json.class)
-    public Result addAccount() {
-        //TODO process and test account already exists case
-        JsonNode request = request().body().asJson();
-        LOG.debug("AD account creation request: " + request);
+    public Promise<Result> addAccount() {
+        JsonNode jsonRequest = request().body().asJson();
+        LOG.debug("AD account creation request: " + jsonRequest);
 
-        WindowsAccountAccess account = fromJsonObject(request);
-        try {
-            accessManager.grant(account);
-            LOG.info("Successfully added account " + account.getLogin());
-            return ok(toJsonObject(account));
-        } catch (Exception e) {
-            LOG.error("Can't create account", e);
-            return internalServerError(getInternalErrorMessage(e));
-        }
+        CreateAdAccount createMessage = Json.fromJson(jsonRequest, CreateAdAccount.class);
+        return Promise.wrap(ask(adActor, createMessage, timeout)).map(response -> {
+                    if (response instanceof Throwable) {
+                        Throwable exception = (Throwable) response;
+                        //TODO process and test account already exists case
+                        LOG.error("Can't create account " + createMessage.id, exception);
+                        return internalServerError(getInternalErrorMessage(exception));
+                    } else if (response instanceof Boolean) {
+                        LOG.info("Successfully created account " + createMessage.id);
+                        return ok();
+                    } else {
+                        LOG.error("Unexpected response for account " + createMessage.id + " create request: " + response);
+                        return internalServerError(response.toString());
+                    }
+                }
+        );
     }
 
     public Result index() {
@@ -106,10 +138,9 @@ public class AdMicroservice extends Controller {
         return ok(main.render("AD REST API"));
     }
 
-    private String getInternalErrorMessage(Exception e) {
+    private String getInternalErrorMessage(Throwable e) {
         return e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage();
     }
-
 
     private static ArrayNode toJsonArray(Collection<WindowsAccountAccess> accounts) {
         ArrayNode result = Json.newArray();
@@ -124,17 +155,9 @@ public class AdMicroservice extends Controller {
         ObjectNode accObjNode = Json.newObject();
         accObjNode.put(WindowsAccountAccess.FIELD_FIRST_NAME, account.getFirstName());
         accObjNode.put(WindowsAccountAccess.FIELD_LAST_NAME, account.getLastName());
-        accObjNode.put(WindowsAccountAccess.FIELD_LOGIN, account.getLogin());
+        accObjNode.put(WindowsAccountAccess.FIELD_ID, account.getId());
         accObjNode.put(WindowsAccountAccess.FIELD_EMAIL, account.getEmail());
         return accObjNode;
     }
 
-    private static WindowsAccountAccess fromJsonObject(JsonNode request) {
-        String login = request.get(WindowsAccountAccess.FIELD_LOGIN).asText();
-        String firstname = request.get(WindowsAccountAccess.FIELD_FIRST_NAME).asText();
-        String lastname = request.get(WindowsAccountAccess.FIELD_LAST_NAME).asText();
-        String email = request.get(WindowsAccountAccess.FIELD_EMAIL).asText();
-
-        return new WindowsAccountAccess(login, firstname, lastname, email);
-    }
 }

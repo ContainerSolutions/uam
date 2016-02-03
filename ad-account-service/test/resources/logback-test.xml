@@ -14,6 +14,7 @@
   -->
   <logger name="play" level="OFF" />
   <logger name="application" level="OFF" />
+  <logger name="helpers" level="DEBUG" />
 
   <root level="OFF">
     <appender-ref ref="STDOUT" />

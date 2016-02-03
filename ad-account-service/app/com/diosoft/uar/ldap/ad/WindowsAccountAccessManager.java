@@ -14,7 +14,7 @@ public class WindowsAccountAccessManager implements AccessManager<WindowsAccount
 
     private static final Logger.ALogger LOG = Logger.of(WindowsAccountAccessManager.class);
 
-    public static final String ATTR_LOGIN = "sAMAccountName";
+    public static final String ATTR_ID = "sAMAccountName";
     public static final String ATTR_FIRST_NAME = "givenName";
     public static final String ATTR_LAST_NAME = "sn";
     public static final String ATTR_CN = "cn";
@@ -103,9 +103,9 @@ public class WindowsAccountAccessManager implements AccessManager<WindowsAccount
                     result.add(access);
                 }
             }
-            LOG.info("Found " + searchResult.getEntryCount() + " records for " + filter.getLogin());
+            LOG.info("Found " + searchResult.getEntryCount() + " records for " + filter.getId());
         } catch (LDAPException e) {
-            LOG.error("Exception occurred while searching for account [" + filter.getLogin() + "]", e);
+            LOG.error("Exception occurred while searching for account [" + filter.getId() + "]", e);
             throw new AccessManagerException("Can't list AD accounts", e);
         }
         return result;
@@ -116,8 +116,8 @@ public class WindowsAccountAccessManager implements AccessManager<WindowsAccount
         newAccountEntry.setAttribute("objectClass","user");
         newAccountEntry.setAttribute(ATTR_CN, access.getCnValue());
 
-        newAccountEntry.setAttribute(ATTR_LOGIN, access.getLogin());
-        newAccountEntry.setAttribute(ATTR_UID, access.getLogin());
+        newAccountEntry.setAttribute(ATTR_ID, access.getId());
+        newAccountEntry.setAttribute(ATTR_UID, access.getId());
 
         newAccountEntry.setAttribute(ATTR_FIRST_NAME, access.getFirstName());
         newAccountEntry.setAttribute(ATTR_LAST_NAME, access.getLastName());
@@ -132,7 +132,7 @@ public class WindowsAccountAccessManager implements AccessManager<WindowsAccount
 
     private static WindowsAccountAccess fromLdapEntry(SearchResultEntry entry) {
         return new WindowsAccountAccess(
-                entry.getAttributeValue(ATTR_LOGIN),
+                entry.getAttributeValue(ATTR_ID),
                 entry.getAttributeValue(ATTR_FIRST_NAME),
                 entry.getAttributeValue(ATTR_LAST_NAME),
                 entry.getAttributeValue(ATTR_USER_PRINCIPAL_NAME)

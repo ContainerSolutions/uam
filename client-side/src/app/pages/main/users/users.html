@@ -1,7 +1,7 @@
 <div layout="row" class="users-wrapper">
   <div flex="25">
     <mantl-user-select selected="users.selected"
-                       selected-backup-copy="users.selectedBackupCopy">
+                       selected-backup-copy="users.selectedUserBackupCopy">
     </mantl-user-select>
   </div>
   <div class="section-divider"></div>
@@ -15,7 +15,7 @@
                 <span class="md-headline">General</span>
               </md-card-title-text>
             </md-card-title>
-            <form name="users.userForm">
+            <form name="users.userForm" autocomplete="off">
               <mantl-user-form user="users.selected" form="users.userForm"></mantl-user-form>
             </form>
           </md-card>
@@ -85,7 +85,8 @@
                    class="md-warn md-raised">Retire
         </md-button>
         <span flex></span>
-        <md-button ng-click="users.save()" ng-if="users.selected.firstName" class="md-primary md-raised">Save
+        <md-button ng-click="users.save()" ng-if="users.selected.firstName" class="md-primary md-raised">
+          Submit
         </md-button>
         <md-button class="md-raised">Discard</md-button>
       </div>

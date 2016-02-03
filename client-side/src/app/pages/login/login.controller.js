@@ -7,11 +7,11 @@
 
   /** @ngInject */
   function LoginController() {
-    var vm = this;
+    //var vm = this;
 
-    vm.credentials = {
-      email: 'john.galt@awesomecompany.com',
-      password: 'WhoIsJohnGalt?'
-    };
+    //vm.credentials = {
+    //  email: 'john.galt@awesomecompany.com',
+    //  password: 'WhoIsJohnGalt?'
+    //};
   }
 })();
