@@ -96,7 +96,7 @@
 
       requestUrl = url + '/' + id;
       accountData.loading = true;
-      $resource(requestUrl).remove({}, onSuccess);
+      $resource(requestUrl).remove({}, onSuccess, onError);
 
       function onSuccess() {
         accountData.account = {};
