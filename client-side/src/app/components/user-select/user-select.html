@@ -4,6 +4,9 @@
       <label>Search user:</label>
       <input ng-model="vm.searchQuery" type="text">
     </md-input-container>
+    <div ng-if="vm.data.fetching && !vm.data.users.length" layout="row" layout-align="space-around">
+      <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+    </div>
     <md-list class="user-list">
       <md-list-item ng-repeat="user in vm.data.users | filter: vm.searchQuery track by $index"
                     ng-click="vm.updateSelected(user)"

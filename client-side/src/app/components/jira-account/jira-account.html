@@ -9,6 +9,10 @@
     Select a user.
   </p>
 
+  <div ng-if="vm.data.loading" layout="row" layout-align="space-around">
+    <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+  </div>
+
   <p ng-if="vm.selectedUser.id && !vm.data.accountExists && !vm.data.loading">
     There is no Jira account for this user. Go ahead and create one!
   </p>

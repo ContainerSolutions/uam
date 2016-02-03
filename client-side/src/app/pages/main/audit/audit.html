@@ -6,29 +6,40 @@
   </div>
   <div class="section-divider"></div>
   <div flex class="section padding-large">
-    <md-input-container class="search-query-wrapper">
-      <label>Search event:</label>
-      <input ng-model="audit.searchQuery" type="text">
-    </md-input-container>
-    <table class="events-table">
-      <thead>
-      <tr>
-        <th>Datetime</th>
-        <th>Application</th>
-        <th>Action</th>
-        <th>Executor</th>
-        <th>Request number</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr ng-repeat="event in audit.eventData.events | filter: audit.searchQuery">
-        <td>{{::event.datetime}}</td>
-        <td>{{::event.application}}</td>
-        <td>{{::event.action}}</td>
-        <td>{{::event.executor}}</td>
-        <td>{{::event.requestNumber}}</td>
-      </tr>
-      </tbody>
-    </table>
+    <div ng-if="audit.eventData.events.length && audit.selectedUser.id">
+      <md-input-container class="search-query-wrapper">
+        <label>Search event:</label>
+        <input ng-model="audit.searchQuery" type="text">
+      </md-input-container>
+      <table class="events-table">
+        <thead>
+        <tr>
+          <th>Datetime</th>
+          <th>Application</th>
+          <th>Action</th>
+          <th>Executor</th>
+          <th>Request number</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="event in audit.eventData.events | filter: audit.searchQuery">
+          <td>{{::event.datetime}}</td>
+          <td>{{::event.application}}</td>
+          <td>{{::event.action}}</td>
+          <td>{{::event.executor}}</td>
+          <td>{{::event.requestNumber}}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <div ng-if="!audit.selectedUser.id">
+      <p>Select a user.</p>
+    </div>
+    <div ng-if="!audit.eventData.loading && !audit.eventData.events.length && audit.selectedUser.id">
+      <p>There are no events for selected user</p>
+    </div>
+    <div ng-if="audit.eventData.loading" layout="row" layout-align="space-around">
+      <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+    </div>
   </div>
 </div>

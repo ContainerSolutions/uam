@@ -9,6 +9,7 @@
   function UsersService($resource, ENV, $log) {
 
     var usersData = {
+      fetching: false,
       users: []
     };
     var url = ENV.usersApi + 'users';
@@ -28,16 +29,23 @@
     }
 
     function fetch() {
-      $resource(url).query({}, onSuccess);
+      usersData.fetching = true;
+      $resource(url).query({}, onSuccess, onError);
 
       function onSuccess(users) {
         if (!angular.isArray(users)) {
           $log.debug('Expected array. Got:', users);
+          onError();
           return;
         }
 
         usersData.users = users;
+        usersData.fetching = false;
         $log.debug('XHR Success: GET ' + url, users);
+      }
+
+      function onError() {
+        usersData.fetching = false;
       }
     }
 
