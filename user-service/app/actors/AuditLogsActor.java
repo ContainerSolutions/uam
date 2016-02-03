@@ -18,6 +18,10 @@ public class AuditLogsActor extends UntypedActor
 
 	private final OrientGraphFactory graphFactory;
 
+	public AuditLogsActor(OrientGraphFactory graphFactory)
+	{
+		this.graphFactory = graphFactory;
+	}
 	@Override
 	public void postStop() throws Exception
 	{
@@ -32,9 +36,9 @@ public class AuditLogsActor extends UntypedActor
 			OrientGraph graph = graphFactory.getTx();
 			try
 			{
-				OSequence seq = graph.getRawGraph().getMetadata().getSequenceLibrary().getSequence("rnseq");
+//				OSequence seq = graph.getRawGraph().getMetadata().getSequenceLibrary().getSequence("rnseq");
 				OrientVertex auditLogVertex = graph.addVertex("AuditLog", "auditlog");
-				auditLogVertex.setProperty("request_number", seq.next());
+//				auditLogVertex.setProperty("request_number", seq.next());
 				auditLogVertex.setProperty("user_id", message.userId);
 				auditLogVertex.setProperty("datetime", LocalDateTime.now());
 				auditLogVertex.setProperty("application", message.application);
@@ -42,7 +46,7 @@ public class AuditLogsActor extends UntypedActor
 				auditLogVertex.setProperty("action", message.action);
 
 				graph.commit();
-				sender().tell("Ok", self());
+				sender().tell("done", self());
 			}
 			catch (Exception e)
 			{
@@ -60,12 +64,11 @@ public class AuditLogsActor extends UntypedActor
 	}
 
 
-	public class SaveAuditLog
+	public static class SaveAuditLog
 	{
 
 		private Long requestNumber;
 		private String userId;
-		private LocalDateTime dateTime;
 		private String application;
 		private String executor;
 		private String action;
@@ -73,7 +76,6 @@ public class AuditLogsActor extends UntypedActor
 		public SaveAuditLog(
 		    Long requestNumber,
 		    String userId,
-		    LocalDateTime dateTime,
 		    String application,
 		    String executor,
 		    String action
@@ -81,7 +83,6 @@ public class AuditLogsActor extends UntypedActor
 		{
 			this.requestNumber = requestNumber;
 			this.userId = userId;
-			this.dateTime = dateTime;
 			this.application = application;
 			this.executor = executor;
 			this.action = action;
