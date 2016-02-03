@@ -48,8 +48,12 @@
       });
 
       $mdDialog.show(confirm).then(function () {
-        UsersService.remove(vm.selected.id);
+        UsersService.remove(vm.selected.id, onSuccess);
       });
+
+      function onSuccess() {
+        vm.selected = vm.selectedUserBackupCopy = {};
+      }
     }
 
     function save() {

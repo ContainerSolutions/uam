@@ -33,6 +33,8 @@
 
         if (id) {
           JiraService.getAccount(id);
+        } else {
+          JiraService.dataToDefault();
         }
       });
 

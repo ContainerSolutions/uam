@@ -49,7 +49,7 @@
       }
     }
 
-    function remove(id) {
+    function remove(id, successCallback) {
       var requestUrl;
 
       if (!id) {
@@ -62,6 +62,7 @@
 
       function onSuccess() {
         fetch();
+        successCallback && successCallback();
         $log.debug('XHR Success: DELETE ' + requestUrl);
       }
     }
