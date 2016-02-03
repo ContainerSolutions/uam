@@ -1,4 +1,5 @@
 package actors;
+
 import java.util.Date;
 
 import com.tinkerpop.blueprints.impls.orient.OrientGraph;
@@ -13,6 +14,8 @@ import java.time.LocalDateTime;
 
 public class AuditLogsActor extends UntypedActor
 {
+	private static final ALogger logger = Logger.of(AuditLogsActor.class);
+
 	private final OrientGraphFactory graphFactory;
 
 	@Override

@@ -2,19 +2,17 @@ package controllers;
 
 import java.util.concurrent.TimeUnit;
 
+import actors.*;
 import org.apache.commons.lang3.StringUtils;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.tinkerpop.blueprints.impls.orient.OrientGraphFactory;
 
-import actors.GetUsersActor;
+import actors.UserEventsActor.GetUserEventsMessage;
 import actors.GetUsersActor.GetUsersMessage;
-import actors.RemoveUserActor;
 import actors.RemoveUserActor.RemoveUserMessage;
-import actors.CreateUserActor;
 import actors.CreateUserActor.CreateUserMessage;
-import actors.UpdateUserActor;
 import actors.UpdateUserActor.UpdateUserMessage;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
@@ -42,6 +40,7 @@ public class Application extends Controller {
 	private final ActorRef createUserActor;
 	private final ActorRef updateUserActor;
 	private final ActorRef removeUserActor;
+	private final ActorRef userEventsActor;
 
 	@Inject
 	public Application(ActorSystem system) {
@@ -51,6 +50,7 @@ public class Application extends Controller {
 		createUserActor = system.actorOf(Props.create(CreateUserActor.class, graphFactory));
 		updateUserActor = system.actorOf(Props.create(UpdateUserActor.class, graphFactory));
 		removeUserActor = system.actorOf(Props.create(RemoveUserActor.class, graphFactory));
+		userEventsActor = system.actorOf(Props.create(UserEventsActor.class, graphFactory));
 	}
 
 	public Result index() {
@@ -81,4 +81,17 @@ public class Application extends Controller {
 				.map(response -> StringUtils.equals("Ok", response.toString()) ? noContent()
 						: internalServerError(response.toString()));
 	}
+
+	public Promise<Result> events(String id) {
+		return Promise.wrap(Patterns.ask(userEventsActor, new GetUserEventsMessage(id), TIMEOUT))
+				.map(response -> {
+						if(response instanceof Throwable) {
+							return internalServerError(((Throwable) response).getMessage());
+						} else {
+							return ok(response.toString());
+						}
+					}
+				);
+	}
+
 }

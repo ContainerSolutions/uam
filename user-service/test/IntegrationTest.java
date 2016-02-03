@@ -25,9 +25,7 @@ public class IntegrationTest {
 
 	@Test
 	public void testIt() {
-		running(testServer(3333), new Runnable() {
-			public void run() {
-				
+		running(testServer(3333), () -> {
 				// Verify users response have no user with generated id
 				WSResponse response = WS.url("http://localhost:3333/users").get().get(5000);
 				Assert.assertEquals(200, response.getStatus());
@@ -75,7 +73,12 @@ public class IntegrationTest {
 				Assert.assertTrue(jsonResponse.isArray());
 				Assert.assertFalse(jsonResponse.findValuesAsText("id").contains(id));
 				Assert.assertFalse(jsonResponse.findValuesAsText("id").contains(updatedId));
-			}
+
+				//Verify empty events response
+				response = WS.url("http://localhost:3333/users/" + id + "/events").get().get(100000);
+				jsonResponse = response.asJson();
+				Assert.assertTrue(jsonResponse.isArray());
+				Assert.assertEquals(jsonResponse.size(), 0);
 		});
 	}
 }
