@@ -1,4 +1,8 @@
 mantl-navbar {
+  md-toolbar {
+    height: 63px;
+  }
+
   .md-button.active {
     color: $color-blue;
     font-weight: bold;

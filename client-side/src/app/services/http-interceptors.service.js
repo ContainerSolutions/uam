@@ -22,13 +22,13 @@
         var $mdToast = $injector.get('$mdToast');
         var msg = rejection.statusText || 'Unknown Error';
 
-        $log.debug(rejection);
+        $log.debug('XHR rejection: ', rejection);
 
         $mdToast.show(
           $mdToast.simple()
-            .content(msg)
+            .textContent(msg)
             .position('top right')
-            .hideDelay(5000)
+            .hideDelay(3000)
         );
 
         switch (rejection.status) {

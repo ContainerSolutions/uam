@@ -11,7 +11,7 @@
     var usersData = {
       users: []
     };
-    var url = ENV.api + 'users';
+    var url = ENV.usersApi + 'users';
 
     return {
       getData: getData,
