@@ -41,17 +41,9 @@
                                     selected-options-title="'User Projects:'">
             </mantl-templates-select>
           </md-card>
-          <md-card ng-if="users.selectedAccount === 3">
-            <md-card-title>
-              <md-card-title-text>
-                <span class="md-headline">Jira</span>
-              </md-card-title-text>
-            </md-card-title>
-            <mantl-templates-select templates="users.templates"
-                                    possible-options-title="'All Projects:'"
-                                    selected-options-title="'User Projects:'">
-            </mantl-templates-select>
-          </md-card>
+          <mantl-jira-account ng-if="users.selectedAccount === 3"
+                              selected-user="users.selected">
+          </mantl-jira-account>
           <md-card ng-if="users.selectedAccount === 4">
             <md-card-title>
               <md-card-title-text>

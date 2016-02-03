@@ -1,0 +1,72 @@
+<md-card>
+  <md-card-title>
+    <md-card-title-text>
+      <span class="md-headline">Jira</span>
+    </md-card-title-text>
+  </md-card-title>
+
+  <p ng-if="!vm.selectedUser.id">
+    Select a user.
+  </p>
+
+  <p ng-if="vm.selectedUser.id && !vm.data.accountExists && !vm.data.loading">
+    There is no Jira account for this user. Go ahead and create one!
+  </p>
+
+  <form ng-if="!vm.data.loading && vm.data.accountExists" name="vm.form" autocomplete="off">
+    <!-- Fix Chrome auto-complete off -->
+    <input style="display:none">
+    <input type="password" style="display:none">
+
+    <md-input-container>
+      <label>ID</label>
+      <input ng-model="vm.data.account.id"
+             name="id"
+             type="text"
+             disabled
+             required>
+      <div ng-messages="vm.form.id.$error">
+        <div ng-message="required">This field is required.</div>
+      </div>
+    </md-input-container>
+    <md-input-container>
+      <label>Email</label>
+      <input ng-model="vm.data.account.email"
+             name="email"
+             type="email"
+             disabled
+             required>
+      <div ng-messages="vm.form.email.$error">
+        <div ng-message="required">This field is required.</div>
+        <div ng-message="email">Please provide valid email address.</div>
+      </div>
+    </md-input-container>
+    <md-input-container>
+      <label>Name</label>
+      <input ng-model="vm.data.account.displayName"
+             name="name"
+             type="text"
+             disabled
+             required>
+      <div ng-messages="vm.form.name.$error">
+        <div ng-message="required">This field is required.</div>
+      </div>
+    </md-input-container>
+  </form>
+
+  <md-button ng-if="vm.data.accountExists && !vm.data.loading"
+             ng-click="vm.deleteAccount()"
+             class="md-raised md-warn">
+    Delete Account
+  </md-button>
+  <md-button ng-if="vm.selectedUser.id && !vm.data.accountExists && !vm.data.loading"
+             ng-click="vm.createAccount()"
+             class="md-raised md-primary">
+    Create Account
+  </md-button>
+
+  <!--<mantl-templates-select templates="users.templates"-->
+  <!--possible-options-title="'All Projects:'"-->
+  <!--selected-options-title="'User Projects:'">-->
+  <!--</mantl-templates-select>-->
+</md-card>
