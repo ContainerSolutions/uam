@@ -32,9 +32,7 @@
       UsersService.fetch();
 
       function updateSelected(user) {
-        angular.forEach(vm.data.users, function (user) {
-          user.selected = false;
-        });
+        UsersService.clearSelected();
 
         vm.selected = user;
         vm.selectedBackupCopy = angular.copy(vm.selected);

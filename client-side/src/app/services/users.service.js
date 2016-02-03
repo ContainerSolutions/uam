@@ -18,10 +18,12 @@
       fetch: fetch,
       remove: remove,
       addNew: addNew,
-      update: update
+      update: update,
+      clearSelected: clearSelected
     };
 
     function getData() {
+      clearSelected();
       return usersData;
     }
 
@@ -93,6 +95,12 @@
         $log.debug('XHR Success: PUT: ' + requestUrl, data);
         successCallback && successCallback();
       }
+    }
+
+    function clearSelected() {
+      angular.forEach(usersData.users, function (user) {
+        user.selected = false;
+      });
     }
   }
 })();
