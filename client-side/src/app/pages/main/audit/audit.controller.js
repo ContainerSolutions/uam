@@ -15,11 +15,13 @@
 
     vm.eventData = EventsService.getData();
 
-    $scope.$watch(function () {
+    var destroyUserListener = $scope.$watch(function () {
       return vm.selectedUser && vm.selectedUser.id;
     }, function () {
       vm.eventData.events = [];
       EventsService.fetchEvents(vm.selectedUser.id);
     });
+
+    $scope.$on('$destroy', destroyUserListener);
   }
 })();

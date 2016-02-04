@@ -26,7 +26,7 @@
       vm.createAccount = createAccount;
       vm.deleteAccount = deleteAccount;
 
-      $scope.$watch(function () {
+      var destroyUserListener = $scope.$watch(function () {
         return vm.selectedUser && vm.selectedUser.id;
       }, function () {
         var id = vm.selectedUser && vm.selectedUser.id;
@@ -37,6 +37,8 @@
           JiraService.dataToDefault();
         }
       });
+
+      $scope.$on('$destroy', destroyUserListener);
 
       function createAccount() {
         var user = angular.copy(vm.selectedUser);
