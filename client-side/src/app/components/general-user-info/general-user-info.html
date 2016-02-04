@@ -6,18 +6,24 @@
       </md-card-title-text>
     </md-card-title>
     <form name="vm.userForm" autocomplete="off">
-      <uam-user-form user="vm.selectedUser" form="vm.userForm"></uam-user-form>
+      <uam-user-form user="vm.user" form="vm.userForm"></uam-user-form>
     </form>
   </md-card>
 </div>
 <div layout="row" class="actions-wrapper">
   <md-button ng-click="vm.retireUser()"
-             ng-if="vm.selectedUser.id"
+             ng-if="vm.user.id"
              class="md-warn md-raised">Retire
   </md-button>
   <span flex></span>
-  <md-button ng-click="vm.updateUserInfo()" ng-if="vm.selectedUser.id" class="md-primary md-raised">
+  <md-button ng-if="vm.infoChanged"
+             ng-click="vm.updateUserInfo()"
+             class="md-primary md-raised">
     Submit
   </md-button>
-  <md-button ng-click="vm.discard()" class="md-raised">Discard</md-button>
+  <md-button ng-if="vm.infoChanged"
+             ng-click="vm.discard()"
+             class="md-raised">
+    Discard
+  </md-button>
 </div>

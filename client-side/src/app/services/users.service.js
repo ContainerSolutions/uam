@@ -102,6 +102,7 @@
 
       function onSuccess(data) {
         $log.debug('XHR Success: PUT: ' + requestUrl, data);
+        fetch();
         successCallback && successCallback();
       }
     }

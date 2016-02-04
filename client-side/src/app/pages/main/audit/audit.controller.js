@@ -12,16 +12,19 @@
     vm.selectedUser = {};
     vm.selectedUserBackupCopy = {};
     vm.searchQuery = '';
-
     vm.eventData = EventsService.getData();
 
-    var destroyUserListener = $scope.$watch(function () {
-      return vm.selectedUser && vm.selectedUser.id;
-    }, function () {
-      vm.eventData.events = [];
-      EventsService.fetchEvents(vm.selectedUser.id);
-    });
+    init();
 
-    $scope.$on('$destroy', destroyUserListener);
+    function init() {
+      var destroyUserListener = $scope.$watch(function () {
+        return vm.selectedUser && vm.selectedUser.id;
+      }, function () {
+        vm.eventData.events = [];
+        EventsService.fetchEvents(vm.selectedUser.id);
+      });
+
+      $scope.$on('$destroy', destroyUserListener);
+    }
   }
 })();
