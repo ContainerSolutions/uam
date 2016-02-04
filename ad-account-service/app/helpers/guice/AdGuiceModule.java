@@ -1,8 +1,10 @@
 package helpers.guice;
 
+import com.tinkerpop.blueprints.impls.orient.OrientGraphFactory;
+import helpers.akka.AdAccountStorageActor;
 import helpers.akka.AdAccountsActor;
-import com.diosoft.uar.AccessManagerException;
-import com.diosoft.uar.ldap.ad.WindowsAccountAccessManager;
+import com.diosoft.uam.AccessManagerException;
+import com.diosoft.uam.ldap.ad.WindowsAccountAccessManager;
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 import com.google.inject.Provides;
@@ -11,6 +13,7 @@ import com.unboundid.ldap.sdk.LDAPConnectionPool;
 import com.unboundid.ldap.sdk.LDAPException;
 import com.unboundid.util.ssl.SSLUtil;
 import com.unboundid.util.ssl.TrustAllTrustManager;
+import helpers.akka.AuditLogsActor;
 import play.Configuration;
 import play.Logger;
 import play.inject.ApplicationLifecycle;
@@ -26,9 +29,11 @@ public class AdGuiceModule extends AbstractModule implements AkkaGuiceSupport {
     private static final Logger.ALogger LOG = Logger.of(AdGuiceModule.class);
 
     @Override
-    protected void configure() {
+    protected void configure() {//TODO sequence pattern
         LOG.debug("Binding [adActor]");
         bindActor(AdAccountsActor.class, "adActor");
+        bindActor(AdAccountStorageActor.class, "adStorageActor");
+        bindActor(AuditLogsActor.class, "adAuditActor");
     }
 
     @Inject @Provides
@@ -63,6 +68,19 @@ public class AdGuiceModule extends AbstractModule implements AkkaGuiceSupport {
         String configDefaultPass = configuration.getString("default.password");
 
         return new WindowsAccountAccessManager(ldapConnectionPool, configCnUsers, configDefaultPass);
+    }
+
+    @Inject @Provides
+    public OrientGraphFactory buildOrientGraphFactory(Configuration configuration, ApplicationLifecycle lifecycle) throws LDAPException, GeneralSecurityException {
+        LOG.debug("Building  [OrientGraphFactory]");
+        OrientGraphFactory factory = new OrientGraphFactory(configuration.getString("orientdb.url"));
+
+        lifecycle.addStopHook(() -> {
+            factory.close();
+            return F.Promise.pure(null);
+        });
+
+        return factory;
     }
 
 }

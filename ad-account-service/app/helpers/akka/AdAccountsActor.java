@@ -1,11 +1,12 @@
 package helpers.akka;
 
 import akka.actor.UntypedActor;
-import com.diosoft.uar.AccessManagerException;
-import com.diosoft.uar.ldap.ad.WindowsAccountAccess;
-import com.diosoft.uar.ldap.ad.WindowsAccountAccessFilter;
-import com.diosoft.uar.ldap.ad.WindowsAccountAccessManager;
+import com.diosoft.uam.AccessManagerException;
+import com.diosoft.uam.ldap.ad.WindowsAccountAccess;
+import com.diosoft.uam.ldap.ad.WindowsAccountAccessFilter;
+import com.diosoft.uam.ldap.ad.WindowsAccountAccessManager;
 import com.google.inject.Inject;
+import helpers.akka.AdAccountsActorProtocol.*;
 import play.Logger;
 
 public class AdAccountsActor extends UntypedActor {
@@ -24,19 +25,20 @@ public class AdAccountsActor extends UntypedActor {
         if(LOG.isDebugEnabled()) {
             LOG.debug("Message received: " + message);
         }
-        if (message instanceof AdAccountsActorProtocol.GetAllAdAccounts) {
+        if (message instanceof GetAllAdAccounts) {
             Object result = getAccountsImpl("*");
             sender().tell(result, self());
-        } else if (message instanceof AdAccountsActorProtocol.GetAdAccountById) {
-            Object result = getAccountsImpl(((AdAccountsActorProtocol.GetAdAccountById) message).id);
+        } else if (message instanceof GetAdAccountById) {
+            Object result = getAccountsImpl(((GetAdAccountById) message).id);
             sender().tell(result, self());
-        } else if (message instanceof AdAccountsActorProtocol.CreateAdAccount) {
-            Object result = createAccountImpl((AdAccountsActorProtocol.CreateAdAccount) message);
+        } else if (message instanceof CreateAdAccount) {
+            Object result = createAccountImpl((CreateAdAccount) message);
             sender().tell(result, self());
-        } else if (message instanceof AdAccountsActorProtocol.DeleteAdAccount) {
-            Object result = deleteAccountImpl((AdAccountsActorProtocol.DeleteAdAccount) message);
+        } else if (message instanceof DeleteAdAccount) {
+            Object result = deleteAccountImpl((DeleteAdAccount) message);
             sender().tell(result, self());
         } else {
+            LOG.warn("Unhandled message: " + message);
             unhandled(message);
         }
     }
@@ -52,7 +54,7 @@ public class AdAccountsActor extends UntypedActor {
         return result;
     }
 
-    private Object createAccountImpl(AdAccountsActorProtocol.CreateAdAccount createMessage) throws AccessManagerException {
+    private Object createAccountImpl(CreateAdAccount createMessage) throws AccessManagerException {
         Object result;
         try {
             WindowsAccountAccess windowsAccountAccess = new WindowsAccountAccess(createMessage.id,
@@ -61,6 +63,7 @@ public class AdAccountsActor extends UntypedActor {
                     createMessage.email);
 
             accessManager.grant(windowsAccountAccess);
+            LOG.info("Successfully created ad account for " + createMessage.id);
             result = Boolean.TRUE;
         } catch (Exception e) {
             LOG.error("Can't create account for " + createMessage.id, e);
@@ -69,7 +72,7 @@ public class AdAccountsActor extends UntypedActor {
         return result;
     }
 
-    private Object deleteAccountImpl(AdAccountsActorProtocol.DeleteAdAccount deleteMessage) throws AccessManagerException {
+    private Object deleteAccountImpl(DeleteAdAccount deleteMessage) throws AccessManagerException {
         Object result;
         try {
             WindowsAccountAccess access = new WindowsAccountAccess(deleteMessage.id,
@@ -78,6 +81,7 @@ public class AdAccountsActor extends UntypedActor {
                     deleteMessage.email);
 
             accessManager.revoke(access);
+            LOG.info("Successfully revoked ad account for " + deleteMessage.id);
             result = Boolean.TRUE;
         } catch (Exception e) {
             LOG.error("Can't delete account for " + deleteMessage.id, e);

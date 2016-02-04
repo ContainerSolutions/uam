@@ -24,6 +24,7 @@ import static org.junit.Assert.assertTrue;
 
 public class IntegrationTest {
 
+    public static final int TIMEOUT = 5000;
     private int port;
     private TestServer testServer;
 
@@ -72,7 +73,7 @@ public class IntegrationTest {
 
     @Test
     public void testGetAll_Optimistic() {
-        WSResponse response = WS.url("http://localhost:" + port + "/accounts").get().get(2000);
+        WSResponse response = WS.url("http://localhost:" + port + "/accounts").get().get(TIMEOUT);
         assertTrue(response.getBody().contains("{\"firstName\":null,\"lastName\":null,\"id\":\"Administrator\",\"email\":null}"));
     }
 
@@ -83,29 +84,29 @@ public class IntegrationTest {
         //cleanup
         WS.url("http://localhost:" + port + "/account")
                 .setContentType("application/json").setBody(jsonTestAccount)
-                .delete().get(2000);
+                .delete().get(TIMEOUT);
 
         //create account
         WSResponse responseCreate = WS.url("http://localhost:" + port + "/account")
                 .setContentType("application/json")
-                .post(jsonTestAccount).get(2000);
+                .post(jsonTestAccount).get(TIMEOUT);
         assertEquals("Create account failed", Helpers.OK, responseCreate.getStatus());
 
         //list account
         WSResponse responseCheckCreate = WS.url("http://localhost:" + port + "/account/integrationuser")
-                .get().get(2000);
+                .get().get(TIMEOUT);
         assertEquals("List account after creation failed", Helpers.OK, responseCheckCreate.getStatus());
         assertEquals("List account json differs", jsonTestAccount, responseCheckCreate.getBody());
 
         //delete account
         WSResponse responseDelete = WS.url("http://localhost:" + port + "/account")
                 .setContentType("application/json").setBody(jsonTestAccount)
-                .delete().get(2000);
+                .delete().get(TIMEOUT);
         assertEquals("Delete account failed", Helpers.OK, responseDelete.getStatus());
 
         //verify
         WSResponse responseCheckDelete = WS.url("http://localhost:" + port + "/account/integrationuser")
-                .get().get(2000);
+                .get().get(TIMEOUT);
         assertEquals("List account after deletion failed", Helpers.NOT_FOUND, responseCheckDelete.getStatus());
 
     }

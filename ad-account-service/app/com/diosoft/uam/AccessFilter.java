@@ -1,4 +1,4 @@
-package com.diosoft.uar;
+package com.diosoft.uam;
 
 public abstract class AccessFilter {
 

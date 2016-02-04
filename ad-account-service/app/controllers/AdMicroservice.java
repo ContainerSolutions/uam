@@ -1,7 +1,8 @@
 package controllers;
 
+import akka.dispatch.Futures;
 import akka.util.Timeout;
-import com.diosoft.uar.ldap.ad.WindowsAccountAccess;
+import com.diosoft.uam.ldap.ad.WindowsAccountAccess;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -17,10 +18,16 @@ import play.mvc.Result;
 import scala.concurrent.Future;
 import views.html.main;
 import akka.actor.*;
+
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static helpers.akka.AdAccountsActorProtocol.*;
+import static helpers.akka.AdAccountStorageActorProtocol.*;
+import static helpers.akka.AuditLogsActorProtocol.*;
 import static akka.pattern.Patterns.ask;
 
 @Singleton
@@ -28,13 +35,29 @@ public class AdMicroservice extends Controller {
 
     private static final Logger.ALogger LOG = Logger.of(AdMicroservice.class);
 
+    private ActorSystem system;
     private ActorRef adActor;
+    private ActorRef adStorageActor;
+    private ActorRef adAuditActor;
+
     private Timeout timeout;
 
     @Inject
-    public AdMicroservice(@Named("adActor") ActorRef adActor) {
+    public AdMicroservice(ActorSystem system,
+                          @Named("adActor") ActorRef adActor,
+                          @Named("adStorageActor") ActorRef adStorageActor,
+                          @Named("adAuditActor") ActorRef adAuditActor) {
+        this.system = system;
         this.adActor = adActor;
-        this.timeout = new Timeout(2, TimeUnit.SECONDS);
+        this.adStorageActor = adStorageActor;
+        this.adAuditActor = adAuditActor;
+
+        this.timeout = new Timeout(5, TimeUnit.SECONDS);
+    }
+
+    public Result index() {
+        LOG.debug("API console is shown");
+        return ok(main.render("AD REST API"));
     }
 
     public Promise<Result> getAccounts() {
@@ -91,18 +114,33 @@ public class AdMicroservice extends Controller {
         JsonNode jsonRequest = request().body().asJson();
         LOG.debug("AD account deletion request: " + jsonRequest);
 
-        DeleteAdAccount deleteMessage = Json.fromJson(jsonRequest, DeleteAdAccount.class);
-        return Promise.wrap(ask(adActor, deleteMessage, timeout)).map(response -> {
+        DeleteAdAccount deleteAccountMessage = Json.fromJson(jsonRequest, DeleteAdAccount.class);
+        String userId = deleteAccountMessage.id;
+        DeleteAdAccountInfo deleteAccountInfoMessage = new DeleteAdAccountInfo(userId);
+        //TODO get executor based on auth info
+        RegisterAuditLog saveAuditLogMessage = new RegisterAuditLog(1L, userId, "AD", "admin", "delete");
+
+        List<Future<Object>> futures = new ArrayList<>();
+        futures.add(ask(adActor, deleteAccountMessage, timeout));
+        futures.add(ask(adStorageActor, deleteAccountInfoMessage, timeout));
+        futures.add(ask(adAuditActor, saveAuditLogMessage, timeout));
+
+        return Promise.wrap(Futures.sequence(futures, system.dispatcher()))
+                .map(responses -> handleDeleteAdAccountActorsResult(responses,deleteAccountMessage.firstName,
+                        deleteAccountMessage.lastName,
+                        userId,
+                        deleteAccountMessage.email))
+                .map(response -> {
                     if (response instanceof Throwable) {
                         Throwable exception = (Throwable) response;
                         //TODO process and test account not found case
-                        LOG.error("Can't delete account " + deleteMessage.id, exception);
+                        LOG.error("Can't delete account " + userId, exception);
                         return internalServerError(getInternalErrorMessage(exception));
                     } else if (response instanceof Boolean) {
-                        LOG.info("Successfully deleted account " + deleteMessage.id);
+                        LOG.info("Successfully deleted account " + userId);
                         return ok();
                     } else {
-                        LOG.error("Unexpected response for account " + deleteMessage.id + " delete request: " + response);
+                        LOG.error("Unexpected response for account " + userId + " delete request: " + response);
                         return internalServerError(response.toString());
                     }
                 }
@@ -115,27 +153,116 @@ public class AdMicroservice extends Controller {
         JsonNode jsonRequest = request().body().asJson();
         LOG.debug("AD account creation request: " + jsonRequest);
 
-        CreateAdAccount createMessage = Json.fromJson(jsonRequest, CreateAdAccount.class);
-        return Promise.wrap(ask(adActor, createMessage, timeout)).map(response -> {
+        CreateAdAccount createAccountMessage = Json.fromJson(jsonRequest, CreateAdAccount.class);
+        String userId = createAccountMessage.id;
+        SaveAdAccountInfo saveAccountInfoMessage = new SaveAdAccountInfo(userId,
+                createAccountMessage.firstName,
+                createAccountMessage.lastName,
+                createAccountMessage.email);
+        //TODO get executor based on auth info
+        RegisterAuditLog saveAuditLogMessage = new RegisterAuditLog(1L, userId, "AD", "admin", "create");
+
+        List<Future<Object>> futures = new ArrayList<>();
+        futures.add(ask(adActor, createAccountMessage, timeout));
+        futures.add(ask(adStorageActor, saveAccountInfoMessage, timeout));
+        futures.add(ask(adAuditActor, saveAuditLogMessage, timeout));
+
+        return Promise.wrap(Futures.sequence(futures, system.dispatcher()))
+                .map(responses -> handleCreateAdAccountActorsResult(responses,
+                        createAccountMessage.firstName,
+                        createAccountMessage.lastName,
+                        userId,
+                        createAccountMessage.email))
+                .map(response -> {
                     if (response instanceof Throwable) {
                         Throwable exception = (Throwable) response;
                         //TODO process and test account already exists case
-                        LOG.error("Can't create account " + createMessage.id, exception);
+                        LOG.error("Can't create account " + userId, exception);
                         return internalServerError(getInternalErrorMessage(exception));
                     } else if (response instanceof Boolean) {
-                        LOG.info("Successfully created account " + createMessage.id);
+                        LOG.info("Successfully created account " + userId);
                         return ok();
                     } else {
-                        LOG.error("Unexpected response for account " + createMessage.id + " create request: " + response);
+                        LOG.error("Unexpected response for account " + userId + " create request: " + response);
                         return internalServerError(response.toString());
                     }
-                }
-        );
+                });
     }
 
-    public Result index() {
-        LOG.debug("API console is shown");
-        return ok(main.render("AD REST API"));
+    @SuppressWarnings("Duplicates")
+    private Object handleCreateAdAccountActorsResult(Iterable<Object> responses, String firstName, String lastName, String userId, String email) {
+        Iterator<Object> it = responses.iterator();
+        Object adActorResult = it.next();
+        Object adStorageActorResult = it.next();
+        Object adAuditActorResult = it.next();
+
+        if (adActorResult instanceof Throwable
+                || adStorageActorResult instanceof Throwable
+                || adAuditActorResult instanceof Throwable) {
+            Object result = null;
+            if(adAuditActorResult instanceof Boolean) {
+//TODO add update log entry with error
+//                adAuditActor.tell(updateAuditLogMessage, null);
+                LOG.debug("Updated audit entry with exception info");
+            } else {
+                result = adStorageActorResult;
+            }
+            if(adStorageActorResult instanceof Boolean) {
+//TODO add rollback action (consider account already exist case)
+//                adStorageActor.tell(new DeleteAdAccountInfo(userId), null);
+                LOG.debug("Rolled back account info record change");
+            } else {
+                result = adStorageActorResult;
+            }
+            if(adActorResult instanceof Boolean) {
+//TODO add rollback action (consider account already exist case)
+//                adActor.tell(new DeleteAdAccount(firstName, lastName, userId, email), null);
+                LOG.debug("Rolled back created account");
+            } else {
+                result = adActorResult;
+            }
+            return result;
+        } else {
+            return Boolean.TRUE;
+        }
+    }
+
+    @SuppressWarnings("Duplicates")
+    private Object handleDeleteAdAccountActorsResult(Iterable<Object> responses, String firstName, String lastName, String userId, String email) {
+        Iterator<Object> it = responses.iterator();
+        Object adActorResult = it.next();
+        Object adStorageActorResult = it.next();
+        Object adAuditActorResult = it.next();
+
+        if (adActorResult instanceof Throwable
+                || adStorageActorResult instanceof Throwable
+                || adAuditActorResult instanceof Throwable) {
+            Object result = null;
+            if(adAuditActorResult instanceof Boolean) {
+//TODO add update log entry with error
+//                adAuditActor.tell(updateAuditLogMessage, null);
+                LOG.debug("Updated audit entry with exception info");
+            } else {
+                result = adStorageActorResult;
+            }
+            if(adStorageActorResult instanceof Boolean) {
+//TODO add rollback action (consider account not found case)
+//                adStorageActor.tell(new SaveAdAccountInfo(userId, firstName, lastName, email), null);
+                LOG.debug("Rolled back account info record change");
+            } else {
+                result = adStorageActorResult;
+            }
+            if(adActorResult instanceof Boolean) {
+//TODO add rollback action (consider account not found case)
+//                adActor.tell(new CreateAdAccount(firstName, lastName, userId, email), null);
+                LOG.debug("Rolled back deleted account");
+            } else {
+                result = adActorResult;
+            }
+            return result;
+        } else {
+            return Boolean.TRUE;
+        }
     }
 
     private String getInternalErrorMessage(Throwable e) {

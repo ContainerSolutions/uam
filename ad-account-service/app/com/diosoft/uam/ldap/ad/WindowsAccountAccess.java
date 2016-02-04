@@ -1,6 +1,6 @@
-package com.diosoft.uar.ldap.ad;
+package com.diosoft.uam.ldap.ad;
 
-import com.diosoft.uar.Access;
+import com.diosoft.uam.Access;
 
 public class WindowsAccountAccess extends Access {
 

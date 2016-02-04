@@ -1,7 +1,7 @@
-package com.diosoft.uar.ldap.ad;
+package com.diosoft.uam.ldap.ad;
 
-import com.diosoft.uar.AccessManager;
-import com.diosoft.uar.AccessManagerException;
+import com.diosoft.uam.AccessManager;
+import com.diosoft.uam.AccessManagerException;
 import com.unboundid.ldap.sdk.*;
 import play.Logger;
 

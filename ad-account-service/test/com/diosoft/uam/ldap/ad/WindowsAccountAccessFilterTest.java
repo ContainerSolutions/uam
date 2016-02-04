@@ -1,9 +1,7 @@
-package com.diosoft.uar.ldap.ad;
+package com.diosoft.uam.ldap.ad;
 
 import org.junit.Assert;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 public class WindowsAccountAccessFilterTest {
 

@@ -1,6 +1,6 @@
-package com.diosoft.uar.ldap.ad;
+package com.diosoft.uam.ldap.ad;
 
-import com.diosoft.uar.AccessFilter;
+import com.diosoft.uam.AccessFilter;
 
 public class WindowsAccountAccessFilter extends AccessFilter {
 

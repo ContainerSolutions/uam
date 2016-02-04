@@ -1,4 +1,4 @@
-package com.diosoft.uar.ldap.ad;
+package com.diosoft.uam.ldap.ad;
 
 import com.unboundid.ldap.sdk.*;
 import org.junit.Assert;
