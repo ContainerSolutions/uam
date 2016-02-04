@@ -3,23 +3,23 @@
 
   angular
     .module('mantl')
-    .directive('mantlJiraAccount', mantJiraAccount);
+    .directive('mantlJiraAccountInfo', mantlJiraAccountInfo);
 
   /** @ngInject */
-  function mantJiraAccount() {
+  function mantlJiraAccountInfo() {
     return {
       restrict: 'E',
-      templateUrl: 'app/components/jira-account/jira-account.html',
+      templateUrl: 'app/components/jira-account-info/jira-account-info.html',
       scope: {
         selectedUser: '='
       },
-      controller: JiraAccountController,
+      controller: JiraAccountInfoController,
       controllerAs: 'vm',
       bindToController: true
     };
 
     /** @ngInject */
-    function JiraAccountController(JiraService, $mdDialog, $scope) {
+    function JiraAccountInfoController(JiraService, $mdDialog, $scope) {
       var vm = this;
 
       vm.data = JiraService.getData();
@@ -33,6 +33,8 @@
 
         if (id) {
           JiraService.getAccount(id);
+        } else {
+          JiraService.dataToDefault();
         }
       });
 

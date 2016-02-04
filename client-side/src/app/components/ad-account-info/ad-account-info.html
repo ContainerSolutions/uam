@@ -1,0 +1,19 @@
+<div>
+  <md-card>
+    <md-card-title>
+      <md-card-title-text>
+        <span class="md-headline">AD</span>
+      </md-card-title-text>
+    </md-card-title>
+    <p>
+      <b>Date of birth:</b>
+    </p>
+    <md-datepicker ng-model="users.birthday"></md-datepicker>
+    <mantl-templates-select templates="users.templates"
+                            possible-options-title="'All Groups:'"
+                            selected-options-title="'User Groups:'"
+                            class="mt">
+    </mantl-templates-select>
+  </md-card>
+</div>
+<div layout="row" class="actions-wrapper"></div>

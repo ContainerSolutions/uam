@@ -8,8 +8,9 @@
   /** @ngInject */
   function EventsService(ENV, $log, $resource) {
 
-    var url = ENV.api + 'events/';
+    var url = ENV.usersApi + 'users/';
     var data = {
+      loading: false,
       events: []
     };
 
@@ -29,34 +30,27 @@
         return;
       }
 
-      requestUrl = url + userID;
+      requestUrl = url + userID + '/events';
+      data.loading = true;
 
       $log.debug('Fetching event for user ' + userID);
       $resource(requestUrl).query({}, onSuccess, onError);
 
       function onSuccess(events) {
+        if (!angular.isArray(events)) {
+          $log.debug('Expected array of events, got:', events);
+          onError();
+          return;
+        }
+
         $log.debug('XHR Success: GET ' + requestUrl, events);
         data.events = events;
+        data.loading = false;
       }
 
-      //temporarily return mock data while back end is not ready
       function onError() {
-        data.events = [
-          {
-            datetime: new Date() - 45,
-            application: 'AD',
-            action: 'Ololo',
-            executor: 'Alyosha',
-            requestNumber: Math.floor(Math.random() * 10000)
-          },
-          {
-            datetime: new Date() + 10,
-            application: 'Jira',
-            action: 'Ololo2',
-            executor: 'Gena',
-            requestNumber: Math.floor(Math.random() * 10000)
-          }
-        ];
+        data.events = [];
+        data.loading = false;
       }
     }
   }

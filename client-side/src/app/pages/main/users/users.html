@@ -6,60 +6,25 @@
   </div>
   <div class="section-divider"></div>
   <div flex layout="column">
-    <div class="section">
+    <div class="section accounts-wrapper">
       <div flex layout="row">
-        <div flex class="cards-wrapper">
-          <md-card ng-if="users.selectedAccount === 0">
-            <md-card-title>
-              <md-card-title-text>
-                <span class="md-headline">General</span>
-              </md-card-title-text>
-            </md-card-title>
-            <form name="users.userForm" autocomplete="off">
-              <mantl-user-form user="users.selected" form="users.userForm"></mantl-user-form>
-            </form>
-          </md-card>
-          <md-card ng-if="users.selectedAccount === 1">
-            <md-card-title>
-              <md-card-title-text>
-                <span class="md-headline">GApps</span>
-              </md-card-title-text>
-            </md-card-title>
-            <mantl-templates-select templates="users.templates"
-                                    possible-options-title="'All Mailgroups:'"
-                                    selected-options-title="'User Mailgroups:'">
-            </mantl-templates-select>
-          </md-card>
-          <md-card ng-if="users.selectedAccount === 2">
-            <md-card-title>
-              <md-card-title-text>
-                <span class="md-headline">Git</span>
-              </md-card-title-text>
-            </md-card-title>
-            <mantl-templates-select templates="users.templates"
-                                    possible-options-title="'All Projects:'"
-                                    selected-options-title="'User Projects:'">
-            </mantl-templates-select>
-          </md-card>
-          <mantl-jira-account ng-if="users.selectedAccount === 3"
-                              selected-user="users.selected">
-          </mantl-jira-account>
-          <md-card ng-if="users.selectedAccount === 4">
-            <md-card-title>
-              <md-card-title-text>
-                <span class="md-headline">AD</span>
-              </md-card-title-text>
-            </md-card-title>
-            <p>
-              <b>Date of birth:</b>
-            </p>
-            <md-datepicker ng-model="users.birthday"></md-datepicker>
-            <mantl-templates-select templates="users.templates"
-                                    possible-options-title="'All Groups:'"
-                                    selected-options-title="'User Groups:'"
-                                    class="mt">
-            </mantl-templates-select>
-          </md-card>
+        <div flex>
+          <mantl-general-user-info ng-if="users.selectedAccount === 0"
+                                   selected-user="users.selected"
+                                   user-backup-copy="users.selectedUserBackupCopy">
+          </mantl-general-user-info>
+          <mantl-gapps-account-info ng-if="users.selectedAccount === 1"
+                                    selected-user="users.selected">
+          </mantl-gapps-account-info>
+          <mantl-git-account-info ng-if="users.selectedAccount === 2"
+                                  selected-user="users.selected">
+          </mantl-git-account-info>
+          <mantl-jira-account-info ng-if="users.selectedAccount === 3"
+                                   selected-user="users.selected">
+          </mantl-jira-account-info>
+          <mantl-ad-account-info ng-if="users.selectedAccount === 4"
+                                 selected-user="users.selected">
+          </mantl-ad-account-info>
         </div>
         <div layout="column" class="buttons-wrapper">
           <md-button ng-repeat="account in users.accounts"
@@ -69,18 +34,6 @@
             {{::account.name}}
           </md-button>
         </div>
-      </div>
-      <div class="buttons-wrapper-divider"></div>
-      <div layout="row" class="actions-wrapper">
-        <md-button ng-click="users.retireUser()"
-                   ng-if="users.selected.firstName"
-                   class="md-warn md-raised">Retire
-        </md-button>
-        <span flex></span>
-        <md-button ng-click="users.save()" ng-if="users.selected.firstName" class="md-primary md-raised">
-          Submit
-        </md-button>
-        <md-button class="md-raised">Discard</md-button>
       </div>
     </div>
   </div>

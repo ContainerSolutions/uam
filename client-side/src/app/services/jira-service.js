@@ -7,20 +7,24 @@
 
   /** @ngInject */
   function JiraService($resource, ENV, $log) {
-
-    var accountData = {
-      accountExists: false,
-      account: {},
-      loading: false
-    };
     var url = ENV.jiraApi + 'account';
+    var accountData = {};
+
+    dataToDefault();
 
     return {
       getData: getData,
+      dataToDefault: dataToDefault,
       getAccount: getAccount,
       createAccount: createAccount,
       removeAccount: removeAccount
     };
+
+    function dataToDefault() {
+      accountData.accountExists = false;
+      accountData.loading = false;
+      accountData.account = {};
+    }
 
     function getData() {
       return accountData;
