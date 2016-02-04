@@ -2,11 +2,11 @@
   'use strict';
 
   angular
-    .module('mantl')
-    .directive('mantlNavbar', mantlNavbar);
+    .module('uam')
+    .directive('uamNavbar', uamNavbar);
 
   /** @ngInject */
-  function mantlNavbar() {
+  function uamNavbar() {
     return {
       restrict: 'E',
       templateUrl: 'app/components/navbar/navbar.html',

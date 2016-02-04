@@ -2,11 +2,11 @@
   'use strict';
 
   angular
-    .module('mantl')
-    .directive('mantlUserSelect', mantlUserSelect);
+    .module('uam')
+    .directive('uamUserSelect', uamUserSelect);
 
   /** @ngInject */
-  function mantlUserSelect() {
+  function uamUserSelect() {
     return {
       restrict: 'E',
       templateUrl: 'app/components/user-select/user-select.html',

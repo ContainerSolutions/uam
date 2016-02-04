@@ -2,11 +2,11 @@
   'use strict';
 
   angular
-    .module('mantl')
-    .directive('mantlADAccountInfo', mantlADAccountInfo);
+    .module('uam')
+    .directive('uamADAccountInfo', uamADAccountInfo);
 
   /** @ngInject */
-  function mantlADAccountInfo() {
+  function uamADAccountInfo() {
     return {
       restrict: 'E',
       templateUrl: 'app/components/ad-account-info/ad-account-info.html',

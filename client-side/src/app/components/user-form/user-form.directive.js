@@ -2,11 +2,11 @@
   'use strict';
 
   angular
-    .module('mantl')
-    .directive('mantlUserForm', mantlUserForm);
+    .module('uam')
+    .directive('uamUserForm', uamUserForm);
 
   /** @ngInject */
-  function mantlUserForm() {
+  function uamUserForm() {
     return {
       restrict: 'E',
       templateUrl: 'app/components/user-form/user-form.html',

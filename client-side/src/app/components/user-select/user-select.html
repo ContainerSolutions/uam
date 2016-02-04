@@ -4,16 +4,18 @@
       <label>Search user:</label>
       <input ng-model="vm.searchQuery" type="text">
     </md-input-container>
-    <div ng-if="vm.data.fetching && !vm.data.users.length" layout="row" layout-align="space-around">
-      <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+    <div class="user-list">
+      <div ng-if="vm.data.fetching && !vm.data.users.length" layout="row" layout-align="space-around">
+        <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+      </div>
+      <md-list>
+        <md-list-item ng-repeat="user in vm.data.users | filter: vm.searchQuery track by $index"
+                      ng-click="vm.updateSelected(user)"
+                      ng-class="{selected: user.selected}">
+          <p>{{user.firstName}} {{user.lastName}}</p>
+        </md-list-item>
+      </md-list>
     </div>
-    <md-list class="user-list">
-      <md-list-item ng-repeat="user in vm.data.users | filter: vm.searchQuery track by $index"
-                    ng-click="vm.updateSelected(user)"
-                    ng-class="{selected: user.selected}">
-        <p>{{user.firstName}} {{user.lastName}}</p>
-      </md-list-item>
-    </md-list>
   </div>
   <div layout="row">
     <md-button ng-click="vm.addUser()"

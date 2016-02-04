@@ -2,11 +2,11 @@
   'use strict';
 
   angular
-    .module('mantl')
-    .directive('mantlGeneralUserInfo', mantlGeneralUserInfo);
+    .module('uam')
+    .directive('uamGeneralUserInfo', uamGeneralUserInfo);
 
   /** @ngInject */
-  function mantlGeneralUserInfo() {
+  function uamGeneralUserInfo() {
     return {
       restrict: 'E',
       templateUrl: 'app/components/general-user-info/general-user-info.html',

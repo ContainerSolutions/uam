@@ -3,7 +3,7 @@
   'use strict';
 
   angular
-    .module('mantl')
+    .module('uam')
     .constant('moment', moment);
 
 })();

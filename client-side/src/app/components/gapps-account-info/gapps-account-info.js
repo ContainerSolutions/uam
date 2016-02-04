@@ -2,11 +2,11 @@
   'use strict';
 
   angular
-    .module('mantl')
-    .directive('mantlGappsAccountInfo', mantlGappsAccountInfo);
+    .module('uam')
+    .directive('uamGappsAccountInfo', uamGappsAccountInfo);
 
   /** @ngInject */
-  function mantlGappsAccountInfo() {
+  function uamGappsAccountInfo() {
     return {
       restrict: 'E',
       templateUrl: 'app/components/gapps-account-info/gapps-account-info.html',

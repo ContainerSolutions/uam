@@ -2,8 +2,8 @@
   'use strict';
 
   angular
-    .module('mantl', [
-      'mantl.ENV',
+    .module('uam', [
+      'uam.ENV',
       'angular-loading-bar',
       'ngAnimate',
       'ngMessages',

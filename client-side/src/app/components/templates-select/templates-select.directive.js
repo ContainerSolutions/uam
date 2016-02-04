@@ -2,11 +2,11 @@
   'use strict';
 
   angular
-    .module('mantl')
-    .directive('mantlTemplatesSelect', mantlTemplatesSelect);
+    .module('uam')
+    .directive('uamTemplatesSelect', uamTemplatesSelect);
 
   /** @ngInject */
-  function mantlTemplatesSelect() {
+  function uamTemplatesSelect() {
     return {
       restrict: 'E',
       templateUrl: 'app/components/templates-select/templates-select.html',
@@ -15,13 +15,13 @@
         possibleOptionsTitle: '=',
         selectedOptionsTitle: '='
       },
-      controller: mantlTransferSelectController,
+      controller: uamTransferSelectController,
       controllerAs: 'vm',
       bindToController: true
     };
 
     /** @ngInject */
-    function mantlTransferSelectController($timeout) {
+    function uamTransferSelectController($timeout) {
       var vm = this;
 
       vm.addOptionToSelected = addOptionToSelected;

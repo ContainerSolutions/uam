@@ -2,7 +2,7 @@
   'use strict';
 
   angular
-    .module('mantl')
+    .module('uam')
     .factory('TemplatesService', TemplatesService);
 
   /** @ngInject */

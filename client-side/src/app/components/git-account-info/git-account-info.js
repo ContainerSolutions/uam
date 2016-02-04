@@ -2,11 +2,11 @@
   'use strict';
 
   angular
-    .module('mantl')
-    .directive('mantlGitAccountInfo', mantlGitAccountInfo);
+    .module('uam')
+    .directive('uamGitAccountInfo', uamGitAccountInfo);
 
   /** @ngInject */
-  function mantlGitAccountInfo() {
+  function uamGitAccountInfo() {
     return {
       restrict: 'E',
       templateUrl: 'app/components/git-account-info/git-account-info.html',

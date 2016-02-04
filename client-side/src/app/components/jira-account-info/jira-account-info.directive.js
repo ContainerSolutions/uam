@@ -2,11 +2,11 @@
   'use strict';
 
   angular
-    .module('mantl')
-    .directive('mantlJiraAccountInfo', mantlJiraAccountInfo);
+    .module('uam')
+    .directive('uamJiraAccountInfo', uamJiraAccountInfo);
 
   /** @ngInject */
-  function mantlJiraAccountInfo() {
+  function uamJiraAccountInfo() {
     return {
       restrict: 'E',
       templateUrl: 'app/components/jira-account-info/jira-account-info.html',
@@ -42,6 +42,7 @@
         var user = angular.copy(vm.selectedUser);
 
         user.displayName = user.firstName + ' ' + user.lastName;
+
         delete user.firstName;
         delete user.lastName;
         delete user.selected;
