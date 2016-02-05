@@ -8,6 +8,7 @@ scalaVersion := "2.11.6"
 
 libraryDependencies ++= Seq(
   filters
+  , javaWs
   , "com.unboundid" % "unboundid-ldapsdk" % "3.1.0"
 
   , "com.orientechnologies" % "orientdb-core" % "2.1.6"
