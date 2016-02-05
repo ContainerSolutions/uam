@@ -1,0 +1,5 @@
+# append to traefik.toml
+
+[file]
+watch = true
+filename = "rules.toml"
