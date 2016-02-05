@@ -2,4 +2,4 @@
 
 [file]
 watch = true
-filename = "rules.toml"
+filename = "/etc/treafik/rules.toml"
