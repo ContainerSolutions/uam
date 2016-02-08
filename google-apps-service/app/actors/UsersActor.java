@@ -53,7 +53,7 @@ public class UsersActor extends UntypedActor
 
 			try
 			{
-				directory = gFactory.creatDirectoryService();
+				directory = gFactory.createDirectoryService();
 
 			}
 			catch (GeneralSecurityException | IOException  ex)

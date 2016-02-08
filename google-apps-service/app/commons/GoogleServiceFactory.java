@@ -12,7 +12,7 @@ public interface GoogleServiceFactory
 
 	Credential createDirectoryCredential() throws GeneralSecurityException, IOException;
 
-	Directory creatDirectoryService() throws IOException, GeneralSecurityException;
+	Directory createDirectoryService() throws IOException, GeneralSecurityException;
 
 
 }

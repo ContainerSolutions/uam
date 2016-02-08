@@ -121,7 +121,7 @@ public class GoogleServiceFactoryImpl implements GoogleServiceFactory
 
 
 	@Override
-	public Directory creatDirectoryService() throws IOException, GeneralSecurityException
+	public Directory createDirectoryService() throws IOException, GeneralSecurityException
 	{
 		//createDomainWideDirectoryCredential();
 

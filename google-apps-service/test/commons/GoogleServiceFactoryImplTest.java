@@ -55,7 +55,7 @@ public class GoogleServiceFactoryImplTest
 		//test class
 		GoogleServiceFactoryImpl testClass = new GoogleServiceFactoryImpl();
 
-		Directory service = testClass.creatDirectoryService();
+		Directory service = testClass.createDirectoryService();
 
 		List<User> results = service.users().list()
 		                     .setMaxResults(10)

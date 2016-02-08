@@ -48,7 +48,7 @@ public class UsersActorTest
 			{
 				GoogleServiceFactory gFactory = Mockito.mock(GoogleServiceFactory.class);
 				Directory directory =  Mockito.mock(Directory.class);
-				Mockito.when(gFactory.creatDirectoryService()).thenReturn(directory);
+				Mockito.when(gFactory.createDirectoryService()).thenReturn(directory);
 				DirectoryHelper helper = Mockito.mock(DirectoryHelper.class);
 				Mockito.when(helper.executeInsertUser(
 				                 directory,
@@ -74,14 +74,6 @@ public class UsersActorTest
 
 				subject.tell(new UsersActor.InitializeMe(), getRef());
 				subject.tell(msg, getRef());
-				Mockito.verify(helper).executeInsertUser(
-				    Mockito.eq(directory),
-				    Mockito.eq("dio-soft.com"),
-				    Mockito.eq("vtegza@dio-soft.com"),
-				    Mockito.eq("testFirstName"),
-				    Mockito.eq("testLastName"),
-				    Mockito.eq("testPassword")
-				);
 
 				expectMsgEquals(duration("1 second"), "done");
 
