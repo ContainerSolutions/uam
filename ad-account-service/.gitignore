@@ -10,3 +10,5 @@ target
 *.log
 /project/project
 /project/target
+/.cache-main
+/.cache-tests
