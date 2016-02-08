@@ -3,11 +3,11 @@
 # ~~~~
 
 # Home page
-GET     /                       controllers.AdMicroservice.index()
-GET     /accounts               controllers.AdMicroservice.getAccounts()
-GET     /account/:id            controllers.AdMicroservice.getAccount(id: String)
-POST    /account                controllers.AdMicroservice.addAccount()
-DELETE  /account                controllers.AdMicroservice.deleteAccount()
+GET     /                          controllers.AdMicroservice.index()
+GET     /ad/accounts               controllers.AdMicroservice.getAccounts()
+GET     /ad/account/:id            controllers.AdMicroservice.getAccount(id: String)
+POST    /ad/account                controllers.AdMicroservice.addAccount()
+DELETE  /ad/account                controllers.AdMicroservice.deleteAccount()
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file           controllers.Assets.versioned(path="/public", file: Asset)

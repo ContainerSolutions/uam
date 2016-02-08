@@ -18,8 +18,8 @@
   "dist": {
     "ENV": {
       "usersApi": "http://52.35.140.210/",
-      "jiraApi": "http://52.35.140.210/",
-      "adApi": "http://52.35.140.210/",
+      "jiraApi": "http://52.35.140.210/jira/",
+      "adApi": "http://52.35.140.210/ad/",
       "debugEnabled": false
     }
   }
