@@ -1,5 +1,0 @@
-# append to traefik.toml
-
-[file]
-watch = true
-filename = "/etc/treafik/rules.toml"
