@@ -80,6 +80,22 @@ public class UsersActor extends UntypedActor
 			else
 				getSender().tell("fail", getSelf());
 		}
+		else if (msg instanceof DeleteUser)
+		{
+
+			DeleteUser message = (DeleteUser) msg;
+
+			int status = directoryHelper.executeDeleteUser(
+			                 directory,
+			                 message.domain,
+			                 message.primaryEmail
+			             );
+			if (status == 200)
+				getSender().tell("done", getSelf());
+			else
+				getSender().tell("fail", getSelf());
+		}
+
 	}
 
 	public static class InitializeMe {}
@@ -111,4 +127,19 @@ public class UsersActor extends UntypedActor
 
 		}
 	}
+	public static class DeleteUser
+	{
+		private final String domain;
+		private final String primaryEmail;
+
+		public DeleteUser(
+		    String domain,
+		    String primaryEmail
+		)
+		{
+			this.domain = domain;
+			this.primaryEmail = primaryEmail;
+		}
+	}
+
 }
