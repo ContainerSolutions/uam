@@ -1,19 +1,37 @@
-<div>
-  <md-card>
-    <md-card-title>
-      <md-card-title-text>
-        <span class="md-headline">AD</span>
-      </md-card-title-text>
-    </md-card-title>
-    <p>
-      <b>Date of birth:</b>
-    </p>
-    <md-datepicker ng-model="users.birthday"></md-datepicker>
-    <uam-templates-select templates="users.templates"
-                          possible-options-title="'All Groups:'"
-                          selected-options-title="'User Groups:'"
-                          class="mt">
-    </uam-templates-select>
-  </md-card>
-</div>
-<div layout="row" class="actions-wrapper"></div>
+<md-card>
+  <md-card-title>
+    <md-card-title-text>
+      <span class="md-headline">AD</span>
+    </md-card-title-text>
+  </md-card-title>
+
+  <p ng-if="!vm.selectedUser.id">
+    Select a user.
+  </p>
+
+  <div ng-if="vm.data.loading" layout="row" layout-align="space-around">
+    <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+  </div>
+
+  <p ng-if="vm.selectedUser.id && !vm.data.accountExists && !vm.data.loading">
+    There is no AD account for this user. Go ahead and create one!
+  </p>
+
+  <form ng-if="!vm.data.loading && vm.data.accountExists" name="vm.form" autocomplete="off">
+    <uam-user-form user="vm.selectedUser"
+                   form="vm.form"
+                   disable-inputs="true">
+    </uam-user-form>
+  </form>
+
+  <md-button ng-if="vm.data.accountExists && !vm.data.loading"
+             ng-click="vm.deleteAccount()"
+             class="md-raised md-warn">
+    Delete Account
+  </md-button>
+  <md-button ng-if="vm.selectedUser.id && !vm.data.accountExists && !vm.data.loading"
+             ng-click="vm.createAccount()"
+             class="md-raised md-primary">
+    Create Account
+  </md-button>
+</md-card>
