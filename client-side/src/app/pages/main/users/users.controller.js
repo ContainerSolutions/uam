@@ -10,7 +10,6 @@
     var vm = this;
 
     vm.selected = {};
-    vm.selectedUserBackupCopy = {};
     vm.templates = angular.copy(TemplatesService.getTemplates());
     vm.selectedAccount = 0;
     vm.accounts = [

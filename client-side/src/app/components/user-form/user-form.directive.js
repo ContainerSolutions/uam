@@ -12,7 +12,8 @@
       templateUrl: 'app/components/user-form/user-form.html',
       scope: {
         user: '=',
-        form: '='
+        form: '=',
+        disableInputs: '='
       },
       controller: UserFormController,
       controllerAs: 'vm',

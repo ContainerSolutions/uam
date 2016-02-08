@@ -7,6 +7,7 @@
   <input ng-model="vm.user.firstName"
          name="firstName"
          type="text"
+         ng-disabled="vm.disableInputs"
          required>
   <div ng-messages="vm.form.firstName.$error">
     <div ng-message="required">This field is required.</div>
@@ -17,6 +18,7 @@
   <input ng-model="vm.user.lastName"
          name="lastName"
          type="text"
+         ng-disabled="vm.disableInputs"
          required>
   <div ng-messages="vm.form.lastName.$error">
     <div ng-message="required">This field is required.</div>
@@ -27,6 +29,7 @@
   <input ng-model="vm.user.id"
          name="id"
          type="text"
+         ng-disabled="vm.disableInputs"
          required>
   <div ng-messages="vm.form.id.$error">
     <div ng-message="required">This field is required.</div>
@@ -37,6 +40,7 @@
   <input ng-model="vm.user.email"
          name="email"
          type="email"
+         ng-disabled="vm.disableInputs"
          required>
   <div ng-messages="vm.form.email.$error">
     <div ng-message="required">This field is required.</div>
