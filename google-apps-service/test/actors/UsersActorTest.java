@@ -17,6 +17,9 @@ import com.google.api.services.admin.directory.Directory;
 import org.mockito.Mockito;
 import org.mockito.Matchers;
 import java.util.Arrays;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import play.libs.Json;
 
 import commons.DirectoryHelper;
 import commons.GoogleServiceFactory;
@@ -53,7 +56,7 @@ public class UsersActorTest
 				Mockito.when(helper.executeInsertUser(
 				                 directory,
 				                 "dio-soft.com",
-				                 "vtegza@dio-soft.com",
+				                 "test@dio-soft.com",
 				                 "testFirstName",
 				                 "testLastName",
 				                 "testPassword")
@@ -65,7 +68,7 @@ public class UsersActorTest
 				UsersActor.InsertUser msg = new UsersActor.InsertUser(
 				    "dio-soft.com",
 				    "testId",
-				    "vtegza@dio-soft.com",
+				    "test@dio-soft.com",
 				    "testFirstName",
 				    "testLastName",
 				    "testPassword"
@@ -82,7 +85,7 @@ public class UsersActorTest
 		};
 
 	}
-@Test
+	@Test
 	public void testActorDelete() throws Exception
 	{
 		new JavaTestKit(system)
@@ -95,8 +98,8 @@ public class UsersActorTest
 				Mockito.when(helper.executeDeleteUser(
 				                 directory,
 				                 "dio-soft.com",
-				                 "vtegza@dio-soft.com"
-				                 )
+				                 "test@dio-soft.com"
+				             )
 				            ).thenReturn(200);
 
 				ActorRef subject = system.actorOf(UsersActor.props(gFactory, helper));
@@ -104,7 +107,7 @@ public class UsersActorTest
 				JavaTestKit probe =  new JavaTestKit(system);
 				UsersActor.DeleteUser msg = new UsersActor.DeleteUser(
 				    "dio-soft.com",
-				    "vtegza@dio-soft.com"
+				    "test@dio-soft.com"
 				);
 
 
@@ -118,5 +121,57 @@ public class UsersActorTest
 		};
 
 	}
+
+	@Test
+	public void testActorGet() throws Exception
+	{
+		new JavaTestKit(system)
+		{
+			{
+				String lastName = "LastName";
+				String firstName = "firstName";
+				String password = "pw";
+				String email = "primaryEmail";
+
+				ObjectNode expectedBody = Json.newObject();
+
+				expectedBody.put("lastName", lastName);
+				expectedBody.put("firstName", firstName);
+				expectedBody.put("primaryEmail", email);
+
+
+
+				GoogleServiceFactory gFactory = Mockito.mock(GoogleServiceFactory.class);
+				Directory directory =  Mockito.mock(Directory.class);
+				Mockito.when(gFactory.createDirectoryService()).thenReturn(directory);
+				DirectoryHelper helper = Mockito.mock(DirectoryHelper.class);
+				Mockito.when(helper.executeGetUser(
+				                 directory,
+				                 "dio-soft.com",
+				                 email
+				             )
+				            ).thenReturn(expectedBody);
+
+				ActorRef subject = system.actorOf(UsersActor.props(gFactory, helper));
+
+				JavaTestKit probe =  new JavaTestKit(system);
+				UsersActor.GetUser msg = new UsersActor.GetUser(
+				    "dio-soft.com",
+				    email
+				);
+
+
+				subject.tell(new UsersActor.InitializeMe(), getRef());
+				subject.tell(msg, getRef());
+
+
+				expectMsgEquals(duration("1 second"), expectedBody );
+
+
+			}
+		};
+
+	}
+
 
 }

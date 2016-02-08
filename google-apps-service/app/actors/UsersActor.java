@@ -19,6 +19,9 @@ import akka.actor.ActorRef;
 
 import commons.GoogleServiceFactory;
 import commons.DirectoryHelper;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import play.libs.Json;
 
 
 import akka.actor.UntypedActor;
@@ -95,6 +98,21 @@ public class UsersActor extends UntypedActor
 			else
 				getSender().tell("fail", getSelf());
 		}
+		else if (msg instanceof GetUser)
+		{
+
+			GetUser message = (GetUser) msg;
+
+			 ObjectNode response = directoryHelper.executeGetUser(
+			                 directory,
+			                 message.domain,
+			                 message.primaryEmail
+			             );
+			if (response != null)
+				getSender().tell(response, getSelf());
+			else
+				getSender().tell("fail", getSelf());
+		}
 
 	}
 
@@ -141,5 +159,21 @@ public class UsersActor extends UntypedActor
 			this.primaryEmail = primaryEmail;
 		}
 	}
+
+	public static class GetUser
+	{
+		private final String domain;
+		private final String primaryEmail;
+
+		public GetUser(
+		    String domain,
+		    String primaryEmail
+		)
+		{
+			this.domain = domain;
+			this.primaryEmail = primaryEmail;
+		}
+	}
+
 
 }

@@ -12,6 +12,10 @@ import com.google.api.services.admin.directory.Directory;
 import java.security.GeneralSecurityException;
 
 import com.google.api.services.admin.directory.model.*;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import play.libs.Json;
+
 
 import akka.actor.ActorRef;
 
@@ -38,6 +42,11 @@ public interface DirectoryHelper
 	    String primaryEmail
 	);
 
+	ObjectNode executeGetUser(
+	    Directory directory,
+	    String domain,
+	    String primaryEmail
+	);
 
 
 }
