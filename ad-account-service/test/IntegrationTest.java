@@ -24,7 +24,7 @@ import static org.junit.Assert.assertTrue;
 
 public class IntegrationTest {
 
-    public static final int TIMEOUT = 5000;
+    public static final int TIMEOUT = 30000;
     private int port;
     private TestServer testServer;
 
