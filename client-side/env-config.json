@@ -3,6 +3,7 @@
     "ENV": {
       "usersApi": "http://52.89.131.202:25077/",
       "jiraApi": "http://52.89.131.202:9951/",
+      "adApi": "http://52.89.131.202:9951/",
       "debugEnabled": true
     }
   },
@@ -10,13 +11,15 @@
     "ENV": {
       "usersApi": "http://52.89.131.202:25077/",
       "jiraApi": "http://52.89.131.202:9951/",
+      "adApi": "http://52.89.131.202:9951/",
       "debugEnabled": true
     }
   },
   "dist": {
     "ENV": {
-      "usersApi": "http://52.89.131.202:25077/",
-      "jiraApi": "http://52.89.131.202:9951/",
+      "usersApi": "http://52.35.140.210/",
+      "jiraApi": "http://52.35.140.210/",
+      "adApi": "http://52.35.140.210/",
       "debugEnabled": false
     }
   }
