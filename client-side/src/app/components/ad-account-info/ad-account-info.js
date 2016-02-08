@@ -3,26 +3,26 @@
 
   angular
     .module('uam')
-    .directive('uamADAccountInfo', uamADAccountInfo);
+    .directive('uamAdAccountInfo', uamAdAccountInfo);
 
   /** @ngInject */
-  function uamADAccountInfo() {
+  function uamAdAccountInfo() {
     return {
       restrict: 'E',
       templateUrl: 'app/components/ad-account-info/ad-account-info.html',
       scope: {
         selectedUser: '='
       },
-      controller: ADAccountInfoController,
+      controller: AdAccountInfoController,
       controllerAs: 'vm',
       bindToController: true
     };
 
     /** @ngInject */
-    function ADAccountInfoController(ADService, $mdDialog, $scope) {
+    function AdAccountInfoController(AdService, $mdDialog, $scope) {
       var vm = this;
 
-      vm.data = ADService.getData();
+      vm.data = AdService.getData();
 
       vm.createAccount = createAccount;
       vm.deleteAccount = deleteAccount;
@@ -36,9 +36,9 @@
           var id = vm.selectedUser && vm.selectedUser.id;
 
           if (id) {
-            ADService.getAccount(id);
+            AdService.getAccount(id);
           } else {
-            ADService.dataToDefault();
+            AdService.dataToDefault();
           }
         });
 
@@ -50,7 +50,7 @@
 
         delete user.selected;
 
-        ADService.createAccount(user);
+        AdService.createAccount(user);
       }
 
       function deleteAccount(ev) {
@@ -64,7 +64,7 @@
         });
 
         $mdDialog.show(confirm).then(function () {
-          ADService.removeAccount(vm.selectedUser.id);
+          AdService.removeAccount(vm.selectedUser.id);
         });
       }
     }
