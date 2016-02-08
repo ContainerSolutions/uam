@@ -91,4 +91,32 @@ public class DirectoryHelperImpl implements DirectoryHelper
 			throw new IllegalStateException(ex.getMessage());
 		}
 	}
+
+	@Override
+	public int executeDeleteUser(
+	    Directory directory,
+	    String domain,
+	    String primaryEmail
+	)
+	{
+
+		try
+		{
+
+
+			directory.users().delete(primaryEmail)
+			.execute();
+
+
+			return 200;
+
+		}
+		catch ( IOException  ex)
+		{
+			ex.printStackTrace();
+			//Send an error response
+			throw new IllegalStateException(ex.getMessage());
+		}
+	}
+
 }

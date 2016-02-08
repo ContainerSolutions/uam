@@ -32,5 +32,12 @@ public interface DirectoryHelper
 	    String password
 	);
 
+	int executeDeleteUser(
+	    Directory directory,
+	    String domain,
+	    String primaryEmail
+	);
+
+
 
 }

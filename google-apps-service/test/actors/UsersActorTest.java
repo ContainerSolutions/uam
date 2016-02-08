@@ -82,4 +82,41 @@ public class UsersActorTest
 		};
 
 	}
+@Test
+	public void testActorDelete() throws Exception
+	{
+		new JavaTestKit(system)
+		{
+			{
+				GoogleServiceFactory gFactory = Mockito.mock(GoogleServiceFactory.class);
+				Directory directory =  Mockito.mock(Directory.class);
+				Mockito.when(gFactory.createDirectoryService()).thenReturn(directory);
+				DirectoryHelper helper = Mockito.mock(DirectoryHelper.class);
+				Mockito.when(helper.executeDeleteUser(
+				                 directory,
+				                 "dio-soft.com",
+				                 "vtegza@dio-soft.com"
+				                 )
+				            ).thenReturn(200);
+
+				ActorRef subject = system.actorOf(UsersActor.props(gFactory, helper));
+
+				JavaTestKit probe =  new JavaTestKit(system);
+				UsersActor.DeleteUser msg = new UsersActor.DeleteUser(
+				    "dio-soft.com",
+				    "vtegza@dio-soft.com"
+				);
+
+
+				subject.tell(new UsersActor.InitializeMe(), getRef());
+				subject.tell(msg, getRef());
+
+				expectMsgEquals(duration("1 second"), "done");
+
+
+			}
+		};
+
+	}
+
 }
