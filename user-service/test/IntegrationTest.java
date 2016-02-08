@@ -13,6 +13,7 @@ import play.libs.ws.WSResponse;
 
 public class IntegrationTest {
 
+	protected static final int timeout = 50000;
 	protected static final String firstName = RandomStringUtils.randomAlphabetic(10);
 	protected static final String lastName = RandomStringUtils.randomAlphabetic(10);
 	protected static final String id = RandomStringUtils.randomAlphabetic(6);
@@ -27,7 +28,7 @@ public class IntegrationTest {
 	public void testIt() {
 		running(testServer(3333), () -> {
 				// Verify users response have no user with generated id
-				WSResponse response = WS.url("http://localhost:3333/users").get().get(5000);
+				WSResponse response = WS.url("http://localhost:3333/users").get().get(timeout);
 				Assert.assertEquals(200, response.getStatus());
 				JsonNode jsonResponse = response.asJson();
 				Assert.assertTrue(jsonResponse.isArray());
@@ -37,11 +38,11 @@ public class IntegrationTest {
 				response = WS.url("http://localhost:3333/users")
 						.post(Json.parse("{\"firstName\":\"" + firstName + "\", \"lastName\":\"" + lastName
 								+ "\", \"id\":\"" + id + "\", \"email\":\"" + email + "\"}"))
-						.get(5000);
+						.get(timeout);
 				Assert.assertEquals(201, response.getStatus());
 
 				// Verify user exists
-				response = WS.url("http://localhost:3333/users").get().get(5000);
+				response = WS.url("http://localhost:3333/users").get().get(timeout);
 				Assert.assertEquals(200, response.getStatus());
 				jsonResponse = response.asJson();
 				Assert.assertTrue(jsonResponse.isArray());
@@ -51,11 +52,11 @@ public class IntegrationTest {
 				response = WS.url("http://localhost:3333/users/" + id)
 						.put(Json.parse("{\"firstName\":\"" + updatedFirstName + "\", \"lastName\":\"" + updatedLastName
 								+ "\", \"id\":\"" + updatedId + "\", \"email\":\"" + updatedEmail + "\"}"))
-						.get(5000);
+						.get(timeout);
 				Assert.assertEquals(200, response.getStatus());
 
 				// Verify updated
-				response = WS.url("http://localhost:3333/users").get().get(5000);
+				response = WS.url("http://localhost:3333/users").get().get(timeout);
 				Assert.assertEquals(200, response.getStatus());
 				jsonResponse = response.asJson();
 				Assert.assertTrue(jsonResponse.isArray());
@@ -63,22 +64,22 @@ public class IntegrationTest {
 				Assert.assertTrue(jsonResponse.findValuesAsText("id").contains(updatedId));
 				
 				// Remove user
-				response = WS.url("http://localhost:3333/users/" + updatedId).delete().get(5000);
+				response = WS.url("http://localhost:3333/users/" + updatedId).delete().get(timeout);
 				Assert.assertEquals(204, response.getStatus());
 				
 				// Verify users response have no user with generated ids
-				response = WS.url("http://localhost:3333/users").get().get(5000);
+				response = WS.url("http://localhost:3333/users").get().get(timeout);
 				Assert.assertEquals(200, response.getStatus());
 				jsonResponse = response.asJson();
 				Assert.assertTrue(jsonResponse.isArray());
 				Assert.assertFalse(jsonResponse.findValuesAsText("id").contains(id));
 				Assert.assertFalse(jsonResponse.findValuesAsText("id").contains(updatedId));
 
-				//Verify empty events response
-				response = WS.url("http://localhost:3333/users/" + id + "/events").get().get(100000);
+				//Verify events response
+				response = WS.url("http://localhost:3333/users/" + id + "/events").get().get(timeout);
 				jsonResponse = response.asJson();
 				Assert.assertTrue(jsonResponse.isArray());
-				Assert.assertEquals(jsonResponse.size(), 0);
+				Assert.assertEquals(1, jsonResponse.size());
 		});
 	}
 }
