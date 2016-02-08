@@ -9,6 +9,9 @@
 	hostPort: 0
 	servicePort: 0
 	protocol: tcp
+	labels:
+		traefik.frontend.rule: PathPrefix
+		traefik.frontend.value: /users
 
 2. Create ‘ad-account-service’ Marathon application with following parameters:
 	id: /ad-account-service
@@ -21,6 +24,9 @@
 	hostPort: 0
 	servicePort: 0
 	protocol: tcp	
+	labels:
+		traefik.frontend.rule: PathPrefix
+		traefik.frontend.value: /ad/account
 
 3. Create ‘client-side’ Marathon application with following parameters:
 	id: /client-side
@@ -35,7 +41,7 @@
 	protocol: tcp	
 
 4. Create ‘google-apps-service’ Marathon application with following parameters:
-	id: /client-side
+	id: /‘google-apps-service
 	CPUs: 0.2
 	Memory(MB): 128
 	Disk Space(MB): 512
@@ -45,9 +51,12 @@
 	hostPort: 0
 	servicePort: 0
 	protocol: tcp	
+	labels:
+		traefik.frontend.rule: PathPrefix
+		traefik.frontend.value: /gapps/users
 
 5. Create ‘jira-account-service’ Marathon application with following parameters:
-	id: /client-side
+	id: /jira-account-service
 	CPUs: 0.2
 	Memory(MB): 128
 	Disk Space(MB): 512
@@ -57,6 +66,9 @@
 	hostPort: 0
 	servicePort: 0
 	protocol: tcp
+	labels:
+		traefik.frontend.rule: PathPrefix
+		traefik.frontend.value: /jira/account
 
 6. Create ‘jira’ Marathon application with following parameters:
 	id: /jira

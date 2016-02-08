@@ -19,7 +19,7 @@ public class ApplicationTest
 			public void run()
 			{
 
-				WSResponse response =   WS.url("http://localhost:3333/users/liz@example.com")
+				WSResponse response =   WS.url("http://localhost:3333/gapps/users/liz@example.com")
 				                        .get().get(5000);
 				int status = response.getStatus();
 				//default user should be added here for all requests

@@ -74,26 +74,26 @@ public class IntegrationTest {
 			public void run() {
 
 				// User does not exist in all Jira accounts
-				WSResponse response = WS.url("http://localhost:3333/accounts").get().get(timeout);
+				WSResponse response = WS.url("http://localhost:3333/jira/accounts").get().get(timeout);
 				Assert.assertEquals(200, response.getStatus());
 				JsonNode jsonNode = response.asJson();
 				Assert.assertTrue(jsonNode.isArray());
 				Assert.assertFalse(jsonNode.toString().contains(id));
 
 				// Create account in Jira
-				response = WS.url("http://localhost:3333/account")
+				response = WS.url("http://localhost:3333/jira/account")
 						.post(Json.toJson(new JiraUser(id, email, displayName))).get(timeout);
 				Assert.assertEquals(201, response.getStatus());
 
 				// User exists in all Jira accounts
-				response = WS.url("http://localhost:3333/accounts").get().get(timeout);
+				response = WS.url("http://localhost:3333/jira/accounts").get().get(timeout);
 				Assert.assertEquals(200, response.getStatus());
 				jsonNode = response.asJson();
 				Assert.assertTrue(jsonNode.isArray());
 				Assert.assertTrue(jsonNode.toString().contains(id));
 
 				// Get Jira account info
-				response = WS.url("http://localhost:3333/account/" + id).get().get(timeout);
+				response = WS.url("http://localhost:3333/jira/account/" + id).get().get(timeout);
 				Assert.assertEquals(200, response.getStatus());
 				jsonNode = response.asJson();
 				Assert.assertEquals(
@@ -101,11 +101,11 @@ public class IntegrationTest {
 						jsonNode.toString());
 
 				// Remove Jira account
-				response = WS.url("http://localhost:3333/account/" + id).delete().get(timeout);
+				response = WS.url("http://localhost:3333/jira/account/" + id).delete().get(timeout);
 				Assert.assertEquals(204, response.getStatus());
 
 				// User does not exist
-				response = WS.url("http://localhost:3333/account/" + id).get().get(timeout);
+				response = WS.url("http://localhost:3333/jira/account/" + id).get().get(timeout);
 				Assert.assertEquals(200, response.getStatus());
 				jsonNode = response.asJson();
 				Assert.assertEquals(

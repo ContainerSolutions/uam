@@ -1,25 +1,25 @@
 {
   "local": {
     "ENV": {
-      "usersApi": "http://52.89.131.202:25077/",
-      "jiraApi": "http://52.89.131.202:9951/",
-      "adApi": "http://52.89.131.202:9951/",
+      "usersApi": "http://52.35.140.210/",
+      "jiraApi": "http://52.35.140.210/jira/",
+      "adApi": "http://52.35.140.210/ad/",
       "debugEnabled": true
     }
   },
   "qa": {
     "ENV": {
-      "usersApi": "http://52.89.131.202:25077/",
-      "jiraApi": "http://52.89.131.202:9951/",
-      "adApi": "http://52.89.131.202:9951/",
+      "usersApi": "http://52.35.140.210/",
+      "jiraApi": "http://52.35.140.210/jira/",
+      "adApi": "http://52.35.140.210/ad/",
       "debugEnabled": true
     }
   },
   "dist": {
     "ENV": {
       "usersApi": "http://52.35.140.210/",
-      "jiraApi": "http://52.35.140.210/",
-      "adApi": "http://52.35.140.210/",
+      "jiraApi": "http://52.35.140.210/jira/",
+      "adApi": "http://52.35.140.210/ad/",
       "debugEnabled": false
     }
   }

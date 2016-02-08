@@ -5,6 +5,11 @@
 
     md-card {
       padding: $offset-standard;
+
+      button {
+        width: 150px;
+        margin-left: 0 !important;
+      }
     }
   }
 }

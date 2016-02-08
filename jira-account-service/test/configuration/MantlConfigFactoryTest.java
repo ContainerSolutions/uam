@@ -27,7 +27,7 @@ public class MantlConfigFactoryTest {
 		running(fakeApplication(), () -> {
 			Configuration config = MantlConfigFactory.load("consul.url", "jiraservice");
 
-			Assert.assertEquals("http://52.89.196.134:4752", config.getString("jiraservice/jira/url"));
+			Assert.assertEquals("http://54.68.174.182:25714", config.getString("jiraservice/jira/url"));
 		});
 	}
 
