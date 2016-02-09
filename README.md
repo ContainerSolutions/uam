@@ -11,7 +11,7 @@ Follow [instructions](https://github.com/CiscoCloud/microservices-infrastructure
 git clone https://github.com/ContainerSolutions/dio-soft.git to you development/build environment
 ```
 7.	Deploy Consul configuration located for each service in _$service/script/consul/keyval-\*.sh_
-8.	[Configure](https://www.vaultproject.io/docs/auth/userpass.html) Vault. You will need to enable auth backend.
+8.	[Configure] Vault. Use auth init instrivtions in _conf/vault/vault_instructions.md_ and service instructions in _$service/script/vault/_
 9.	Run db init scripts in OrientDB located in _$service/script/orientdb/_
 10.	Create docker image for each module. All microcesrvices are created using activator. You can use built in docker support to create/publish your image
 11.	Configure required services`s docker image in Maraton. You can use configuration described in conf/maraton/maraton_instructions.md. Maraton will automatically deploy your images.
