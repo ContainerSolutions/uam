@@ -1,7 +1,7 @@
 # Deployment Instructions UAM
 
 1.	Install mantl.io [mantl.io](https://github.com/ciscocloud/microservices-infrastructure) in your environment of choice.
-Follow [instruction](https://github.com/CiscoCloud/microservices-infrastructure/blob/master/README.md)
+Follow [instructions](https://github.com/CiscoCloud/microservices-infrastructure/blob/master/README.md)
 2.	Install [OrientDB](http://orientdb.com/) (with Maraton or as external service)
 3.	Install Jira instance (with Maraton or as external service)
 4.	Locate your Activate Directory service or create if needed.
