@@ -32,7 +32,7 @@ import play.mvc.Result;
 public class Application extends Controller
 {
 
-	private static final Timeout TIMEOUT = new Timeout(20, TimeUnit.SECONDS);
+	private static final Timeout TIMEOUT = new Timeout(200, TimeUnit.SECONDS);
 	private static final String serviceName = "userservice";
 	private static final String consulUrlKey = "consul.url";
 	private static final String orientDbUrlKey = "userservice/orientdb/url";

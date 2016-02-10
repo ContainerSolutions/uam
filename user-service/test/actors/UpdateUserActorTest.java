@@ -60,8 +60,7 @@ public class UpdateUserActorTest extends JavaTestKit {
 		String id = "anOldId";
 		User user = new User("aFirstName", "aLastName", "anId", "anEmail");
 		Mockito.when(graphFactory.getTx()).thenReturn(graph);
-		Mockito.when(graph.getVerticesOfClass("User")).thenReturn(Arrays.asList(userVertex1, userVertex2, userVertex3));
-		Mockito.when(userVertex2.getProperty("uniqueId")).thenReturn(id);
+		Mockito.when(graph.getVertices("User.uniqueId", id)).thenReturn(Arrays.asList(userVertex1, userVertex2, userVertex3));
 
 		ActorRef unit = system.actorOf(Props.create(UpdateUserActor.class, graphFactory));
 
@@ -71,8 +70,6 @@ public class UpdateUserActorTest extends JavaTestKit {
 		// then
 		expectMsgEquals("Ok");
 
-		Mockito.verify(userVertex1).getProperty("uniqueId");
-		Mockito.verify(userVertex2).getProperty("uniqueId");
 		Mockito.verify(userVertex2).setProperty("firstName", user.firstName);
 		Mockito.verify(userVertex2).setProperty("lastName", user.lastName);
 		Mockito.verify(userVertex2).setProperty("uniqueId", user.id);
@@ -80,7 +77,6 @@ public class UpdateUserActorTest extends JavaTestKit {
 		Mockito.verify(userVertex2).setProperty(Matchers.eq("updated"), Matchers.any(Date.class));
 		Mockito.verify(graph).commit();
 		Mockito.verify(graph).shutdown();
-		Mockito.verifyZeroInteractions(userVertex3);
 	}
 
 	@Test
@@ -88,7 +84,7 @@ public class UpdateUserActorTest extends JavaTestKit {
 		// given
 		String message = "anError";
 		Mockito.when(graphFactory.getTx()).thenReturn(graph);
-		Mockito.when(graph.getVerticesOfClass(Matchers.anyString())).thenThrow(new RuntimeException(message));
+		Mockito.when(graph.getVertices(Matchers.anyString(),Matchers.anyString())).thenThrow(new RuntimeException(message));
 
 		ActorRef unit = system.actorOf(Props.create(UpdateUserActor.class, graphFactory));
 

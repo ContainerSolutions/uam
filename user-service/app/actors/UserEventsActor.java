@@ -46,19 +46,17 @@ public class UserEventsActor extends UntypedActor {
 	}
 
 	private void getUserEvents(String id) {
-		logger.debug("Get user events started");
+		logger.info("Get user events started");
 		OrientGraph graph = graphFactory.getTx();
 		try {
 			List<UserEvent> data = new ArrayList<>();
-			graph.getVerticesOfClass("AuditLog").forEach(userEvent -> {
-				if (StringUtils.equals(userEvent.getProperty("user_id"), id)) {
+			graph.getVertices("AuditLog.user_id", id).forEach(userEvent -> {
 					data.add(new UserEvent(
 							userEvent.getProperty("datetime"),
 							userEvent.getProperty("application"),
 							userEvent.getProperty("action"),
 							userEvent.getProperty("executor"),
 							userEvent.getProperty("request_number")));
-				}
 			});
 
 			sender().tell(Json.toJson(data), self());

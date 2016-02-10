@@ -46,11 +46,8 @@ public class RemoveUserActor extends UntypedActor {
 		logger.info("Remove user started: " + id);
 		OrientGraph graph = graphFactory.getTx();
 		try {
-			for (Vertex user : graph.getVerticesOfClass("User")) {
-				if (StringUtils.equals(user.getProperty("uniqueId"), id)) {
-					graph.removeVertex(user);
-					break;
-				}
+			for (Vertex user : graph.getVertices("User.uniqueId", id)) {
+				graph.removeVertex(user);
 			}
 
 			graph.commit();

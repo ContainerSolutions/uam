@@ -52,15 +52,12 @@ public class UpdateUserActor extends UntypedActor {
 		logger.info("Update user started: " + id);
 		OrientGraph graph = graphFactory.getTx();
 		try {
-			for (Vertex userVertex : graph.getVerticesOfClass("User")) {
-				if (StringUtils.equals(userVertex.getProperty("uniqueId"), id)) {
-					userVertex.setProperty("firstName", user.firstName);
-					userVertex.setProperty("lastName", user.lastName);
-					userVertex.setProperty("uniqueId", user.id);
-					userVertex.setProperty("email", user.email);
-					userVertex.setProperty("updated", new Date());
-					break;
-				}
+			for (Vertex userVertex : graph.getVertices("User.uniqueId", id)) {
+				userVertex.setProperty("firstName", user.firstName);
+				userVertex.setProperty("lastName", user.lastName);
+				userVertex.setProperty("uniqueId", user.id);
+				userVertex.setProperty("email", user.email);
+				userVertex.setProperty("updated", new Date());
 			}
 
 			graph.commit();

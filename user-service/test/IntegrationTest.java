@@ -13,16 +13,17 @@ import play.libs.ws.WSResponse;
 
 public class IntegrationTest {
 
-	protected static final int timeout = 50000;
-	protected static final String firstName = RandomStringUtils.randomAlphabetic(10);
-	protected static final String lastName = RandomStringUtils.randomAlphabetic(10);
-	protected static final String id = RandomStringUtils.randomAlphabetic(6);
-	protected static final String email = id + "@dio-soft.com";
+	private static final int timeout = 5000000;
+	private static final String firstName = RandomStringUtils.randomAlphabetic(10);
+	private static final String lastName = RandomStringUtils.randomAlphabetic(10);
+	private static final String id = RandomStringUtils.randomAlphabetic(6);
+	private static final String email = id + "@dio-soft.com";
 	
-	protected static final String updatedFirstName = RandomStringUtils.randomAlphabetic(10);
-	protected static final String updatedLastName = RandomStringUtils.randomAlphabetic(10);
-	protected static final String updatedId = RandomStringUtils.randomAlphabetic(6);
-	protected static final String updatedEmail = updatedId + "@dio-soft.com";
+	private static final String updatedFirstName = RandomStringUtils.randomAlphabetic(10);
+	private static final String updatedLastName = RandomStringUtils.randomAlphabetic(10);
+	private static final String updatedId = RandomStringUtils.randomAlphabetic(6);
+	private static final String updatedEmail = updatedId + "@dio-soft.com";
+	
 
 	@Test
 	public void testIt() {

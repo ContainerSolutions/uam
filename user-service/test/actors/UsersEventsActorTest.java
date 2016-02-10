@@ -58,8 +58,7 @@ public class UsersEventsActorTest extends JavaTestKit {
 		JsonNode expected = Json.toJson(Arrays.asList(userEvent));
 
 		Mockito.when(graphFactory.getTx()).thenReturn(graph);
-		Mockito.when(graph.getVerticesOfClass("AuditLog")).thenReturn(Arrays.asList(userVertex));
-		Mockito.when(userVertex.getProperty("user_id")).thenReturn(userId);
+		Mockito.when(graph.getVertices("AuditLog.user_id", userId)).thenReturn(Arrays.asList(userVertex));
 		Mockito.when(userVertex.getProperty("datetime")).thenReturn(userEvent.datetime);
 		Mockito.when(userVertex.getProperty("application")).thenReturn(userEvent.application);
 		Mockito.when(userVertex.getProperty("action")).thenReturn(userEvent.action);
@@ -82,7 +81,7 @@ public class UsersEventsActorTest extends JavaTestKit {
 		// given
 		RuntimeException exception = new RuntimeException("anError");
 		Mockito.when(graphFactory.getTx()).thenReturn(graph);
-		Mockito.when(graph.getVerticesOfClass(Matchers.anyString())).thenThrow(exception);
+		Mockito.when(graph.getVertices(Matchers.anyString(), Matchers.anyString())).thenThrow(exception);
 
 		ActorRef unit = system.actorOf(Props.create(UserEventsActor.class, graphFactory));
 

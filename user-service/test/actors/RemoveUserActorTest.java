@@ -57,8 +57,7 @@ public class RemoveUserActorTest extends JavaTestKit {
 		// given
 		String id = "anId";
 		Mockito.when(graphFactory.getTx()).thenReturn(graph);
-		Mockito.when(graph.getVerticesOfClass("User")).thenReturn(Arrays.asList(userVertex1, userVertex2, userVertex3));
-		Mockito.when(userVertex2.getProperty("uniqueId")).thenReturn(id);
+		Mockito.when(graph.getVertices("User.uniqueId", id)).thenReturn(Arrays.asList(userVertex1, userVertex2, userVertex3));
 
 		ActorRef unit = system.actorOf(Props.create(RemoveUserActor.class, graphFactory));
 
@@ -68,11 +67,9 @@ public class RemoveUserActorTest extends JavaTestKit {
 		// then
 		expectMsgEquals("Ok");
 
-		Mockito.verify(userVertex1).getProperty("uniqueId");
 		Mockito.verify(graph).removeVertex(userVertex2);
 		Mockito.verify(graph).commit();
 		Mockito.verify(graph).shutdown();
-		Mockito.verifyZeroInteractions(userVertex3);
 	}
 
 	@Test
@@ -80,7 +77,7 @@ public class RemoveUserActorTest extends JavaTestKit {
 		// given
 		String message = "anError";
 		Mockito.when(graphFactory.getTx()).thenReturn(graph);
-		Mockito.when(graph.getVerticesOfClass(Matchers.anyString())).thenThrow(new RuntimeException(message));
+		Mockito.when(graph.getVertices(Matchers.anyString(),Matchers.anyString())).thenThrow(new RuntimeException(message));
 
 		ActorRef unit = system.actorOf(Props.create(RemoveUserActor.class, graphFactory));
 
