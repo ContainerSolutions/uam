@@ -51,18 +51,17 @@ public class GroupsActorTest
 				Mockito.when(gFactory.createDirectoryService()).thenReturn(directory);
 				DirectoryHelper helper = Mockito.mock(DirectoryHelper.class);
 				Mockito.when(helper.executeGetUserGroups(
-							directory,
-							"dio-soft.com", 
-							"vtegza"
-							)
-						).thenReturn(
-							Arrays.asList("myGroup@domain.com")
-							);
+				                 directory,
+				                 "dio-soft.com",
+				                 "vtegza"
+				             )
+				            ).thenReturn(
+				                Arrays.asList("myGroup@domain.com")
+				            );
 				ActorRef subject = system.actorOf(GroupsActor.props(gFactory, helper));
 
 				JavaTestKit probe =  new JavaTestKit(system);
 				GroupsActor.GetUserGroups msg = new GroupsActor.GetUserGroups("dio-soft.com", "vtegza");
-				subject.tell(new GroupsActor.InitializeMe(), getRef());
 				subject.tell(msg, getRef());
 				expectMsgEquals(Arrays.asList("myGroup@domain.com"));
 

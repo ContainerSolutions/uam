@@ -33,29 +33,19 @@ public class GroupsActor extends UntypedActor
 
 	}
 
-	public GroupsActor(GoogleServiceFactory gFactory, DirectoryHelper directoryHelper)
+	public GroupsActor(GoogleServiceFactory gFactory, DirectoryHelper directoryHelper) throws GeneralSecurityException, IOException
+
 	{
 		this.gFactory = gFactory;
 		this.directoryHelper = directoryHelper;
+		directory = gFactory.createDirectoryService();
+
 	}
 
 	@Override
 	public void onReceive(Object msg)
 	{
-		if (msg instanceof InitializeMe)
-		{
-
-			try
-			{
-				directory = gFactory.createDirectoryService();
-			}
-			catch (GeneralSecurityException | IOException  ex)
-			{
-				ex.printStackTrace();
-				//Send an error response
-			}
-		}
-		else if (msg instanceof GetUserGroups)
+		if (msg instanceof GetUserGroups)
 		{
 
 			GetUserGroups message = (GetUserGroups) msg;

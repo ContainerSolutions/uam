@@ -44,7 +44,7 @@ public class UsersActorTest
 	}
 
 	@Test
-	public void testActor() throws Exception
+	public void testInsertActor() throws Exception
 	{
 		new JavaTestKit(system)
 		{
@@ -75,7 +75,6 @@ public class UsersActorTest
 				);
 
 
-				subject.tell(new UsersActor.InitializeMe(), getRef());
 				subject.tell(msg, getRef());
 
 				expectMsgEquals(duration("1 second"), "done");
@@ -111,7 +110,6 @@ public class UsersActorTest
 				);
 
 
-				subject.tell(new UsersActor.InitializeMe(), getRef());
 				subject.tell(msg, getRef());
 
 				expectMsgEquals(duration("1 second"), "done");
@@ -161,7 +159,6 @@ public class UsersActorTest
 				);
 
 
-				subject.tell(new UsersActor.InitializeMe(), getRef());
 				subject.tell(msg, getRef());
 
 

@@ -35,37 +35,28 @@ public class UsersActor extends UntypedActor
 	private final GoogleServiceFactory gFactory;
 	private final DirectoryHelper directoryHelper;
 	private Directory directory;
+	private final ActorRef repoActor;
 
-	public static Props props(final GoogleServiceFactory gFactory, final DirectoryHelper directoryHelper)
+	public static Props props(Props repoActorProps , final GoogleServiceFactory gFactory, final DirectoryHelper directoryHelper)
 	{
-		return Props.create( UsersActor.class, () -> new UsersActor(gFactory, directoryHelper));
+		return Props.create( UsersActor.class, () -> new UsersActor(repoActorProps, gFactory, directoryHelper));
 
 	}
 
-	public UsersActor(GoogleServiceFactory gFactory, DirectoryHelper directoryHelper)
+	public UsersActor(Props repoActorProps, GoogleServiceFactory gFactory, DirectoryHelper directoryHelper) throws GeneralSecurityException, IOException
+
 	{
 		this.gFactory = gFactory;
 		this.directoryHelper = directoryHelper;
+		this.repoActor = context().actorOf(repoActorProps, "repoActor");
+		directory = gFactory.createDirectoryService();
+
 	}
 
 	@Override
 	public void onReceive(Object msg)
 	{
-		if (msg instanceof InitializeMe)
-		{
-
-			try
-			{
-				directory = gFactory.createDirectoryService();
-
-			}
-			catch (GeneralSecurityException | IOException  ex)
-			{
-				ex.printStackTrace();
-				//Send an error response
-			}
-		}
-		else if (msg instanceof InsertUser)
+		if (msg instanceof InsertUser)
 		{
 
 			InsertUser message = (InsertUser) msg;
@@ -79,7 +70,11 @@ public class UsersActor extends UntypedActor
 			                 message.password
 			             );
 			if (status == 200)
+			{
+				//SaveUser
+				//repoActor.tell(objMsg, self());
 				getSender().tell("done", getSelf());
+			}
 			else
 				getSender().tell("fail", getSelf());
 		}
@@ -103,11 +98,11 @@ public class UsersActor extends UntypedActor
 
 			GetUser message = (GetUser) msg;
 
-			 ObjectNode response = directoryHelper.executeGetUser(
-			                 directory,
-			                 message.domain,
-			                 message.primaryEmail
-			             );
+			ObjectNode response = directoryHelper.executeGetUser(
+			                          directory,
+			                          message.domain,
+			                          message.primaryEmail
+			                      );
 			if (response != null)
 				getSender().tell(response, getSelf());
 			else
@@ -115,8 +110,6 @@ public class UsersActor extends UntypedActor
 		}
 
 	}
-
-	public static class InitializeMe {}
 
 	public static class InsertUser
 	{
