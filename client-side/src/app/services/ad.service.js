@@ -6,7 +6,7 @@
     .factory('AdService', AdService);
 
   /** @ngInject */
-  function AdService($resource, ENV, $log) {
+  function AdService($http, $resource, ENV, $log) {
     var url = ENV.adApi + 'account';
     var accountData = {};
 
@@ -92,22 +92,21 @@
       }
     }
 
-    function removeAccount(id) {
-      var requestUrl;
-
-      if (!id) {
+    function removeAccount(account) {
+      if (!account) {
         return;
       }
 
-      requestUrl = url + '/' + id;
       accountData.loading = true;
-      $resource(requestUrl).remove({}, onSuccess, onError);
+      $http.delete(url, {data: account})
+        .success(onSuccess)
+        .error(onError);
 
       function onSuccess() {
         accountData.account = {};
         accountData.accountExists = false;
         accountData.loading = false;
-        $log.debug('XHR Success: DELETE ' + requestUrl);
+        $log.debug('XHR Success: DELETE ' + url);
       }
 
       function onError() {

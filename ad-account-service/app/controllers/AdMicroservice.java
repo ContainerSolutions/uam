@@ -52,7 +52,7 @@ public class AdMicroservice extends Controller {
         this.adStorageActor = adStorageActor;
         this.adAuditActor = adAuditActor;
 
-        this.timeout = new Timeout(5000);
+        this.timeout = new Timeout(30, TimeUnit.SECONDS);
     }
 
     public Result index() {

@@ -1,5 +1,7 @@
 package helpers.akka;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 public class AdAccountsActorProtocol {
 
     public static class GetAllAdAccounts {
@@ -52,6 +54,7 @@ public class AdAccountsActorProtocol {
         }
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class DeleteAdAccount {
         public String firstName;
         public String lastName;

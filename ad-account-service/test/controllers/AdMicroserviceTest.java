@@ -225,7 +225,7 @@ public class AdMicroserviceTest {
         int expected = OK;
 
         //given
-        JsonNode body = Json.parse("{\"firstName\":\"firstName1\",\"lastName\":\"lastName1\",\"id\":\"login1\",\"email\":\"email1@domain.com\"}");
+        JsonNode body = Json.parse("{\"firstName\":\"firstName1\",\"lastName\":\"lastName1\",\"id\":\"login1\",\"email\":\"email1@domain.com\",\"unknown\":\"field\"}");
 
         //when
         WindowsAccountAccessManager mockAccessManager = mock(WindowsAccountAccessManager.class);

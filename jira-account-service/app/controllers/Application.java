@@ -70,9 +70,9 @@ public class Application extends Controller {
 				configuration.getString(jiraUrlKey), jiraCredentials.getUser(), jiraCredentials.getPassword()));
 
 		getAllActor = system.actorOf(
-				GetAllAccountsActor.props(WS.client(), configuration.getString(jiraUrlKey), "admin", "secret"));
+				GetAllAccountsActor.props(WS.client(), configuration.getString(jiraUrlKey), jiraCredentials.getUser(), jiraCredentials.getPassword()));
 		getAccountActor = system
-				.actorOf(GetAccountActor.props(WS.client(), configuration.getString(jiraUrlKey), "admin", "secret"));
+				.actorOf(GetAccountActor.props(WS.client(), configuration.getString(jiraUrlKey), jiraCredentials.getUser(), jiraCredentials.getPassword()));
 
 		ActorRef removeAccountVertexActor = system.actorOf(Props.create(RemoveAccountVertexActor.class, graphFactory));
 		removeAccountActor = system.actorOf(RemoveAccountActor.props(removeAccountVertexActor, WS.client(),

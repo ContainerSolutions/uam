@@ -64,7 +64,7 @@
         });
 
         $mdDialog.show(confirm).then(function () {
-          AdService.removeAccount(vm.selectedUser.id);
+          AdService.removeAccount(vm.selectedUser);
         });
       }
     }
