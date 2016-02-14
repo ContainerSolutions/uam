@@ -7,6 +7,7 @@ lazy val root = (project in file(".")).enablePlugins(PlayJava)
 scalaVersion := "2.11.6"
 
 libraryDependencies ++= Seq(
+                filters,
 		javaWs,
 		cache,
 		"com.orientechnologies" % "orientdb-core" % "2.1.6",

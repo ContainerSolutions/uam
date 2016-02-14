@@ -62,7 +62,7 @@ public class UsersActorTest
 				                 "testPassword")
 				            ).thenReturn(200);
 
-				ActorRef subject = system.actorOf(UsersActor.props(gFactory, helper));
+				ActorRef subject = system.actorOf(UsersActor.props(null, gFactory, helper));
 
 				JavaTestKit probe =  new JavaTestKit(system);
 				UsersActor.InsertUser msg = new UsersActor.InsertUser(
@@ -101,7 +101,7 @@ public class UsersActorTest
 				             )
 				            ).thenReturn(200);
 
-				ActorRef subject = system.actorOf(UsersActor.props(gFactory, helper));
+				ActorRef subject = system.actorOf(UsersActor.props(null, gFactory, helper));
 
 				JavaTestKit probe =  new JavaTestKit(system);
 				UsersActor.DeleteUser msg = new UsersActor.DeleteUser(
@@ -150,7 +150,7 @@ public class UsersActorTest
 				             )
 				            ).thenReturn(expectedBody);
 
-				ActorRef subject = system.actorOf(UsersActor.props(gFactory, helper));
+				ActorRef subject = system.actorOf(UsersActor.props(null, gFactory, helper));
 
 				JavaTestKit probe =  new JavaTestKit(system);
 				UsersActor.GetUser msg = new UsersActor.GetUser(
@@ -165,6 +165,49 @@ public class UsersActorTest
 				expectMsgEquals(duration("1 second"), expectedBody );
 
 
+			}
+		};
+
+	}
+
+	@Test
+	public void testActorGetFail() throws Exception
+	{
+		new JavaTestKit(system)
+		{
+			{
+				String lastName = "LastName";
+				String firstName = "firstName";
+				String password = "pw";
+				String email = "primaryEmail";
+
+				ObjectNode expectedBody = null;
+
+
+				GoogleServiceFactory gFactory = Mockito.mock(GoogleServiceFactory.class);
+				Directory directory =  Mockito.mock(Directory.class);
+				Mockito.when(gFactory.createDirectoryService()).thenReturn(directory);
+				DirectoryHelper helper = Mockito.mock(DirectoryHelper.class);
+				Mockito.when(helper.executeGetUser(
+				                 directory,
+				                 "dio-soft.com",
+				                 email
+				             )
+				            ).thenReturn(expectedBody);
+
+				ActorRef subject = system.actorOf(UsersActor.props(null, gFactory, helper));
+
+				JavaTestKit probe =  new JavaTestKit(system);
+				UsersActor.GetUser msg = new UsersActor.GetUser(
+				    "dio-soft.com",
+				    email
+				);
+
+
+				subject.tell(msg, getRef());
+
+
+				expectMsgEquals(duration("1 second"), "404" );
 			}
 		};
 

@@ -9,41 +9,88 @@ import play.mvc.Result;
 import play.mvc.BodyParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import actors.Kernel;
+import actors.UsersActor;
+import play.libs.F.Promise;
+import akka.util.Timeout;
+import scala.concurrent.duration.Duration;
+import java.util.concurrent.TimeUnit;
 
+import static akka.pattern.Patterns.ask;
 
 public class Application extends Controller
 {
 	private final String DIRECTORY_REST = Configuration.root().getString("google.directory.rest.url") ;
-	// add parameter for email information  liz@example.com
-	public Result getUserInfo(String email)
-	{
+	private static final Timeout TIMEOUT = new Timeout(Duration.create(10, TimeUnit.SECONDS));
+	private final String domain = "dio-soft.com";
 
-		String response = WS.client().url(DIRECTORY_REST + "users/" + email).get().get(5000).asJson().toString();
-		return ok(response);
+	// add parameter for email information  liz@example.com
+	private final Kernel kernel;
+
+	public Application()
+	{
+		try
+		{
+			kernel = new Kernel();
+		}
+		catch (Exception ex)
+		{
+			ex.printStackTrace();
+			System.exit(0);
+			throw new IllegalStateException("Could not init Kernel " + ex.getMessage());
+		}
+	}
+
+	public Promise<Result> getUserInfo(String email)
+	{
+		//TODO get user email by id
+		return Promise.wrap(ask(kernel.users(), new UsersActor.GetUser(domain, email), TIMEOUT)).map(
+		           response ->
+		{
+			if (response.equals("404"))
+			{
+				return notFound(email);
+
+			}
+			else{
+				return ok(response.toString());
+			}
+		}
+		       );
+
+	}
+
+	public Promise<Result> deleteUser(String email)
+	{
+		//TODO get user email by id
+		return Promise.wrap(ask(kernel.users(), new UsersActor.DeleteUser(domain, email), TIMEOUT)).map(
+		           response -> ok(response.toString())
+		       );
+
 	}
 
 	@BodyParser.Of(BodyParser.Json.class)
-	public Result insert()
+	public Promise<Result> insert()
 	{
 		JsonNode body = request().body().asJson();
 		String firstName = body.findPath("firstName").textValue();
 		String lastName = body.findPath("lastName").textValue();
 		String email = body.findPath("email").textValue();
 		String password = body.findPath("password").textValue();
-		//Formulate Json for g directory
-		ObjectNode gbody = Json.newObject();
-		ObjectNode gname = Json.newObject();
+		String id = body.findPath("id").textValue();
 
-		gname.put("familyName", lastName);
-		gname.put("givenName", firstName);
-		gbody.set("name", gname);
-		gbody.put("password", password);
-		gbody.put("primaryEmail", email);
+		UsersActor.InsertUser insertUser = new UsersActor.InsertUser(
+		    domain,
+		    id,
+		    email,
+		    firstName,
+		    lastName,
+		    password
+		);
 
-		String status = WS.client().url(DIRECTORY_REST + "users/").post(gbody.toString()).get(5000).getStatusText();
-
-		//Showing current status -  need to Authorise
-		return ok(status);
+		return Promise.wrap(ask(kernel.users(), insertUser, TIMEOUT)).map(
+		           response -> ok(response.toString())
+		       );
 	}
 
 }

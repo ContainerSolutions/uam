@@ -6,6 +6,8 @@ import play.test.*;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.Ignore;
+
 
 import play.libs.ws.WS;
 import play.libs.ws.WSResponse;
@@ -15,6 +17,7 @@ public class StoreTest
 {
 
 	@Test
+	@Ignore
 	public void testPutGetAndDelete() throws Exception
 	{
 		//running(fakeApplication());
