@@ -37,18 +37,18 @@ public class UsersActor extends UntypedActor
 	private Directory directory;
 	private final ActorRef repoActor;
 
-	public static Props props(Props repoActorProps , final GoogleServiceFactory gFactory, final DirectoryHelper directoryHelper)
+	public static Props props(ActorRef repoActor , final GoogleServiceFactory gFactory, final DirectoryHelper directoryHelper)
 	{
-		return Props.create( UsersActor.class, () -> new UsersActor(repoActorProps, gFactory, directoryHelper));
+		return Props.create( UsersActor.class, () -> new UsersActor(repoActor, gFactory, directoryHelper));
 
 	}
 
-	public UsersActor(Props repoActorProps, GoogleServiceFactory gFactory, DirectoryHelper directoryHelper) throws GeneralSecurityException, IOException
+	public UsersActor(ActorRef repoActor, GoogleServiceFactory gFactory, DirectoryHelper directoryHelper) throws GeneralSecurityException, IOException
 
 	{
 		this.gFactory = gFactory;
 		this.directoryHelper = directoryHelper;
-		this.repoActor = context().actorOf(repoActorProps, "repoActor");
+		this.repoActor = repoActor;
 		directory = gFactory.createDirectoryService();
 
 	}
@@ -106,7 +106,7 @@ public class UsersActor extends UntypedActor
 			if (response != null)
 				getSender().tell(response, getSelf());
 			else
-				getSender().tell("fail", getSelf());
+				getSender().tell("404", getSelf());
 		}
 
 	}
