@@ -1,52 +1,18 @@
 package commons;
+
 import java.util.List;
-import java.util.stream.Collectors;
 
-import akka.actor.UntypedActor;
-
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.api.services.admin.directory.Directory;
 
-import java.security.GeneralSecurityException;
-
-import com.google.api.services.admin.directory.model.*;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import play.libs.Json;
-
-
-import akka.actor.ActorRef;
-
-import commons.GoogleServiceFactory;
-
-
-public interface DirectoryHelper
-{
+public interface DirectoryHelper {
 
 	List<String> executeGetUserGroups(Directory directory, String domain, String user);
 
-	int executeInsertUser(
-	    Directory directory,
-	    String domain,
-	    String primaryEmail,
-	    String firstName,
-	    String lastName,
-	    String password
-	);
+	int executeInsertUser(Directory directory, String domain, String primaryEmail, String firstName, String lastName, String password);
 
-	int executeDeleteUser(
-	    Directory directory,
-	    String domain,
-	    String primaryEmail
-	);
+	int executeDeleteUser(Directory directory, String domain, String primaryEmail);
 
-	ObjectNode executeGetUser(
-	    Directory directory,
-	    String domain,
-	    String primaryEmail
-	);
-
+	ObjectNode executeGetUser(Directory directory, String domain, String primaryEmail);
 
 }
