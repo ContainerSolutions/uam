@@ -5,10 +5,12 @@ import static play.test.Helpers.running;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.Ignore;
 
 public class StoreTest {
 
 	@Test
+	@Ignore
 	public void testPutGetAndDelete() throws Exception {
 		running(fakeApplication(), () -> {
 			String inputKey = "MyTestKey";

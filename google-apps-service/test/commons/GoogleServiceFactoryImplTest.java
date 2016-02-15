@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.Ignore;
 
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.services.admin.directory.Directory;
@@ -15,6 +16,7 @@ import com.google.api.services.admin.directory.model.User;
 public class GoogleServiceFactoryImplTest {
 
 	@Test
+	@Ignore //depended on key
 	public void testCreateDirectoryCredential() throws Exception {
 		running(fakeApplication(), () -> {
 			try {
@@ -32,6 +34,7 @@ public class GoogleServiceFactoryImplTest {
 	}
 
 	@Test
+	@Ignore
 	public void testCreateDirectoryService() throws Exception {
 		running(fakeApplication(), () -> {
 			try {
@@ -54,7 +57,6 @@ public class GoogleServiceFactoryImplTest {
 
 				Assert.assertEquals(10, results.size());
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		});
