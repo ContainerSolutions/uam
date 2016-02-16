@@ -32,7 +32,7 @@ public class IntegrationTest {
 	@BeforeClass
 	public static void setUp() {
 
-		OrientGraph graph = new OrientGraphFactory("remote:52.25.246.25:2424/UserAccessControl").getTx();
+		OrientGraph graph = new OrientGraphFactory("remote:localhost:2424/UserAccessControl").getTx();
 		try {
 			OrientVertex user = graph.addVertex("User", "user");
 			user.setProperty("uniqueId", id);
@@ -56,7 +56,7 @@ public class IntegrationTest {
 	@AfterClass
 	public static void tearDown() {
 
-		OrientGraph graph = new OrientGraphFactory("remote:52.25.246.25:2424/UserAccessControl").getTx();
+		OrientGraph graph = new OrientGraphFactory("remote:localhost:2424/UserAccessControl").getTx();
 		try {
 			graph.removeVertex(graph.getVertex(userId));
 
@@ -72,7 +72,6 @@ public class IntegrationTest {
 	public void testIt() {
 		running(testServer(3333), new Runnable() {
 			public void run() {
-
 				// User does not exist in all Jira accounts
 				WSResponse response = WS.url("http://localhost:3333/jira/accounts").get().get(timeout);
 				Assert.assertEquals(200, response.getStatus());
@@ -81,8 +80,7 @@ public class IntegrationTest {
 				Assert.assertFalse(jsonNode.toString().contains(id));
 
 				// Create account in Jira
-				response = WS.url("http://localhost:3333/jira/account")
-						.post(Json.toJson(new JiraUser(id, email, displayName))).get(timeout);
+				response = WS.url("http://localhost:3333/jira/account").post(Json.toJson(new JiraUser(id, email, displayName))).get(timeout);
 				Assert.assertEquals(201, response.getStatus());
 
 				// User exists in all Jira accounts
@@ -96,9 +94,7 @@ public class IntegrationTest {
 				response = WS.url("http://localhost:3333/jira/account/" + id).get().get(timeout);
 				Assert.assertEquals(200, response.getStatus());
 				jsonNode = response.asJson();
-				Assert.assertEquals(
-						"{\"id\":\"" + id + "\",\"email\":\"" + email + "\",\"displayName\":\"" + displayName + "\"}",
-						jsonNode.toString());
+				Assert.assertEquals("{\"id\":\"" + id + "\",\"email\":\"" + email + "\",\"displayName\":\"" + displayName + "\"}", jsonNode.toString());
 
 				// Remove Jira account
 				response = WS.url("http://localhost:3333/jira/account/" + id).delete().get(timeout);
@@ -108,9 +104,7 @@ public class IntegrationTest {
 				response = WS.url("http://localhost:3333/jira/account/" + id).get().get(timeout);
 				Assert.assertEquals(200, response.getStatus());
 				jsonNode = response.asJson();
-				Assert.assertEquals(
-						"{\"errorMessages\":[\"The user named '" + id + "' does not exist\"],\"errors\":{}}",
-						jsonNode.toString());
+				Assert.assertEquals("{\"errorMessages\":[\"The user named '" + id + "' does not exist\"],\"errors\":{}}", jsonNode.toString());
 			}
 		});
 	}

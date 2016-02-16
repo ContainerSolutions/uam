@@ -7,15 +7,29 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import play.Configuration;
+import play.libs.ws.WS;
+import play.libs.ws.WSClient;
 
 public class ConsulConfigFactoryTest {
+
+	private static final int timeoutMs = 1000000;
+	private static final String key = "testKey";
+	private static final String value = "{\"value\":\"testValue\"}";
 
 	@Test
 	public void testLoad() throws Exception {
 		running(fakeApplication(), () -> {
-			Configuration config = ConsulConfigFactory.load(Configuration.root(), "jiraservice");
+			Configuration configuration = Configuration.root();
+			String url = configuration.getString("consul.url") + "/v1/kv/" + key;
+			WSClient client = WS.client();
 
-			Assert.assertEquals("http://54.68.174.182:25714", config.getString("jiraservice/jira/url"));
+			client.url(url).put(value).get(timeoutMs);
+
+			Configuration config = ConsulConfigFactory.load(configuration, client, key);
+
+			Assert.assertEquals(value, config.getString(key));
+
+			client.url(url).delete().get(timeoutMs);
 		});
 	}
 }

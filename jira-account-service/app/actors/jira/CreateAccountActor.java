@@ -5,6 +5,7 @@ import java.util.List;
 
 import actors.repository.CreateAccountVertexActor.CreateVertex;
 import akka.actor.ActorRef;
+import akka.actor.ActorSystem;
 import akka.actor.Props;
 import akka.actor.UntypedActor;
 import akka.pattern.Patterns;
@@ -28,17 +29,20 @@ public class CreateAccountActor extends UntypedActor {
 		}
 	}
 
-	public static Props props(ActorRef next, WSClient client, String url, String user, String password) {
-		return Props.create(CreateAccountActor.class, () -> new CreateAccountActor(next, client, url, user, password));
+	public static Props props(ActorSystem system, ActorRef next, WSClient client, String url, String user, String password) {
+		return Props.create(CreateAccountActor.class, () -> new CreateAccountActor(system, next, client, url, user, password));
 	}
 
+	private final ActorSystem system;
 	private final ActorRef next;
 	private final WSClient client;
 	private final String url;
 	private final String user;
 	private final String password;
 
-	public CreateAccountActor(ActorRef next, WSClient client, String url, String user, String password) {
+	
+	public CreateAccountActor(ActorSystem system, ActorRef next, WSClient client, String url, String user, String password) {
+		this.system = system;
 		this.next = next;
 		this.client = client;
 		this.url = url;
@@ -68,7 +72,7 @@ public class CreateAccountActor extends UntypedActor {
 					logger.info(String.format("Jira account [%s] created", msg.jiraUser.id));
 					return new CreateVertex(msg.jiraUser.id);
 				}).wrapped();
-		Patterns.pipe(future, context().dispatcher().prepare()).pipeTo(next, sender());
+		Patterns.pipe(future, system.dispatcher()).pipeTo(next, sender());
 	}
 
 	public static class JiraPostBody {

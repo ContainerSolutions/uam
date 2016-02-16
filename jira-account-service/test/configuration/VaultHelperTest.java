@@ -13,7 +13,7 @@ public class VaultHelperTest {
 	@Test
 	public void testGetCredentials() throws Exception {
 		running(fakeApplication(), () -> {
-			Configuration configuration = ConsulConfigFactory.load(Configuration.root(), "jiraservice");
+			Configuration configuration = Configuration.root();
 
 			String token = VaultHelper.generateToken(configuration);
 			System.out.println(token);

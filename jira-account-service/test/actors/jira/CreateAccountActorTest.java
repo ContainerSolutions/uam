@@ -72,7 +72,7 @@ public class CreateAccountActorTest extends JavaTestKit {
 		Mockito.when(wsRequest.post(bodyArgument.capture())).thenReturn(Promise.pure(wsResponse));
 		Mockito.when(wsResponse.getStatus()).thenReturn(201);
 
-		ActorRef unit = system.actorOf(CreateAccountActor.props(getRef(), client, url, user, password));
+		ActorRef unit = system.actorOf(CreateAccountActor.props(system, getRef(), client, url, user, password));
 
 		// when
 		unit.tell(new CreateJiraAccountMessage(new JiraUser(name, email, displayName)), getRef());
@@ -95,7 +95,7 @@ public class CreateAccountActorTest extends JavaTestKit {
 		Mockito.when(wsRequest.post(Matchers.any(JsonNode.class))).thenReturn(Promise.pure(wsResponse));
 		Mockito.when(wsResponse.getStatus()).thenReturn(500);
 
-		ActorRef unit = system.actorOf(CreateAccountActor.props(getRef(), client, url, user, password));
+		ActorRef unit = system.actorOf(CreateAccountActor.props(system, getRef(), client, url, user, password));
 
 		// when
 		unit.tell(new CreateJiraAccountMessage(new JiraUser(name, email, displayName)), getRef());

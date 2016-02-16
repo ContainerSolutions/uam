@@ -7,31 +7,18 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.tinkerpop.blueprints.impls.orient.OrientGraphFactory;
+import com.google.inject.name.Named;
 
 import actors.AuditLogsActor;
-import actors.jira.CreateAccountActor;
 import actors.jira.CreateAccountActor.CreateJiraAccountMessage;
-import actors.jira.GetAccountActor;
 import actors.jira.GetAccountActor.GetAccount;
-import actors.jira.GetAllAccountsActor;
 import actors.jira.GetAllAccountsActor.GetAllAccounts;
-import actors.jira.RemoveAccountActor;
 import actors.jira.RemoveAccountActor.RemoveAccount;
-import actors.repository.CreateAccountVertexActor;
-import actors.repository.RemoveAccountVertexActor;
 import akka.actor.ActorRef;
-import akka.actor.ActorSystem;
-import akka.actor.Props;
 import akka.util.Timeout;
-import configuration.ConsulConfigFactory;
-import configuration.VaultHelper;
-import configuration.VaultHelper.Credentials;
 import models.JiraUser;
-import play.Configuration;
 import play.libs.F.Promise;
 import play.libs.Json;
-import play.libs.ws.WS;
 import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
@@ -40,12 +27,6 @@ import scala.concurrent.duration.Duration;
 @Singleton
 public class Application extends Controller {
 	private static final Timeout TIMEOUT = new Timeout(Duration.create(10, TimeUnit.SECONDS));
-	private static final String serviceName = "jiraservice";
-
-	private static final String orientDbUrlKey = "jiraservice/orientdb/url";
-	private static final String orientDbKey = "jiraservice/orientdb";
-	private static final String jiraUrlKey = "jiraservice/jira/url";
-	private static final String jiraKey = "jiraservice/jira";
 
 	private final ActorRef createActor;
 
@@ -56,29 +37,16 @@ public class Application extends Controller {
 	private final ActorRef auditLogsActor;
 
 	@Inject
-	public Application(Configuration configuration, ActorSystem system) {
-		configuration = ConsulConfigFactory.load(configuration, serviceName);
-		String token = VaultHelper.generateToken(configuration);
-
-		Credentials orientDbCredentials = VaultHelper.getCredentials(configuration, token, orientDbKey);
-		OrientGraphFactory graphFactory = new OrientGraphFactory(configuration.getString(orientDbUrlKey),
-				orientDbCredentials.getUser(), orientDbCredentials.getPassword()).setupPool(1, 10);
-
-		Credentials jiraCredentials = VaultHelper.getCredentials(configuration, token, jiraKey);
-		ActorRef createVertexActor = system.actorOf(Props.create(CreateAccountVertexActor.class, graphFactory));
-		createActor = system.actorOf(CreateAccountActor.props(createVertexActor, WS.client(),
-				configuration.getString(jiraUrlKey), jiraCredentials.getUser(), jiraCredentials.getPassword()));
-
-		getAllActor = system.actorOf(
-				GetAllAccountsActor.props(WS.client(), configuration.getString(jiraUrlKey), jiraCredentials.getUser(), jiraCredentials.getPassword()));
-		getAccountActor = system
-				.actorOf(GetAccountActor.props(WS.client(), configuration.getString(jiraUrlKey), jiraCredentials.getUser(), jiraCredentials.getPassword()));
-
-		ActorRef removeAccountVertexActor = system.actorOf(Props.create(RemoveAccountVertexActor.class, graphFactory));
-		removeAccountActor = system.actorOf(RemoveAccountActor.props(removeAccountVertexActor, WS.client(),
-				configuration.getString(jiraUrlKey), "admin", "secret"));
-		auditLogsActor = system.actorOf(Props.create(AuditLogsActor.class, graphFactory));
-
+	public Application(@Named("createActor") ActorRef createActor,
+			@Named("getAllActor") ActorRef getAllActor,
+			@Named("getAccountActor") ActorRef getAccountActor,
+			@Named("removeAccountActor") ActorRef removeAccountActor,
+			@Named("auditLogsActor") ActorRef auditLogsActor) {
+		this.createActor = createActor;
+		this.getAllActor = getAllActor;
+		this.getAccountActor = getAccountActor;
+		this.removeAccountActor = removeAccountActor;
+		this.auditLogsActor = auditLogsActor;
 	}
 
 	// TODO add error handling for correct response statuses
