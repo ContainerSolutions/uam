@@ -55,7 +55,7 @@ public class AuditLogsActorTest extends JavaTestKit {
     @Test
     public void testActor_StorageException() throws Exception {
         //expected
-        Class expected = AccessManagerException.class;
+        Class<AccessManagerException> expected = AccessManagerException.class;
         //given
         RegisterAuditLog message = new RegisterAuditLog(1L, "userId", "application", "executor", "action");
 
@@ -69,7 +69,7 @@ public class AuditLogsActorTest extends JavaTestKit {
         target.tell(message, getRef());
 
         //assert
-        expectMsgAnyClassOf(expected);
+        expectMsgClass(expected);
     }
 
 }

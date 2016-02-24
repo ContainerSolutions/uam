@@ -1,29 +1,18 @@
 package actors;
 
-import actors.UserEventsActor.GetUserEventsMessage;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.mockito.Mockito;
+
+import com.tinkerpop.blueprints.impls.orient.OrientGraph;
+import com.tinkerpop.blueprints.impls.orient.OrientGraphFactory;
+import com.tinkerpop.blueprints.impls.orient.OrientVertex;
+
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
 import akka.testkit.JavaTestKit;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.tinkerpop.blueprints.impls.orient.OrientGraph;
-import com.tinkerpop.blueprints.impls.orient.OrientGraphFactory;
-import com.tinkerpop.blueprints.impls.orient.OrientVertex;
-import models.UserEvent;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Matchers;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
-import play.libs.Json;
-import akka.testkit.JavaTestKit;
-import scala.concurrent.duration.Duration;
-import java.util.Arrays;
-import java.util.Date;
-import java.time.LocalDateTime;
 
 public class AuditLogsActorTest
 {
@@ -68,7 +57,6 @@ public class AuditLogsActorTest
 
 
 
-				JavaTestKit probe =  new JavaTestKit(system);
 				subject.tell(message, getRef());
 
 				expectMsgEquals(duration("1 second"), "done");

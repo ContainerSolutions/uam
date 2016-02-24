@@ -57,7 +57,7 @@ public class AdAccountStorageActorTest extends JavaTestKit {
     @Test
     public void testOnReceive_SaveAdAccountInfo_StorageException() throws Exception {
         //expected
-        Class expected = AccessManagerException.class;
+        Class<AccessManagerException> expected = AccessManagerException.class;
 
         //given
         SaveAdAccountInfo saveMessage = new SaveAdAccountInfo("testuser", "User", "Test", "test@mantl.io");
@@ -72,7 +72,7 @@ public class AdAccountStorageActorTest extends JavaTestKit {
         target.tell(saveMessage, getRef());
 
         //assert
-        expectMsgAnyClassOf(expected);
+        expectMsgClass(expected);
 
     }
 
@@ -101,7 +101,7 @@ public class AdAccountStorageActorTest extends JavaTestKit {
     @Test
     public void testOnReceive_DeleteAdAccountInfo_StorageException() throws Exception {
         //expected
-        Class expected = AccessManagerException.class;
+        Class<AccessManagerException> expected = AccessManagerException.class;
 
         //given
         DeleteAdAccountInfo deleteMessage = new DeleteAdAccountInfo("testuser");
@@ -116,7 +116,7 @@ public class AdAccountStorageActorTest extends JavaTestKit {
         target.tell(deleteMessage, getRef());
 
         //assert
-        expectMsgAnyClassOf(expected);
+        expectMsgClass(expected);
 
     }
 

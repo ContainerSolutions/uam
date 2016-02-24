@@ -7,15 +7,13 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Test;
 import org.junit.Ignore;
+import org.junit.Test;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.tinkerpop.blueprints.impls.orient.OrientGraph;
 import com.tinkerpop.blueprints.impls.orient.OrientGraphFactory;
 import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 
-import play.libs.Json;
 import play.libs.ws.WS;
 import play.libs.ws.WSResponse;
 
@@ -90,8 +88,8 @@ public class IntegrationTest
 			public void run()
 			{
 
-				// User does not exist in all Jira accounts
 				WSResponse response = WS.url("http://localhost:3333/gapp/accounts").get().get(timeout);
+				Assert.assertEquals(200, response.getStatus());
 
 			}
 		});

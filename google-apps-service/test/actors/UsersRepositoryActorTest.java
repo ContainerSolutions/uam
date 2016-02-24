@@ -1,26 +1,15 @@
 package actors;
 
-import scala.concurrent.duration.Duration;
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.Mockito;
+
+import com.google.api.services.admin.directory.Directory;
 
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
-import akka.actor.Props;
-import akka.actor.UntypedActor;
 import akka.testkit.JavaTestKit;
-import scala.concurrent.duration.Duration;
-import commons.GoogleServiceFactory;
-import com.google.api.services.admin.directory.Directory;
-import org.mockito.Mockito;
-import org.mockito.Matchers;
-import java.util.Arrays;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import play.libs.Json;
-
 import commons.DirectoryHelper;
 import commons.GoogleServiceFactory;
 
@@ -64,7 +53,6 @@ public class UsersRepositoryActorTest
 
 				ActorRef subject = system.actorOf(UsersActor.props(null, gFactory, helper));
 
-				JavaTestKit probe =  new JavaTestKit(system);
 				UsersActor.InsertUser msg = new UsersActor.InsertUser(
 				    "dio-soft.com",
 				    "testId",

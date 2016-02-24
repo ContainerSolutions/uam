@@ -1,22 +1,17 @@
 package actors;
 
+import java.util.Arrays;
+
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.Mockito;
+
+import com.google.api.services.admin.directory.Directory;
 
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
-import akka.actor.Props;
-import akka.actor.UntypedActor;
 import akka.testkit.JavaTestKit;
-import scala.concurrent.duration.Duration;
-import commons.GoogleServiceFactory;
-import com.google.api.services.admin.directory.Directory;
-import org.mockito.Mockito;
-import org.mockito.Matchers;
-import java.util.Arrays;
-
 import commons.DirectoryHelper;
 import commons.GoogleServiceFactory;
 
@@ -60,7 +55,6 @@ public class GroupsActorTest
 				            );
 				ActorRef subject = system.actorOf(GroupsActor.props(gFactory, helper));
 
-				JavaTestKit probe =  new JavaTestKit(system);
 				GroupsActor.GetUserGroups msg = new GroupsActor.GetUserGroups("dio-soft.com", "vtegza");
 				subject.tell(msg, getRef());
 				expectMsgEquals(Arrays.asList("myGroup@domain.com"));
