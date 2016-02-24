@@ -1,4 +1,4 @@
-package actors;
+package actors.repository;
 
 import java.util.Date;
 
@@ -9,7 +9,6 @@ import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 import akka.actor.UntypedActor;
 import play.Logger;
 import play.Logger.ALogger;
-import java.time.LocalDateTime;
 
 public class AuditLogsActor extends UntypedActor
 {
@@ -38,7 +37,7 @@ public class AuditLogsActor extends UntypedActor
 				logger.info("Starting audit log");
 //				OSequence seq = graph.getRawGraph().getMetadata().getSequenceLibrary().getSequence("rnseq");
 				OrientVertex auditLogVertex = graph.addVertex("AuditLog", "auditlog");
-//				auditLogVertex.setProperty("request_number", seq.next());
+				auditLogVertex.setProperty("request_number", message.requestNumber);
 				auditLogVertex.setProperty("user_id", message.userId);
 				auditLogVertex.setProperty("datetime", new Date());
 				auditLogVertex.setProperty("application", message.application);

@@ -70,4 +70,20 @@ public class GetAccountActorTest extends JavaTestKit {
 		expectMsgEquals("{\"id\":\"testName\",\"email\":\"test@email.test\",\"displayName\":\"testDN\"}");
 	}
 
+	@Test
+	public void testOnReceive_onJiraError() throws Exception {
+		// given
+		Mockito.when(client.url(url + "/rest/api/2/user?username=" + name)).thenReturn(wsRequest);
+		Mockito.when(wsRequest.setAuth(user, password)).thenReturn(wsRequest);
+		Mockito.when(wsRequest.get()).thenReturn(Promise.pure(wsResponse));
+		Mockito.when(wsResponse.getStatus()).thenReturn(500);
+
+		ActorRef unit = system.actorOf(GetAccountActor.props(client, url, user, password));
+
+		// when
+		unit.tell(new GetAccount(name), getRef());
+
+		// then
+		expectMsgClass(Exception.class);
+	}
 }

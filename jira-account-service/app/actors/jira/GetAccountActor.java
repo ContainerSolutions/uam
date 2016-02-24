@@ -60,7 +60,8 @@ public class GetAccountActor extends UntypedActor {
 		sender().tell(client.url(url + "/rest/api/2/user?username=" + msg.name).setAuth(user, password).get()
 				.map(response -> {
 					if (response.getStatus() != 200) {
-						return response.getBody();
+						logger.error("Failed to get user data from Jira: " + response.getBody());
+						return new Exception(response.getBody());
 					}
 					JsonNode jsonNode = response.asJson();
 

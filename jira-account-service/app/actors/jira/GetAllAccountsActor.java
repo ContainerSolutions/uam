@@ -49,7 +49,8 @@ public class GetAllAccountsActor extends UntypedActor {
 		sender().tell(
 				client.url(url + "/rest/api/2/user/search?username=%25").setAuth(user, password).get().map(response -> {
 					if (response.getStatus() != 200) {
-						return response.getBody();
+						logger.error("Failed to get users from Jira: " + response.getBody());
+						return new Exception(response.getBody());
 					}
 
 					ArrayNode result = Json.newArray();

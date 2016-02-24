@@ -6,11 +6,11 @@ import com.tinkerpop.blueprints.impls.orient.OrientGraphFactory;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
-import actors.AuditLogsActor;
 import actors.jira.CreateAccountActor;
 import actors.jira.GetAccountActor;
 import actors.jira.GetAllAccountsActor;
 import actors.jira.RemoveAccountActor;
+import actors.repository.AuditLogsActor;
 import actors.repository.CreateAccountVertexActor;
 import actors.repository.RemoveAccountVertexActor;
 import akka.actor.ActorRef;

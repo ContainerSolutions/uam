@@ -102,7 +102,7 @@ public class IntegrationTest {
 
 				// User does not exist
 				response = WS.url("http://localhost:3333/jira/account/" + id).get().get(timeout);
-				Assert.assertEquals(200, response.getStatus());
+				Assert.assertEquals(500, response.getStatus());
 				jsonNode = response.asJson();
 				Assert.assertEquals("{\"errorMessages\":[\"The user named '" + id + "' does not exist\"],\"errors\":{}}", jsonNode.toString());
 			}

@@ -9,7 +9,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 
-import actors.AuditLogsActor;
+import actors.repository.AuditLogsActor;
 import actors.jira.CreateAccountActor.CreateJiraAccountMessage;
 import actors.jira.GetAccountActor.GetAccount;
 import actors.jira.GetAllAccountsActor.GetAllAccounts;
@@ -37,8 +37,7 @@ public class Application extends Controller {
 	private final ActorRef auditLogsActor;
 
 	@Inject
-	public Application(@Named("createActor") ActorRef createActor,
-			@Named("getAllActor") ActorRef getAllActor,
+	public Application(@Named("createActor") ActorRef createActor, @Named("getAllActor") ActorRef getAllActor,
 			@Named("getAccountActor") ActorRef getAccountActor,
 			@Named("removeAccountActor") ActorRef removeAccountActor,
 			@Named("auditLogsActor") ActorRef auditLogsActor) {
@@ -49,14 +48,12 @@ public class Application extends Controller {
 		this.auditLogsActor = auditLogsActor;
 	}
 
-	// TODO add error handling for correct response statuses
 	public Promise<Result> getAll() {
-		return Promise.wrap(ask(getAllActor, new GetAllAccounts(), TIMEOUT)).map(response -> ok(response.toString()));
+		return Promise.wrap(ask(getAllActor, new GetAllAccounts(), TIMEOUT)).map(this::handleActorResponse);
 	}
 
 	public Promise<Result> get(String name) {
-		return Promise.wrap(ask(getAccountActor, new GetAccount(name), TIMEOUT))
-				.map(response -> ok(response.toString()));
+		return Promise.wrap(ask(getAccountActor, new GetAccount(name), TIMEOUT)).map(this::handleActorResponse);
 	}
 
 	@BodyParser.Of(BodyParser.Json.class)
@@ -75,5 +72,13 @@ public class Application extends Controller {
 		return Promise.wrap(ask(removeAccountActor, new RemoveAccount(name), TIMEOUT))
 				.map(response -> StringUtils.equals("Ok", response.toString()) ? noContent()
 						: internalServerError(response.toString()));
+	}
+
+	private Result handleActorResponse(Object response) {
+		if (response instanceof Throwable) {
+			return internalServerError(((Throwable) response).getMessage());
+		}
+
+		return ok(response.toString());
 	}
 }
